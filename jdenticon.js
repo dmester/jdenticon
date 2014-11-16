@@ -236,8 +236,8 @@ window["jdenticon"] = (function() {
         },
         /** @param {Path} p */
         function (p, cell, index) { 
-            var m = 0 | (cell * 0.12);
-            var s = m * 4;
+            var m = 0 | (cell * 0.15),
+                s = 0 | (cell * 0.5);
             p.addEllipse(cell - s - m, cell - s - m, s, s);
         },
         /** @param {Path} p */
@@ -346,10 +346,10 @@ window["jdenticon"] = (function() {
      * Draws an identicon to a context.
      */
     function drawIcon(ctx, hash, size) {
-        // Sizes smaller than 64 px are not supported. If really needed, apply a scaling transformation 
+        // Sizes smaller than 30 px are not supported. If really needed, apply a scaling transformation 
         // to the context before passing it to this function.
-        if (size < 64) {
-            throw new Error("Jdenticon cannot render identicons smaller than 64 pixels.");
+        if (size < 30) {
+            throw new Error("Jdenticon cannot render identicons smaller than 30 pixels.");
         }
         if (!/^[0-9a-f]{10,}$/i.test(hash)) {
             throw new Error("Invalid hash passed to Jdenticon.");
