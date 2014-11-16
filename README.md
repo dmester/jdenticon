@@ -16,8 +16,10 @@ Files
 
 You got a number of files when you extracted the script library:
 
-jdenticon.min.js  - Compressed and obfuscated, to be used in production.
-jdenticon.js      - Commented source file for your reference.
+File             | Description
+---------------- | ----------------------------------------------------
+jdenticon.min.js | Compressed and obfuscated, to be used in production.
+jdenticon.js     | Commented source file for your reference.
 
 
 How to use
