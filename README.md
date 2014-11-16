@@ -29,13 +29,13 @@ Add a canvas element where you want to render the identicon. Use the `data-jdent
 attribute to specify that an identicon should be rendered on the canvas.
 
 ```HTML
-    <canvas width="80" height="80" data-jdenticon-hash="ff8adece0631821959f443c9d956fc39"></canvas>
+<canvas width="80" height="80" data-jdenticon-hash="ff8adece0631821959f443c9d956fc39"></canvas>
 ```
 
 Include the Jdenticon library somewhere on your page.
 
 ```HTML
-    <script type="text/javascript" src="jdenticon.min.js"></script>
+<script type="text/javascript" src="jdenticon.min.js"></script>
 ```
 
 That's it!
