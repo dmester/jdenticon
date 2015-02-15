@@ -5,6 +5,7 @@
         <version>{version}</version>
         <title>Jdenticon</title>
         <authors>Daniel Mester Pirttijärvi</authors>
+        <licenseUrl>http://opensource.org/licenses/zlib-license.php</licenseUrl>
         <projectUrl>http://jdenticon.com/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Jdenticon is a free Javascript library for generating highly recogizable identicons.</description>
