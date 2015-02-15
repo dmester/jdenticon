@@ -1,6 +1,5 @@
 {
   "name": "Jdenticon",
-  "version": "1.0.0",
   "authors": [
     "Daniel Mester Pirttijärvi"
   ],
@@ -17,7 +16,10 @@
     "utils",
     "obj",
     "releases",
-    "jdenticon.nuspec",
-    "build.bat"
+    "*.nuspec",
+    "*.bat",
+    ".gitignore",
+    "*.template.*",
+    "header.txt"
   ]
 }
