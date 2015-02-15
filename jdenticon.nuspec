@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Jdenticon</id>
+        <version>{version}</version>
+        <title>Jdenticon</title>
+        <authors>Daniel Mester Pirttijärvi</authors>
+        <projectUrl>http://jdenticon.com/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Jdenticon is a free Javascript library for generating highly recogizable identicons.</description>
+        <summary>Javascript identicon generator.</summary>
+        <tags>Javascript identicon library</tags>
+    </metadata>
+    <files>
+        <file src="obj\jdenticon-{version}.min.js" target="Content\Scripts\jdenticon-{version}.min.js" />
+        <file src="obj\jdenticon-{version}.js" target="Content\Scripts\jdenticon-{version}.js" />
+        <file src="obj\readme.txt" target="Content\Scripts\jdenticon.readme.txt" />
+    </files>
+</package>

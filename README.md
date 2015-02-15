@@ -1,8 +1,10 @@
-
+﻿
 Jdenticon
 ======================================
+
 http://jdenticon.com
-Copyright (c) 2014 Daniel Mester Pirttij�rvi
+
+Copyright (c) 2014 Daniel Mester Pirttijärvi
 
 
 Description
@@ -38,7 +40,6 @@ Include the Jdenticon library somewhere on your page.
 <script type="text/javascript" src="jdenticon.min.js"></script>
 ```
 
-That's it!
+That's it! For more usage examples, please see:
 
-For more usage examples, please see:
 http://jdenticon.com

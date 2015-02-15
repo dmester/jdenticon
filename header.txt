@@ -1,0 +1,1 @@
+// Jdenticon {version} | jdenticon.com | zlib licensed | (c) 2014-{year} Daniel Mester Pirttijärvi
