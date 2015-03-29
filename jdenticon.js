@@ -445,7 +445,7 @@ window["jdenticon"] = (function() {
             canvases = document.getElementsByTagName("canvas");
             
         for (var i = 0; i < canvases.length; i++) {
-            hash = canvases[i].getAttribute("data-jdenticon-hash");
+            hash = canvases[i].getAttribute(HASH_ATTRIBUTE);
             if (hash) {
                 update(canvases[i], hash);
             }
