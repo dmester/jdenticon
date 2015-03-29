@@ -3,8 +3,13 @@ CHANGELOG
 Jdenticon
 
 ---------------------------------------------------------------------------
-Version 1.0
+Version 1.0.0
 Released 2014-11-15
 
 * Initial release
+---------------------------------------------------------------------------
+Version 1.0.1
+Released 2015-03-29
+
+* Bug fix: large identicons were not rendered correctly in Chrome.
 ---------------------------------------------------------------------------
