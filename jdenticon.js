@@ -84,12 +84,49 @@ window["jdenticon"] = (function() {
     
     
     /**
+     * Translates and rotates a point before being passed on to the canvas context. This was previously done by the canvas context itself, 
+     * but this caused a rendering issue in Chrome on sizes > 256 where the rotation transformation of inverted paths was not done properly.
+     * @param {number} x The x-coordinate of the upper left corner of the transformed rectangle.
+     * @param {number} y The y-coordinate of the upper left corner of the transformed rectangle.
+     * @param {number} size The size of the transformed rectangle.
+     * @param {number} rotation Rotation specified as 0 = 0 rad, 1 = 0.5π rad, 2 = π rad, 3 = 1.5π rad
+     * @private
+     * @constructor
+     */
+    function Transform(x, y, size, rotation) {
+        this._x = x;
+        this._y = y;
+        this._size = size;
+        this._rotation = rotation;
+    }
+    Transform.noTransform = new Transform(0, 0, 0, 0);
+    Transform.prototype = {
+        /**
+         * Transforms the specified point based on the translation and rotation specification for this Transform.
+         * @param {number} x x-coordinate
+         * @param {number} y y-coordinate
+         * @param {number=} w The width of the transformed rectangle. If greater than 0, this will ensure the returned point is of the upper left corner of the transformed rectangle.
+         * @param {number=} h The height of the transformed rectangle. If greater than 0, this will ensure the returned point is of the upper left corner of the transformed rectangle.
+         */
+        transformPoint: function (x, y, w, h) {
+            var right = this._x + this._size,
+                bottom = this._y + this._size;
+            return this._rotation === 1 ? [right - y - (h || 0), this._y + x] :
+                   this._rotation === 2 ? [right - x - (w || 0), bottom - y - (h || 0)] :
+                   this._rotation === 3 ? [this._x + y, bottom - x - (w || 0)] :
+                   [this._x + x, this._y + y];
+        }
+    };
+    
+    
+    /**
      * A wrapper around a context for building paths.
      * @private
      * @constructor
      */
-    function Path(ctx) {
+    function Path(ctx, transform) {
         this._ctx = ctx;
+        this._transform = transform || Transform.noTransform;
         ctx.beginPath();
     }
     Path.prototype = {
@@ -103,10 +140,10 @@ window["jdenticon"] = (function() {
                 i = invert ? points.length - 2 : 0,
                 ctx = this._ctx;
             
-            ctx.moveTo(points[i], points[i + 1]);
+            ctx.moveTo.apply(ctx, this._transform.transformPoint(points[i], points[i + 1]));
             
             for (i += di; i < points.length && i >= 0; i += di) {
-                ctx.lineTo(points[i], points[i + 1]);
+                ctx.lineTo.apply(ctx, this._transform.transformPoint(points[i], points[i + 1]));
             }
             ctx.closePath();
         },
@@ -123,6 +160,9 @@ window["jdenticon"] = (function() {
         addEllipse: function (x, y, w, h, invert) {
             var ctx = this._ctx,
                 kappa = .5522848,
+                p = this._transform.transformPoint(x, y, w, h),
+                x = p[0],
+                y = p[1],
                 ox = (w / 2) * kappa, // control point offset horizontal
                 oy = (h / 2) * kappa, // control point offset vertical
                 xe = x + w,           // x-end
@@ -323,6 +363,7 @@ window["jdenticon"] = (function() {
 
     /**
      * Updates the identicon in the speciifed canvas element.
+     * @param {number=} padding Optional padding in pixels. Extra padding might be added to center the rendered identicon.
      */
     function update(canvas, hash, padding) {
         var ctx = (canvas = typeof(canvas) === "string" ? document.querySelector(canvas) : canvas).getContext("2d"),
@@ -363,17 +404,14 @@ window["jdenticon"] = (function() {
             var r = rotationIndex ? parseInt(hash.charAt(rotationIndex), 16) : 0,
                 shape = shapes[parseInt(hash.charAt(index), 16) % shapes.length],
                 i,
-                path;
+                path,
+                transform;
 
             for (i = 0; i < positions.length; i++) {
-                ctx.save();
-                ctx.translate(positions[i][0] * cell + cell / 2, positions[i][1] * cell + cell / 2);
-                ctx.rotate((r++ % 4) * Math.PI / 2);
-                ctx.translate(-cell / 2, -cell / 2);
-                path = new Path(ctx);
+                transform = new Transform(positions[i][0] * cell, positions[i][1] * cell, cell, r++ % 4);
+                path = new Path(ctx, transform);
                 shape(path, cell, i);
                 path.fill();
-                ctx.restore();
             }
         }
 
