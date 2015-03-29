@@ -4,7 +4,7 @@ Jdenticon
 
 http://jdenticon.com
 
-Copyright (c) 2014 Daniel Mester Pirttijärvi
+Copyright (c) 2015 Daniel Mester Pirttijärvi
 
 
 Description
