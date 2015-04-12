@@ -217,7 +217,7 @@ window["jdenticon"] = (function() {
                 x, y + h,
                 x, y
             ];
-            points.splice((r || 0) % 4, 2);
+            points.splice(((r || 0) % 4) * 2, 2);
             this.addPolygon(points, invert);
         },
 
