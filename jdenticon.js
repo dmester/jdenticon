@@ -260,8 +260,9 @@ window["jdenticon"] = (function() {
         },
         /** @param {Path} p */
         function (p, cell, index) {
-            var k = 0 | (cell * 0.4);
-            p.addTriangle(cell - k, cell - k * 2, k, k * 2, 1);
+            var w = 0 | (cell * 0.5), 
+                h = 0 | (cell * 0.8);
+            p.addTriangle(cell - w, 0, w, h, 2);
         },
         /** @param {Path} p */
         function (p, cell, index) { 
@@ -294,11 +295,18 @@ window["jdenticon"] = (function() {
         },
         /** @param {Path} p */
         function (p, cell, index) {
-            p.addTriangle(0, 0, cell, cell, 0);
+            p.addPolygon([
+                0, 0,
+                cell, 0,
+                cell, cell * 0.7,
+                cell * 0.4, cell * 0.4,
+                cell * 0.7, cell,
+                0, cell
+            ]);
         },
         /** @param {Path} p */
         function (p, cell, index) {
-            p.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 0);
+            p.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
         },
         /** @param {Path} p */
         function (p, cell, index) {
@@ -416,8 +424,6 @@ window["jdenticon"] = (function() {
         }
 
         // AVAILABLE COLORS
-        // the first 15 characters of the hash control the pixels (even/odd)
-        // they are drawn down the middle first, then mirrored outwards
         var hue = parseInt(hash.substr(-7), 16) / 0xfffffff,
 
             // Available colors for this icon
