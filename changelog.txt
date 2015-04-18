@@ -13,3 +13,10 @@ Released 2015-03-29
 
 * Bug fix: large identicons were not rendered correctly in Chrome.
 ---------------------------------------------------------------------------
+Version 1.1.0
+Released 2015-04-18
+
+* Replaced center shapes that could be interpreted as swastika alike. Only 
+  icons having the affected shapes are affected. All other icons will
+  remain indentical as before.
+---------------------------------------------------------------------------
