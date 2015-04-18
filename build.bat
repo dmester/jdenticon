@@ -4,6 +4,9 @@ echo Enter version:
 set /P version=
 echo.
 
+mkdir dist 2>NUL
+del /Q dist\*.* >NUL
+
 mkdir releases 2>NUL
 
 mkdir obj 2>NUL
@@ -38,6 +41,10 @@ utils\misc\replace "{version}=%version%" "{date}=%date%" "{year}=%year%" obj\jde
 rem Create NuGet Package
 utils\nuget\NuGet.exe pack ~jdenticon.nuspec -OutputDirectory releases
 del /Q ~jdenticon.nuspec
+
+rem Populate dist directory
+copy obj\jdenticon-%version%.min.js dist\jdenticon.min.js
+copy obj\jdenticon-%version%.js dist\jdenticon.js
 
 rem obj files
 del /Q out.~js
