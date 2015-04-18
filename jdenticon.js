@@ -31,6 +31,8 @@
 window["jdenticon"] = (function() {
     "use strict";
     var undefined,
+		/** @const */
+		version = "{version}",
         /** @const */
         HASH_ATTRIBUTE = "data-jdenticon-hash",
         jQuery = window["jQuery"];
@@ -497,6 +499,7 @@ window["jdenticon"] = (function() {
     }
     jdenticon["drawIcon"] = drawIcon;
     jdenticon["update"] = update;
+    jdenticon["version"] = version;
     
     // Basic jQuery plugin
     if (jQuery) {
