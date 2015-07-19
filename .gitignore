@@ -1,2 +1,5 @@
 obj
 releases
+bower_components
+node_modules
+.vs
