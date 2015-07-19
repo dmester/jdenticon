@@ -28,14 +28,29 @@
 
 /*jslint bitwise: true */
 
-window["jdenticon"] = (function() {
+(function (global, name, factory) {
+    var jQuery = global["jQuery"],
+        jdenticon = factory(global, jQuery);
+
+    // Node.js
+    if (typeof module !== "undefined" && "exports" in module) {
+        module["exports"] = jdenticon;
+    }
+    // RequireJS
+    else if (typeof define === "function" && define["amd"]) {
+        define([], function () { return jdenticon; });
+    }
+    // No module loader
+    else {
+        global[name] = jdenticon;
+    }
+})(this, "jdenticon", function (global, jQuery) {
     "use strict";
     var undefined,
 		/** @const */
 		version = "{version}",
         /** @const */
-        HASH_ATTRIBUTE = "data-jdenticon-hash",
-        jQuery = window["jQuery"];
+        HASH_ATTRIBUTE = "data-jdenticon-hash";
     
     /**
      * Represents a color.
@@ -405,6 +420,9 @@ window["jdenticon"] = (function() {
         if (!/^[0-9a-f]{10,}$/i.test(hash)) {
             throw new Error("Invalid hash passed to Jdenticon.");
         }
+        if (!ctx) {
+            throw new Error("No canvas specified.");
+        }
         
         size = size | 0;
         
@@ -488,7 +506,7 @@ window["jdenticon"] = (function() {
      */
     function jdenticon() {
         var hash, 
-            canvases = document.getElementsByTagName("canvas");
+            canvases = "document" in global ? document.getElementsByTagName("canvas") : [];
             
         for (var i = 0; i < canvases.length; i++) {
             hash = canvases[i].getAttribute(HASH_ATTRIBUTE);
@@ -511,6 +529,9 @@ window["jdenticon"] = (function() {
         };
     }
     
-    setTimeout(jdenticon, 0);
+    if (typeof setTimeout === "function") {
+        setTimeout(jdenticon, 0);
+    }
+
     return jdenticon;
-})();
+});
