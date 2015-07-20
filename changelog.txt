@@ -20,3 +20,9 @@ Released 2015-04-18
   icons having the affected shapes are affected. All other icons will
   remain indentical as before.
 ---------------------------------------------------------------------------
+Version 1.2.0
+Released 2015-07-20
+
+* Added support for Node.js and RequireJS module loaders.
+* Added npm package.
+---------------------------------------------------------------------------
