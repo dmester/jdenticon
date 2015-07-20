@@ -37,6 +37,7 @@ copy /Y bower.template.json bower.json
 
 rem Replace version
 utils\misc\replace "{version}=%version%" "{date}=%date%" "{year}=%year%" obj\jdenticon-%version%.js obj\jdenticon-%version%.min.js obj\readme.txt obj\license.txt bower.json ~jdenticon.nuspec
+utils\misc\replace "0.0.0=%version%" package.json
 
 rem Create NuGet Package
 utils\nuget\NuGet.exe pack ~jdenticon.nuspec -OutputDirectory releases

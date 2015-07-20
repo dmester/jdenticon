@@ -15,10 +15,12 @@
   "ignore": [
     "utils",
     "obj",
+    "bin",
     "releases",
     "*.nuspec",
     "*.bat",
     ".gitignore",
+    "/jdenticon.js",
     "*.template.*",
     "header.txt"
   ]

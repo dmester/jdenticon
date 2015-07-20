@@ -1,0 +1,26 @@
+{
+  "name": "jdenticon",
+  "version": "0.0.0",
+  "description": "Javascript identicon generator",
+  "main": "dist/jdenticon.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmester/jdenticon"
+  },
+  "bugs": {
+    "url": "https://github.com/dmester/jdenticon/issues"
+  },
+  "keywords": [
+    "javascript",
+    "identicon",
+    "jdenticon"
+  ],
+  "author": "Daniel Mester Pirttijärvi",
+  "license": "zlib license",
+  "bugs": {
+    "url": "https://github.com/dmester/jdenticon/issues"
+  },
+  "homepage": "https://github.com/dmester/jdenticon"
+}
