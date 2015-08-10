@@ -417,7 +417,7 @@
         if (size < 30) {
             throw new Error("Jdenticon cannot render identicons smaller than 30 pixels.");
         }
-        if (!/^[0-9a-f]{10,}$/i.test(hash)) {
+        if (!/^[0-9a-f]{11,}$/i.test(hash)) {
             throw new Error("Invalid hash passed to Jdenticon.");
         }
         if (!ctx) {
