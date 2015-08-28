@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define(["./Color", "./Path", "./Transform"], function (Color, Path, Transform) {
+define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Path, Transform, SvgContext) {
     "use strict";
     
     var undefined,
@@ -147,22 +147,56 @@ define(["./Color", "./Path", "./Transform"], function (Color, Path, Transform) {
      * Updates the identicon in the speciifed canvas element.
      * @param {number=} padding Optional padding in pixels. Extra padding might be added to center the rendered identicon.
      */
-    function update(canvas, hash, padding) {
-        var ctx = (canvas = typeof(canvas) === "string" ? document.querySelector(canvas) : canvas).getContext("2d"),
-            size = Math.min(canvas.width) * (1 - 2 * (padding === undefined ? 0.08 : padding));
+    function update(el, hash, padding) {
+        if (typeof(el) === "string") {
+            el = document.querySelector(el);
+        }
+        if (!el || !el["tagName"]) {
+            // No element found
+            return;
+        }
         
+        var isSvg = el["tagName"].toLowerCase() == "svg",
+            isCanvas = el["tagName"].toLowerCase() == "canvas";
+        
+        // Ensure we have a supported element
+        if (!isSvg && !(isCanvas && "getContext" in el)) {
+            return;
+        }
+        
+        var ctx = isSvg ? new SvgContext(el.clientWidth, el.clientHeight) : el.getContext("2d"),
+            size = Math.min(el.clientWidth, el.clientHeight) * (1 - 2 * (padding === undefined ? 0.08 : padding));
+        
+        // Draw icon
         ctx.save();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, el.clientWidth, el.clientHeight);
         ctx.translate(
-            0 | ((canvas.width - size) / 2),
-            0 | ((canvas.height - size) / 2));
+            0 | ((el.clientWidth - size) / 2),
+            0 | ((el.clientHeight - size) / 2));
         
         drawIcon(
             ctx, 
-            hash || canvas.getAttribute(HASH_ATTRIBUTE),
+            hash || el.getAttribute(HASH_ATTRIBUTE),
             size);
             
         ctx.restore();
+        
+        // SVG needs postprocessing
+        if (isSvg) {
+            // Parse svg to a temporary span element.
+            // Simply using innerHTLM does unfortunately not work on IE.
+            var wrapper = document.createElement("span");
+            wrapper.innerHTML = ctx.toSvg(false);
+            
+            // Then replace the content of the target element with the parsed svg.
+            while (el.firstChild) {
+                el.removeChild(el.firstChild);
+            }
+            var newNodes = wrapper.firstChild.childNodes;
+            while (newNodes.length) {
+                el.appendChild(newNodes[0]);
+            }
+        }
     }
 
     /**
@@ -263,7 +297,7 @@ define(["./Color", "./Path", "./Transform"], function (Color, Path, Transform) {
      */
     function jdenticon() {
         var hash, 
-            canvases = "document" in global ? document.getElementsByTagName("canvas") : [];
+            canvases = "document" in global ? document.querySelectorAll("[" + HASH_ATTRIBUTE + "]") : [];
             
         for (var i = 0; i < canvases.length; i++) {
             hash = canvases[i].getAttribute(HASH_ATTRIBUTE);
