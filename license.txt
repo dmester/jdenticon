@@ -1,6 +1,6 @@
 ﻿
 Jdenticon
-Copyright (c) 2014 Daniel Mester Pirttijärvi
+Copyright (c) 2014 - {year} Daniel Mester Pirttijärvi
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages

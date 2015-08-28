@@ -1,6 +1,7 @@
 utils
 obj
 bin
+src
 releases
 *.nuspec
 *.bat
@@ -9,3 +10,4 @@ releases
 *.template.*
 header.txt
 bower.json
+node_modules
