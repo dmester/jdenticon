@@ -4,18 +4,18 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define(["./SvgLine", "./SvgBezier"], function (SvgLine, SvgBezier) {
+define(["./Line"], function (Line) {
     function simplifyByPoints(points, outLines) {
         points.sort(function (a, b) {
             return (
                 // Sort by x coordinate
-                a.x - b.x ||
+                (a.x - b.x) ||
 
                 // Sort by y coordinate
-                a.y - b.y ||
+                (a.y - b.y) ||
 
                 // Ensure start points comes before end points => adjacent lines are merged
-                b.s - a.s);
+                (b.s - a.s));
         });
 
         var start = null,
@@ -43,8 +43,8 @@ define(["./SvgLine", "./SvgBezier"], function (SvgLine, SvgBezier) {
             else if (start && !activeLine) {
                 if (start.x != point.x || start.y != point.y) {
                     outLines.push(start.s ?
-                        new SvgLine(start.x, start.y, point.x, point.y) :
-                        new SvgLine(point.x, point.y, start.x, start.y));
+                        new Line(start.x, start.y, point.x, point.y) :
+                        new Line(point.x, point.y, start.x, start.y));
                 }
                 start = null;
             }
@@ -54,7 +54,7 @@ define(["./SvgLine", "./SvgBezier"], function (SvgLine, SvgBezier) {
     function simplify(lines) {
         lines.sort(function (a, b) {
             // By slope
-            return a.dy - b.dy || a.intersect - b.intersect;
+            return (a.dy - b.dy) || (a.intersect - b.intersect);
         });
 
         var outLines = [],
@@ -100,53 +100,25 @@ define(["./SvgLine", "./SvgBezier"], function (SvgLine, SvgBezier) {
 
     function SvgPath() {
         this._lines = [];
-        this._beziers = [];
-        this._lastPosition = { x: 0, y: 0 };
-        this._startPosition = { x: 0, y: 0 };
+        this._circles = "";
     }
     SvgPath.prototype = {
-        append: function (other) {
-            if (other) {
-                other.$closePath();
-                this._lines = this._lines.concat(other._lines);
-                this._beziers = this._beziers.concat(other._beziers);
-            }
-            return this;
-        },
-        $moveTo: function (x, y) {
-            this._startPosition = { x: x, y: y };
-            this._lastPosition = { x: x, y: y };
-        },
-        $lineTo: function (x, y) {
-            var lastPosition = this._lastPosition;
-            this._lines.push(new SvgLine(lastPosition.x, lastPosition.y, x, y));
-            lastPosition.x = x;
-            lastPosition.y = y;
-        },
-        $bezierCurveTo: function (cp1x, cp1y, cp2x, cp2y, x, y) {
-            var lastPosition = this._lastPosition;
-            this._beziers.push(new SvgBezier(
-                lastPosition.x, lastPosition.y,
-                x, y,
-                cp1x, cp1y,
-                cp2x, cp2y
-                ));
-            lastPosition.x = x;
-            lastPosition.y = y;
-        },
-        $closePath: function () {
-            var startPosition = this._startPosition,
-                lastPosition = this._lastPosition;
-            if (startPosition.x != lastPosition.x ||
-                startPosition.y != lastPosition.y) {
-                this._lines.push(new SvgLine(lastPosition.x, lastPosition.y, startPosition.x, startPosition.y));
-                lastPosition.x = startPosition.x;
-                lastPosition.y = startPosition.y;
+        addPolygon: function (points) {
+            for (var i = 1; i < points.length; i++) {
+                this._lines.push(new Line(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y));
             }
         },
-        simplify: function () {
-            var lines = simplify(this._lines).concat(this._beziers);
-            var linesByPath = [];
+        addCircle: function (point, size, invert) {
+            var sweepFlag = invert ? 0 : 1,
+                radius = size / 2;
+            this._circles += 
+                " M " + (point.x) + " " + (point.y + radius) +
+                " a " + radius + "," + radius + " 0 1," + sweepFlag + " " + size + ",0" + 
+                " a " + radius + "," + radius + " 0 1," + sweepFlag + " " + (-size) + ",0";
+        },
+        toSvg: function () {
+            var lines = simplify(this._lines);
+            var path = "";
 
             for (var pi = 0; pi < lines.length; pi++) {
                 if (!lines[pi]) continue;
@@ -168,16 +140,18 @@ define(["./SvgLine", "./SvgBezier"], function (SvgLine, SvgBezier) {
 
                 if (cursor.x1 == pivot.x0 && cursor.y1 == pivot.y0) {
                     // Closed path
-                    var path = [pivot];
+                    var line = lines[pathIndexes[0]];
+                    path += " M " + line.x0 + " " + line.y0;
                     for (var i = 0; i < pathIndexes.length; i++) {
                         var lineIndex = pathIndexes[i];
-                        linesByPath.push(lines[lineIndex]);
+                        line = lines[lineIndex];
                         lines[lineIndex] = null;
+                        path += " L " + line.x1 + " " + line.y1;
                     }
                 }
             }
 
-            return linesByPath;
+            return (path + this._circles).replace(/^\s+/, "");
         }
     };
     

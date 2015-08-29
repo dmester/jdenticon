@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Path, Transform, SvgContext) {
+define(["./Color", "./Path", "./Transform", "./Graphics", "./SvgRenderer", "./CanvasRenderer"], function (Color, Path, Transform, Graphics, SvgRenderer, CanvasRenderer) {
     "use strict";
     
     var undefined,
@@ -53,7 +53,7 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
         function (p, cell, index) { 
             var m = 0 | (cell * 0.15),
                 s = 0 | (cell * 0.5);
-            p.addEllipse(cell - s - m, cell - s - m, s, s);
+            p.addCircle(cell - s - m, cell - s - m, s);
         },
         /** @param {Path} p */
         function (p, cell, index) {
@@ -101,7 +101,7 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
                 outer = inner * 3;
 
             p.addRectangle(0, 0, cell, cell);
-            p.addEllipse(outer, outer, cell - inner - outer, cell - inner - outer, true);
+            p.addCircle(outer, outer, cell - inner - outer, true);
         },
         /** @param {Path} p */
         function (p, cell, index) {
@@ -117,7 +117,7 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
         function (p, cell, index) {
             var m = cell * 0.4, s = cell * 1.2;
             if (!index) {
-                p.addEllipse(m, m, s, s);
+                p.addCircle(m, m, s);
             }
         }
     ];
@@ -139,7 +139,7 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
         /** @param {Path} p */
         function (p, cell, index) {
             var m = cell / 6;
-            p.addEllipse(m, m, cell - 2 * m, cell - 2 * m);
+            p.addCircle(m, m, cell - 2 * m);
         }
     ];
 
@@ -164,29 +164,22 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
             return;
         }
         
-        var ctx = isSvg ? new SvgContext(el.clientWidth, el.clientHeight) : el.getContext("2d"),
-            size = Math.min(el.clientWidth, el.clientHeight) * (1 - 2 * (padding === undefined ? 0.08 : padding));
+        var width = Number(el.getAttribute("width")) || el.clientWidth || 0,
+            height = Number(el.getAttribute("height")) || el.clientHeight || 0,
+            renderer = isSvg ? new SvgRenderer(width, height) : new CanvasRenderer(el.getContext("2d"), width, height),
+            size = Math.min(width, height) * (1 - 2 * (padding === undefined ? 0.08 : padding)),
+            x = 0 | ((width - size) / 2),
+            y = 0 | ((height - size) / 2);
         
         // Draw icon
-        ctx.save();
-        ctx.clearRect(0, 0, el.clientWidth, el.clientHeight);
-        ctx.translate(
-            0 | ((el.clientWidth - size) / 2),
-            0 | ((el.clientHeight - size) / 2));
-        
-        drawIcon(
-            ctx, 
-            hash || el.getAttribute(HASH_ATTRIBUTE),
-            size);
-            
-        ctx.restore();
+        drawIcon(renderer, hash || el.getAttribute(HASH_ATTRIBUTE), x, y, size);
         
         // SVG needs postprocessing
         if (isSvg) {
             // Parse svg to a temporary span element.
             // Simply using innerHTLM does unfortunately not work on IE.
             var wrapper = document.createElement("span");
-            wrapper.innerHTML = ctx.toSvg(false);
+            wrapper.innerHTML = renderer.toSvg(false);
             
             // Then replace the content of the target element with the parsed svg.
             while (el.firstChild) {
@@ -198,11 +191,32 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
             }
         }
     }
+    
+    /**
+     * Draws an identicon to a context.
+     */
+    function drawIconContext(ctx, hash, size) {
+        if (!ctx) {
+            throw new Error("No canvas specified.");
+        }
+        
+        var renderer = new CanvasRenderer(ctx);
+        drawIcon(renderer, hash, 0, 0, size);
+    }
+    
+    /**
+     * Draws an identicon to a context.
+     */
+    function toSvg(hash, size) {
+        var renderer = new SvgRenderer(size, size);
+        drawIcon(renderer, hash, 0, 0, size);
+        return renderer.toSvg();
+    }
 
     /**
      * Draws an identicon to a context.
      */
-    function drawIcon(ctx, hash, size) {
+    function drawIcon(renderer, hash, x, y, size) {
         // Sizes smaller than 30 px are not supported. If really needed, apply a scaling transformation 
         // to the context before passing it to this function.
         if (size < 30) {
@@ -211,27 +225,28 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
         if (!/^[0-9a-f]{11,}$/i.test(hash)) {
             throw new Error("Invalid hash passed to Jdenticon.");
         }
-        if (!ctx) {
-            throw new Error("No canvas specified.");
-        }
         
         size = size | 0;
         
+        var graphics = new Graphics(renderer);
+        
         var cell = (0 | (size / 8)) * 2;
+        x += 0 | (size / 2 - cell * 2);
+        y += 0 | (size / 2 - cell * 2);
 
-        function renderShape(ctx, shapes, index, rotationIndex, positions) {
+        function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
             var r = rotationIndex ? parseInt(hash.charAt(rotationIndex), 16) : 0,
                 shape = shapes[parseInt(hash.charAt(index), 16) % shapes.length],
-                i,
-                path,
-                transform;
-
+                i;
+            
+            renderer.beginDraw(availableColors[selectedColorIndexes[colorIndex]]);
+            
             for (i = 0; i < positions.length; i++) {
-                transform = new Transform(positions[i][0] * cell, positions[i][1] * cell, cell, r++ % 4);
-                path = new Path(ctx, transform);
-                shape(path, cell, i);
-                path.fill();
+                graphics._transform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
+                shape(graphics, cell, i);
             }
+            
+            renderer.endDraw();
         }
 
         // AVAILABLE COLORS
@@ -274,22 +289,13 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
             selectedColorIndexes.push(index);
         }
 
-        function selectColor(index) {
-            ctx.fillStyle = availableColors[selectedColorIndexes[index]].toString();
-        }
-
-        
         // ACTUAL RENDERING
-        ctx.clearRect(0, 0, size, size);
         // Sides
-        selectColor(0);
-        renderShape(ctx, OUTER_SHAPES, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
+        renderShape(0, OUTER_SHAPES, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
         // Corners
-        selectColor(1);
-        renderShape(ctx, OUTER_SHAPES, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
+        renderShape(1, OUTER_SHAPES, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
         // Center
-        selectColor(2);
-        renderShape(ctx, CENTER_SHAPES, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
+        renderShape(2, CENTER_SHAPES, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
     };
 
     /**
@@ -306,7 +312,8 @@ define(["./Color", "./Path", "./Transform", "./SvgContext"], function (Color, Pa
             }
         }
     }
-    jdenticon["drawIcon"] = drawIcon;
+    jdenticon["drawIcon"] = drawIconContext;
+    jdenticon["toSvg"] = toSvg;
     jdenticon["update"] = update;
     jdenticon["version"] = version;
     

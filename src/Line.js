@@ -5,18 +5,20 @@
  */
 
 define([], function () {
-    function SvgLine(x0, y0, x1, y1) {
+    function Line(x0, y0, x1, y1) {
         this.x0 = x0;
         this.y0 = y0;
         this.x1 = x1;
         this.y1 = y1;
         
-        var dy = this.dy = (y1 - y0) / (x1 - x0);
+        var dy = (y1 - y0) / (x1 - x0);
+        if (dy == -Infinity) dy = Infinity;
+        this.dy = dy;
         this.intersect = dy > 1 || dy < -1 ? 
             x0 - y0 / dy : // Intersection of x axis
             y0 - x0 * dy;  // Intersection of y axis
         this.r = (x1 - x0) < 0;
     };
     
-    return SvgLine;
+    return Line;
 });

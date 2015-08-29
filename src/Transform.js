@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define([], function () {
+define(["./Point"], function (Point) {
     "use strict";
     /**
      * Translates and rotates a point before being passed on to the canvas context. This was previously done by the canvas context itself, 
@@ -22,7 +22,6 @@ define([], function () {
         this._size = size;
         this._rotation = rotation;
     }
-    Transform.noTransform = new Transform(0, 0, 0, 0);
     Transform.prototype = {
         /**
          * Transforms the specified point based on the translation and rotation specification for this Transform.
@@ -34,12 +33,13 @@ define([], function () {
         transformPoint: function (x, y, w, h) {
             var right = this._x + this._size,
                 bottom = this._y + this._size;
-            return this._rotation === 1 ? [right - y - (h || 0), this._y + x] :
-                   this._rotation === 2 ? [right - x - (w || 0), bottom - y - (h || 0)] :
-                   this._rotation === 3 ? [this._x + y, bottom - x - (w || 0)] :
-                   [this._x + x, this._y + y];
+            return this._rotation === 1 ? new Point(right - y - (h || 0), this._y + x) :
+                   this._rotation === 2 ? new Point(right - x - (w || 0), bottom - y - (h || 0)) :
+                   this._rotation === 3 ? new Point(this._x + y, bottom - x - (w || 0)) :
+                   new Point(this._x + x, this._y + y);
         }
     };
+    Transform.noTransform = new Transform(0, 0, 0, 0);
     
     return Transform;
 });
