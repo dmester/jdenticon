@@ -7,7 +7,7 @@
 define(["./transform"], function (Transform) {
     "use strict";
     /**
-     * A wrapper around a context for building paths.
+     * Provides helper functions for rendering common basic shapes.
      * @private
      * @constructor
      */
@@ -17,7 +17,7 @@ define(["./transform"], function (Transform) {
     }
     Graphics.prototype = {
         /**
-         * Adds a polygon to the rendering context.
+         * Adds a polygon to the underlying renderer.
          * @param {Array} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
          * @param {boolean=} invert Specifies if the polygon will be inverted.
          */
@@ -41,12 +41,11 @@ define(["./transform"], function (Transform) {
         },
         
         /**
-         * Adds a polygon to the path.
+         * Adds a polygon to the underlying renderer.
          * Source: http://stackoverflow.com/a/2173084
          * @param {number} x The x-coordinate of the upper left corner of the rectangle holding the entire ellipse.
          * @param {number} y The y-coordinate of the upper left corner of the rectangle holding the entire ellipse.
-         * @param {number} w The width of the ellipse.
-         * @param {number} h The height of the ellipse.
+         * @param {number} size The size of the ellipse.
          * @param {boolean=} invert Specifies if the ellipse will be inverted.
          */
         addCircle: function (x, y, size, invert) {
@@ -55,7 +54,7 @@ define(["./transform"], function (Transform) {
         },
 
         /**
-         * Adds a rectangle to the path.
+         * Adds a rectangle to the underlying renderer.
          * @param {number} x The x-coordinate of the upper left corner of the rectangle.
          * @param {number} y The y-coordinate of the upper left corner of the rectangle.
          * @param {number} w The width of the rectangle.
@@ -72,7 +71,7 @@ define(["./transform"], function (Transform) {
         },
 
         /**
-         * Adds a right triangle to the path.
+         * Adds a right triangle to the underlying renderer.
          * @param {number} x The x-coordinate of the upper left corner of the rectangle holding the triangle.
          * @param {number} y The y-coordinate of the upper left corner of the rectangle holding the triangle.
          * @param {number} w The width of the triangle.
@@ -92,7 +91,7 @@ define(["./transform"], function (Transform) {
         },
 
         /**
-         * Adds a rhombus to the path.
+         * Adds a rhombus to the underlying renderer.
          * @param {number} x The x-coordinate of the upper left corner of the rectangle holding the rhombus.
          * @param {number} y The y-coordinate of the upper left corner of the rectangle holding the rhombus.
          * @param {number} w The width of the rhombus.

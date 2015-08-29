@@ -25,9 +25,8 @@ define([], function () {
     }
         
     /**
-     * Represents a color.
+     * Functions for converting colors to hex-rgb representations.
      * @private
-     * @constructor
      */
     var color = {
         /**

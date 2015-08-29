@@ -6,9 +6,8 @@
 
 define(["./svgPath"], function (SvgPath) {
     "use strict";
-    
     /**
-     * A wrapper around a context for building paths.
+     * Renderer producing SVG output.
      * @private
      * @constructor
      */
@@ -27,6 +26,10 @@ define(["./svgPath"], function (SvgPath) {
         addCircle: function (point, size, counterClockwise) {
             this._path.addCircle(point, size, counterClockwise);
         },
+        /**
+         * Gets the rendered image as an SVG string.
+         * @param {boolean=} fragment If true, the container svg element is not included in the result.
+         */
         toSvg: function (fragment) {
             var svg = fragment ? '' : 
                 '<svg xmlns="http://www.w3.org/2000/svg" width="' + 

@@ -6,7 +6,11 @@
 
 define([], function () {
     "use strict";
-    
+    /**
+     * Represents an SVG path element.
+     * @private
+     * @constructor
+     */
     function SvgPath() {
         this._path = "";
     }

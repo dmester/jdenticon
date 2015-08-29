@@ -6,7 +6,11 @@
 
 define([], function () {
     "use strict";
-    
+    /**
+     * Represents a point.
+     * @private
+     * @constructor
+     */
     function Point(x, y) {
         this.x = x;
         this.y = y;
@@ -16,6 +20,5 @@ define([], function () {
             return other.x == this.x && other.y == this.y;
         }
     };
-    
     return Point;
 });

@@ -32,7 +32,8 @@ define([
         supportsQuerySelectorAll = "document" in global && "querySelectorAll" in document;
    
     /**
-     * Updates the identicon in the speciifed canvas element.
+     * Updates the identicon in the specified canvas or svg elements.
+     * @param {string=} hash Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
      * @param {number=} padding Optional padding in pixels. Extra padding might be added to center the rendered identicon.
      */
     function update(el, hash, padding) {
@@ -99,7 +100,7 @@ define([
             throw new Error("No canvas specified.");
         }
         
-        var renderer = new CanvasRenderer(ctx);
+        var renderer = new CanvasRenderer(ctx, size, size);
         drawIcon(renderer, hash, 0, 0, size);
     }
     

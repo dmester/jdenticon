@@ -6,9 +6,8 @@
 
 define([], function () {
     "use strict";
-    
     /**
-     * A wrapper around a context for building paths.
+     * Renderer redirecting drawing commands to a canvas context.
      * @private
      * @constructor
      */
