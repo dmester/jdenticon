@@ -18,28 +18,40 @@ define([
     CanvasRenderer, 
     shapes) {
     "use strict";
-    
-    var undefined,
-		/** @const */
-		version = "{version}",
-        /** @const */
-        HASH_ATTRIBUTE = "data-jdenticon-hash";
-        
+         
     // <debug>
     var global = window,
         jQuery = window.jQuery;
     // </debug>
     
+    var undefined,
+		/** @const */
+		version = "{version}",
+        /** @const */
+        HASH_ATTRIBUTE = "data-jdenticon-hash",
+        supportsQuerySelectorAll = "document" in global && "querySelectorAll" in document;
+   
     /**
      * Updates the identicon in the speciifed canvas element.
      * @param {number=} padding Optional padding in pixels. Extra padding might be added to center the rendered identicon.
      */
     function update(el, hash, padding) {
         if (typeof(el) === "string") {
-            el = document.querySelector(el);
+            if (supportsQuerySelectorAll) {
+                var elements = document.querySelectorAll(el);
+                for (var i = 0; i < elements.length; i++) {
+                    update(elements[i], hash, padding);
+                }
+            }
+            return;
         }
         if (!el || !el["tagName"]) {
             // No element found
+            return;
+        }
+        hash = hash || el.getAttribute(HASH_ATTRIBUTE);
+        if (!hash) {
+            // No hash specified
             return;
         }
         
@@ -59,7 +71,7 @@ define([
             y = 0 | ((height - size) / 2);
         
         // Draw icon
-        drawIcon(renderer, hash || el.getAttribute(HASH_ATTRIBUTE), x, y, size);
+        drawIcon(renderer, hash, x, y, size);
         
         // SVG needs postprocessing
         if (isSvg) {
@@ -189,14 +201,8 @@ define([
      * Updates all canvas elements with the data-jdenticon-hash attribute.
      */
     function jdenticon() {
-        var hash, 
-            canvases = "document" in global ? document.querySelectorAll("[" + HASH_ATTRIBUTE + "]") : [];
-            
-        for (var i = 0; i < canvases.length; i++) {
-            hash = canvases[i].getAttribute(HASH_ATTRIBUTE);
-            if (hash) {
-                update(canvases[i], hash);
-            }
+        if (supportsQuerySelectorAll) {
+            update("svg[" + HASH_ATTRIBUTE + "],canvas[" + HASH_ATTRIBUTE + "]");
         }
     }
     jdenticon["drawIcon"] = drawIconContext;
