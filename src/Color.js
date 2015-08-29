@@ -29,7 +29,7 @@ define([], function () {
      * @private
      * @constructor
      */
-    var Color = {
+    var color = {
         /**
          * @param {number} r Red channel [0, 255]
          * @param {number} g Green channel [0, 255]
@@ -61,9 +61,9 @@ define([], function () {
         // This function will correct the lightness for the "dark" hues
         correctedHsl: function (h, s, l) {
             var correctors = [ 0.95, 1, 1, 1, 0.7, 0.8, 0.8 ];
-            return Color.hsl(h, s, 1 - correctors[(h * 6 + 0.5) | 0] * (1 - l));
+            return color.hsl(h, s, 1 - correctors[(h * 6 + 0.5) | 0] * (1 - l));
         }
     };
 
-    return Color;
+    return color;
 });

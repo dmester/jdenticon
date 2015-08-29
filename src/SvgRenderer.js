@@ -7,8 +7,6 @@
 define(["./SvgPath"], function (SvgPath) {
     "use strict";
     
-    function noop() { }
-    
     /**
      * A wrapper around a context for building paths.
      * @private
@@ -19,10 +17,10 @@ define(["./SvgPath"], function (SvgPath) {
         this._size = { w: width, h: height };
     }
     SvgRenderer.prototype = {
-        beginDraw: function (color) {
+        beginShape: function (color) {
             this._path = this._pathsByColor[color] || (this._pathsByColor[color] = new SvgPath());
         },
-        endDraw: noop,
+        endShape: function () { },
         addPolygon: function (points) {
             this._path.addPolygon(points);
         },
@@ -31,7 +29,9 @@ define(["./SvgPath"], function (SvgPath) {
         },
         toSvg: function (fragment) {
             var svg = fragment ? '' : 
-                '<svg width="' + this._size.w + '" height="' + this._size.h + '" version="1.1" xmlns="http://www.w3.org/2000/svg">';
+                '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
+                this._size.w + '" height="' + this._size.h + '" viewBox="0 0 ' + 
+                this._size.w + ' ' + this._size.h + '" preserveAspectRatio="xMidYMid meet">';
             
             for (var color in this._pathsByColor) {
                 svg += '<path fill="' + color + '" d="' + this._pathsByColor[color].toSvg() + '"/>';

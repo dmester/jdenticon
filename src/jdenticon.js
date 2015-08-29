@@ -4,7 +4,21 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define(["./Color", "./Path", "./Transform", "./Graphics", "./SvgRenderer", "./CanvasRenderer"], function (Color, Path, Transform, Graphics, SvgRenderer, CanvasRenderer) {
+define([
+    "./color", 
+    "./Path", 
+    "./Transform", 
+    "./Graphics", 
+    "./SvgRenderer", 
+    "./CanvasRenderer", 
+    "./shapes"], function (
+    color, 
+    Path, 
+    Transform, 
+    Graphics, 
+    SvgRenderer, 
+    CanvasRenderer, 
+    shapes) {
     "use strict";
     
     var undefined,
@@ -18,131 +32,6 @@ define(["./Color", "./Path", "./Transform", "./Graphics", "./SvgRenderer", "./Ca
         jQuery = window.jQuery;
     // </debug>
     
-    // SHAPES
-    /** @const */
-    var CENTER_SHAPES = [
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var k = cell * 0.42;
-            p.addPolygon([
-                0, 0,
-                cell, 0,
-                cell, cell - k * 2,
-                cell - k, cell,
-                0, cell
-            ]);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var w = 0 | (cell * 0.5), 
-                h = 0 | (cell * 0.8);
-            p.addTriangle(cell - w, 0, w, h, 2);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) { 
-            var s = 0 | (cell / 3);
-            p.addRectangle(s, s, cell - s, cell - s);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) { 
-            var inner = 0 | (cell * 0.1),
-                outer = 0 | (cell * 0.25);
-            p.addRectangle(outer, outer, cell - inner - outer, cell - inner - outer);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) { 
-            var m = 0 | (cell * 0.15),
-                s = 0 | (cell * 0.5);
-            p.addCircle(cell - s - m, cell - s - m, s);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var inner = cell * 0.1,
-                outer = inner * 4;
-
-            p.addRectangle(0, 0, cell, cell);
-            p.addPolygon([
-                outer, outer,
-                cell - inner, outer,
-                outer + (cell - outer - inner) / 2, cell - inner
-            ], true);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addPolygon([
-                0, 0,
-                cell, 0,
-                cell, cell * 0.7,
-                cell * 0.4, cell * 0.4,
-                cell * 0.7, cell,
-                0, cell
-            ]);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addRectangle(0, 0, cell, cell / 2);
-            p.addRectangle(0, cell / 2, cell / 2, cell / 2);
-            p.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 1);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var inner = 0 | (cell * 0.14),
-                outer = 0 | (cell * 0.35);
-            p.addRectangle(0, 0, cell, cell);
-            p.addRectangle(outer, outer, cell - outer - inner, cell - outer - inner, true);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var inner = cell * 0.12,
-                outer = inner * 3;
-
-            p.addRectangle(0, 0, cell, cell);
-            p.addCircle(outer, outer, cell - inner - outer, true);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var m = cell * 0.25;
-            p.addRectangle(0, 0, cell, cell);
-            p.addRhombus(m, m, cell - m, cell - m, true);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var m = cell * 0.4, s = cell * 1.2;
-            if (!index) {
-                p.addCircle(m, m, s);
-            }
-        }
-    ];
-    
-    /** @const */
-    var OUTER_SHAPES = [
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addTriangle(0, 0, cell, cell, 0);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addTriangle(0, cell / 2, cell, cell / 2, 0);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            p.addRhombus(0, 0, cell, cell);
-        },
-        /** @param {Path} p */
-        function (p, cell, index) {
-            var m = cell / 6;
-            p.addCircle(m, m, cell - 2 * m);
-        }
-    ];
-
     /**
      * Updates the identicon in the speciifed canvas element.
      * @param {number=} padding Optional padding in pixels. Extra padding might be added to center the rendered identicon.
@@ -239,14 +128,14 @@ define(["./Color", "./Path", "./Transform", "./Graphics", "./SvgRenderer", "./Ca
                 shape = shapes[parseInt(hash.charAt(index), 16) % shapes.length],
                 i;
             
-            renderer.beginDraw(availableColors[selectedColorIndexes[colorIndex]]);
+            renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
             
             for (i = 0; i < positions.length; i++) {
                 graphics._transform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
                 shape(graphics, cell, i);
             }
             
-            renderer.endDraw();
+            renderer.endShape();
         }
 
         // AVAILABLE COLORS
@@ -255,15 +144,15 @@ define(["./Color", "./Path", "./Transform", "./Graphics", "./SvgRenderer", "./Ca
             // Available colors for this icon
             availableColors = [
                 // Dark gray
-                Color.rgb(76, 76, 76),
+                color.rgb(76, 76, 76),
                 // Mid color
-                Color.correctedHsl(hue, 0.5, 0.6),
+                color.correctedHsl(hue, 0.5, 0.6),
                 // Light gray
-                Color.rgb(230, 230, 230),
+                color.rgb(230, 230, 230),
                 // Light color
-                Color.correctedHsl(hue, 0.5, 0.8),
+                color.correctedHsl(hue, 0.5, 0.8),
                 // Dark color
-                Color.hsl(hue, 0.5, 0.4)
+                color.hsl(hue, 0.5, 0.4)
             ],
 
             // The index of the selected colors
@@ -291,11 +180,11 @@ define(["./Color", "./Path", "./Transform", "./Graphics", "./SvgRenderer", "./Ca
 
         // ACTUAL RENDERING
         // Sides
-        renderShape(0, OUTER_SHAPES, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
+        renderShape(0, shapes.outer, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
         // Corners
-        renderShape(1, OUTER_SHAPES, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
+        renderShape(1, shapes.outer, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
         // Center
-        renderShape(2, CENTER_SHAPES, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
+        renderShape(2, shapes.center, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
     };
 
     /**

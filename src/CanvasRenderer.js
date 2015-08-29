@@ -17,11 +17,11 @@ define([], function () {
         ctx.clearRect(0, 0, width, height);
     }
     CanvasRenderer.prototype = {
-        beginDraw: function (color) {
+        beginShape: function (color) {
             this._ctx.fillStyle = color;
             this._ctx.beginPath();
         },
-        endDraw: function () {
+        endShape: function () {
             this._ctx.fill();
         },
         addPolygon: function (points) {
