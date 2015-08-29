@@ -1,13 +1,13 @@
 ﻿var gulp     = require("gulp"),
-    del      = require('del'),
+    del      = require("del"),
     rename   = require("gulp-rename"),
     nuget    = require("gulp-nuget"),
     closure  = require("gulp-closure-compiler-service"),
-    zip      = require('gulp-zip'),
-    optimize = require('gulp-requirejs-optimize'),
+    zip      = require("gulp-zip"),
+    optimize = require("gulp-requirejs-optimize"),
     replace  = require("gulp-replace"),
     wrap     = require("gulp-wrap"),
-    exec     = require('child_process').exec,
+    exec     = require("child_process").exec,
     pack     = require("./package.json");
 
 gulp.task("clean", function (cb) {
@@ -16,7 +16,7 @@ gulp.task("clean", function (cb) {
 
 gulp.task("build", ["clean"], function () {
     return gulp.src("./src/jdenticon.js")
-        .pipe(optimize({ optimize: 'none' }))
+        .pipe(optimize({ optimize: "none" }))
         
         // Debug section
         .pipe(replace(/\/\/\s*\<debug\>[\s\S]*?\/\/\s*\<\/debug\>/g, ""))
