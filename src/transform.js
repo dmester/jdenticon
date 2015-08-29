@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define(["./Point"], function (Point) {
+define(["./point"], function (Point) {
     "use strict";
     /**
      * Translates and rotates a point before being passed on to the canvas context. This was previously done by the canvas context itself, 

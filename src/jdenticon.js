@@ -6,15 +6,13 @@
 
 define([
     "./color", 
-    "./Path", 
-    "./Transform", 
-    "./Graphics", 
-    "./SvgRenderer", 
-    "./CanvasRenderer", 
+    "./transform", 
+    "./graphics", 
+    "./svgRenderer", 
+    "./canvasRenderer", 
     "./shapes"], function (
-    color, 
-    Path, 
-    Transform, 
+    color,
+    Transform,
     Graphics, 
     SvgRenderer, 
     CanvasRenderer, 

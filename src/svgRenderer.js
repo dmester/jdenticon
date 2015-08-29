@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-define(["./SvgPath"], function (SvgPath) {
+define(["./svgPath"], function (SvgPath) {
     "use strict";
     
     /**
