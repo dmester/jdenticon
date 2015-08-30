@@ -31,12 +31,6 @@ define(["./transform"], function (Transform) {
                 transformedPoints.push(transform.transformPoint(points[i], points[i + 1]));
             }
             
-            // Close polygon
-            if (!transformedPoints[0].equals(transformedPoints[transformedPoints.length - 1]))
-            {
-                transformedPoints.push(transformedPoints[0]);
-            }
-            
             this._renderer.addPolygon(transformedPoints);
         },
         

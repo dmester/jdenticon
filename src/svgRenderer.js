@@ -37,7 +37,7 @@ define(["./svgPath"], function (SvgPath) {
                 this._size.w + ' ' + this._size.h + '" preserveAspectRatio="xMidYMid meet">';
             
             for (var color in this._pathsByColor) {
-                svg += '<path fill="' + color + '" d="' + this._pathsByColor[color].toSvg() + '"/>';
+                svg += '<path fill="' + color + '" d="' + this._pathsByColor[color].dataString + '"/>';
             }
 
             return fragment ? svg : 

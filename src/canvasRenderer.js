@@ -29,6 +29,7 @@ define([], function () {
             for (i = 1; i < points.length; i++) {
                 ctx.lineTo(points[i].x, points[i].y);
             }
+            ctx.closePath();
         },
         addCircle: function (point, size, counterClockwise) {
             var ctx = this._ctx,

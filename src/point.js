@@ -15,10 +15,5 @@ define([], function () {
         this.x = x;
         this.y = y;
     };
-    Point.prototype = {
-        equals: function (other) {
-            return other.x == this.x && other.y == this.y;
-        }
-    };
     return Point;
 });
