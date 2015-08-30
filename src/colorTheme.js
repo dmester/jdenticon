@@ -10,7 +10,7 @@ define(["./color"], function (color) {
     /**
      * Gets a set of identicon color candidates for a specified hue and config.
      */
-    function colorTheme(hue, config) {
+    function colorTheme(hue, configContainer) {
         /**
          * Gets a lightness relative the specified value in the specified lightness range.
          */
@@ -20,7 +20,7 @@ define(["./color"], function (color) {
         }
         
         // Config
-        var config = config || { },
+        var config = configContainer["jdenticon_config"] || { },
             saturation = typeof config["saturation"] == "number" ? config["saturation"] : 0.5,
             lightnessConfig = config["lightness"] || { },
             colorLightnessRange = lightnessConfig["color"] instanceof Array ? lightnessConfig["color"] : [0.4, 0.8],
