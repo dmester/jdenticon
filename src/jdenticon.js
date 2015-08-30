@@ -5,18 +5,18 @@
  */
 
 define([
-    "./color", 
     "./transform", 
     "./graphics", 
     "./svgRenderer", 
     "./canvasRenderer", 
-    "./shapes"], function (
-    color,
+    "./shapes",
+    "./colorTheme"], function (
     Transform,
     Graphics, 
     SvgRenderer, 
     CanvasRenderer, 
-    shapes) {
+    shapes,
+    colorTheme) {
     "use strict";
          
     // <debug>
@@ -30,7 +30,7 @@ define([
         /** @const */
         HASH_ATTRIBUTE = "data-jdenticon-hash",
         supportsQuerySelectorAll = "document" in global && "querySelectorAll" in document;
-   
+    
     /**
      * Updates the identicon in the specified canvas or svg elements.
      * @param {string=} hash Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
@@ -151,20 +151,9 @@ define([
 
         // AVAILABLE COLORS
         var hue = parseInt(hash.substr(-7), 16) / 0xfffffff,
-
+        
             // Available colors for this icon
-            availableColors = [
-                // Dark gray
-                color.rgb(76, 76, 76),
-                // Mid color
-                color.correctedHsl(hue, 0.5, 0.6),
-                // Light gray
-                color.rgb(230, 230, 230),
-                // Light color
-                color.correctedHsl(hue, 0.5, 0.8),
-                // Dark color
-                color.hsl(hue, 0.5, 0.4)
-            ],
+            availableColors = colorTheme(hue, global["jdenticon_config"]),
 
             // The index of the selected colors
             selectedColorIndexes = [],

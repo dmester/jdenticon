@@ -59,8 +59,14 @@ define([], function () {
         },
         // This function will correct the lightness for the "dark" hues
         correctedHsl: function (h, s, l) {
-            var correctors = [ 0.95, 1, 1, 1, 0.7, 0.8, 0.8 ];
-            return color.hsl(h, s, 1 - correctors[(h * 6 + 0.5) | 0] * (1 - l));
+            // The corrector specifies the perceived middle lightnesses for each hue
+            var correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
+                corrector = correctors[(h * 6 + 0.5) | 0];
+            
+            // Adjust the input lightness relative to the corrector
+            l = l < 0.5 ? l * corrector * 2 : corrector + (l - 0.5) * (1 - corrector) * 2;
+            
+            return color.hsl(h, s, l);
         }
     };
 
