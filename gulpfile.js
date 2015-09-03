@@ -57,7 +57,7 @@ gulp.task("build", ["clean"], function () {
 });
 
 gulp.task("preparerelease", ["build"], function () {
-    return gulp.src(["./license.txt", "./readme.md", "./changelog.txt"])
+    return gulp.src(["./license.txt", "./readme.md"])
         .pipe(replace(/\{version\}/g, pack.version))
         .pipe(replace(/\{year\}/g, new Date().getFullYear()))
         .pipe(replace(/\{date\}/g, new Date().toISOString()))
