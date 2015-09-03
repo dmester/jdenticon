@@ -81,6 +81,8 @@ define([
             while (newNodes.length) {
                 el.appendChild(newNodes[0]);
             }
+            
+            el.setAttribute("viewBox", "0 0 " + width + " " + height);
         }
     }
     
