@@ -18,15 +18,14 @@ define([
         jQuery = window.jQuery;
     // </debug>
     
-    var undefined,
-		/** @const */
+    var /** @const */
         HASH_ATTRIBUTE = "data-jdenticon-hash",
         supportsQuerySelectorAll = "document" in global && "querySelectorAll" in document;
     
     /**
      * Updates the identicon in the specified canvas or svg elements.
      * @param {string=} hash Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
-     * @param {number=} padding Optional padding in pixels. Extra padding might be added to center the rendered identicon.
+     * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
      */
     function update(el, hash, padding) {
         if (typeof(el) === "string") {
@@ -59,17 +58,15 @@ define([
         var width = Number(el.getAttribute("width")) || el.clientWidth || 0,
             height = Number(el.getAttribute("height")) || el.clientHeight || 0,
             renderer = isSvg ? new SvgRenderer(width, height) : new CanvasRenderer(el.getContext("2d"), width, height),
-            size = Math.min(width, height) * (1 - 2 * (padding === undefined ? 0.08 : padding)),
-            x = 0 | ((width - size) / 2),
-            y = 0 | ((height - size) / 2);
+            size = Math.min(width, height);
         
         // Draw icon
-        iconGenerator(renderer, hash, x, y, size, global);
+        iconGenerator(renderer, hash, 0, 0, size, padding, global);
         
         // SVG needs postprocessing
         if (isSvg) {
             // Parse svg to a temporary span element.
-            // Simply using innerHTLM does unfortunately not work on IE.
+            // Simply using innerHTML does unfortunately not work on IE.
             var wrapper = document.createElement("span");
             wrapper.innerHTML = renderer.toSvg(false);
             
@@ -82,6 +79,7 @@ define([
                 el.appendChild(newNodes[0]);
             }
             
+            // Set viewBox attribute to ensure the svg scales nicely.
             el.setAttribute("viewBox", "0 0 " + width + " " + height);
         }
     }
@@ -95,15 +93,16 @@ define([
         }
         
         var renderer = new CanvasRenderer(ctx, size, size);
-        iconGenerator(renderer, hash, 0, 0, size, global);
+        iconGenerator(renderer, hash, 0, 0, size, 0, global);
     }
     
     /**
      * Draws an identicon to a context.
+     * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
      */
-    function toSvg(hash, size) {
+    function toSvg(hash, size, padding) {
         var renderer = new SvgRenderer(size, size);
-        iconGenerator(renderer, hash, 0, 0, size, global);
+        iconGenerator(renderer, hash, 0, 0, size, padding, global);
         return renderer.toSvg();
     }
 

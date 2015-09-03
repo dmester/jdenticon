@@ -18,7 +18,13 @@ define([
     /**
      * Draws an identicon to a specified renderer.
      */
-    function iconGenerator(renderer, hash, x, y, size, configContainer) {
+    function iconGenerator(renderer, hash, x, y, size, padding, configContainer) {
+        var undefined;
+        
+        // Calculate padding
+        padding = (size * (padding === undefined ? 0.08 : padding)) | 0;
+        size -= padding * 2;
+        
         // Sizes smaller than 30 px are not supported. If really needed, apply a scaling transformation 
         // to the context before passing it to this function.
         if (size < 30) {
@@ -34,8 +40,8 @@ define([
         var cell = 0 | (size / 4);
         
         // Since the cell size is integer based, the actual icon will be slightly smaller than specified => center icon
-        x += 0 | (size / 2 - cell * 2);
-        y += 0 | (size / 2 - cell * 2);
+        x += 0 | (padding + size / 2 - cell * 2);
+        y += 0 | (padding + size / 2 - cell * 2);
 
         function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
             var r = rotationIndex ? parseInt(hash.charAt(rotationIndex), 16) : 0,
