@@ -16,15 +16,32 @@ define(["./svgPath"], function (SvgPath) {
         this._size = { w: width, h: height };
     }
     SvgRenderer.prototype = {
+        /**
+         * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
+         * @param {string} color Fill color on format #xxxxxx.
+         */
         beginShape: function (color) {
             this._path = this._pathsByColor[color] || (this._pathsByColor[color] = new SvgPath());
         },
+        /**
+         * Marks the end of the currently drawn shape.
+         */
         endShape: function () { },
+        /**
+         * Adds a polygon with the current fill color to the SVG.
+         * @param points An array of Point objects.
+         */
         addPolygon: function (points) {
             this._path.addPolygon(points);
         },
-        addCircle: function (point, size, counterClockwise) {
-            this._path.addCircle(point, size, counterClockwise);
+        /**
+         * Adds a circle with the current fill color to the SVG.
+         * @param {Point} point The upper left corner of the circle bounding box.
+         * @param {number} diameter The diameter of the circle.
+         * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
+         */
+        addCircle: function (point, diameter, counterClockwise) {
+            this._path.addCircle(point, diameter, counterClockwise);
         },
         /**
          * Gets the rendered image as an SVG string.
