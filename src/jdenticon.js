@@ -2,6 +2,8 @@
  * Jdenticon
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
+ * 
+ * This file contains the public interface of Jdenticon.
  */
 
 define([
@@ -21,6 +23,36 @@ define([
     var /** @const */
         HASH_ATTRIBUTE = "data-jdenticon-hash",
         supportsQuerySelectorAll = "document" in global && "querySelectorAll" in document;
+    
+    /**
+     * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
+     */
+    function getCurrentConfig() {
+        var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
+            lightnessConfig = configObject["lightness"] || { },
+            saturation = configObject["saturation"];
+        
+        /**
+         * Creates a lightness range.
+         */
+        function lightness(configName, defaultMin, defaultMax) {
+            var range = lightnessConfig[configName] instanceof Array ? lightnessConfig[configName] : [defaultMin, defaultMax];
+            
+            /**
+             * Gets a lightness relative the specified value in the specified lightness range.
+             */
+            return function (value) {
+                value = range[0] + value * (range[1] - range[0]);
+                return value < 0 ? 0 : value > 1 ? 1 : value;
+            };
+        }
+            
+        return {
+            saturation: typeof saturation == "number" ? saturation : 0.5,
+            colorLightness: lightness("color", 0.4, 0.8),
+            grayscaleLightness: lightness("grayscale", 0.3, 0.9)
+        }
+    }
     
     /**
      * Updates the identicon in the specified canvas or svg elements.
@@ -61,7 +93,7 @@ define([
             size = Math.min(width, height);
         
         // Draw icon
-        iconGenerator(renderer, hash, 0, 0, size, padding, global);
+        iconGenerator(renderer, hash, 0, 0, size, padding, getCurrentConfig());
         
         // SVG needs postprocessing
         if (isSvg) {
@@ -93,7 +125,7 @@ define([
         }
         
         var renderer = new CanvasRenderer(ctx, size, size);
-        iconGenerator(renderer, hash, 0, 0, size, 0, global);
+        iconGenerator(renderer, hash, 0, 0, size, 0, getCurrentConfig());
     }
     
     /**
@@ -102,7 +134,7 @@ define([
      */
     function toSvg(hash, size, padding) {
         var renderer = new SvgRenderer(size, size);
-        iconGenerator(renderer, hash, 0, 0, size, padding, global);
+        iconGenerator(renderer, hash, 0, 0, size, padding, getCurrentConfig());
         return renderer.toSvg();
     }
 

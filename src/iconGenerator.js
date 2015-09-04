@@ -18,7 +18,7 @@ define([
     /**
      * Draws an identicon to a specified renderer.
      */
-    function iconGenerator(renderer, hash, x, y, size, padding, configContainer) {
+    function iconGenerator(renderer, hash, x, y, size, padding, config) {
         var undefined;
         
         // Calculate padding
@@ -62,7 +62,7 @@ define([
         var hue = parseInt(hash.substr(-7), 16) / 0xfffffff,
         
             // Available colors for this icon
-            availableColors = colorTheme(hue, configContainer),
+            availableColors = colorTheme(hue, config),
 
             // The index of the selected colors
             selectedColorIndexes = [],
