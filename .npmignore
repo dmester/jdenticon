@@ -11,3 +11,5 @@ releases
 header.txt
 bower.json
 node_modules
+template*.js
+gulpfile.js

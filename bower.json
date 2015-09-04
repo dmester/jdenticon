@@ -22,6 +22,7 @@
     "*.bat",
     ".gitignore",
     "/jdenticon.js",
-    "template.*"
+    "template.*",
+    "gulpfile.js"
   ]
 }
