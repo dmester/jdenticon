@@ -13,16 +13,19 @@
   "license": "zlib",
   "homepage": "http://jdenticon.com/",
   "ignore": [
-    "utils",
-    "obj",
-    "bin",
-    "src",
-    "releases",
-    "*.nuspec",
-    "*.bat",
-    ".gitignore",
     "/jdenticon.js",
+    ".npmignore",
+    ".gitignore",
+    ".vs",
+    "*.bat",
+    "*.nuspec",
+    "bin",
+    "gulpfile.js",
+    "node_modules",
+    "obj",
+    "releases",
+    "src",
     "template.*",
-    "gulpfile.js"
+    "utils"
   ]
 }
