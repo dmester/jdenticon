@@ -148,7 +148,7 @@ define([
     }
     
     // Public API
-    jdenticon["identicon"] = drawIcon;
+    jdenticon["drawIcon"] = drawIcon;
     jdenticon["toSvg"] = toSvg;
     jdenticon["update"] = update;
     jdenticon["version"] = "{version}";
