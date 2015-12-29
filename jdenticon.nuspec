@@ -10,7 +10,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Jdenticon is a free Javascript library for generating highly recogizable identicons.</description>
         <summary>Javascript identicon generator.</summary>
-        <tags>Javascript identicon library</tags>
+        <tags>Javascript identicon avatar library</tags>
     </metadata>
     <files>
         <file src="obj\jdenticon-{version}.min.js" target="Content\Scripts\jdenticon-{version}.min.js" />
