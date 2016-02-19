@@ -1,45 +1,57 @@
-﻿
-Jdenticon
-======================================
+# [Jdenticon](https://jdenticon.com)
+JavaScript library for generating highly recognizable identicons.
 
-http://jdenticon.com
+![Sample identicons](https://jdenticon.com/hosted/github-samples.png)
 
-Copyright (c) 2015 Daniel Mester Pirttijärvi
+## Live demo
+https://jdenticon.com
 
+## Getting started
+Using Jdenticon is simple. Follow the steps below to integrate Jdenticon into your website.
 
-Description
------------
-
-This is a JavaScript library for generating identicons from a hash using canvas.
-
-
-Files
------
-
-You got a number of files when you extracted the script library:
-
-File             | Description
----------------- | ----------------------------------------------------
-jdenticon.min.js | Compressed and obfuscated, to be used in production.
-jdenticon.js     | Commented source file for your reference.
-
-
-How to use
-----------
-
-Add a canvas element where you want to render the identicon. Use the `data-jdenticon-hash`
-attribute to specify that an identicon should be rendered on the canvas.
+### 1. Add identicon placeholders
+Jdenticon is able to render both raster and vector identicons. Raster icons are rendered 
+slightly faster than vector icons, but vector icons scale better on high resolution screens.
+Add a canvas to render a raster icon, and an inline svg element to render a vector icon.
 
 ```HTML
+<!-- Vector icon -->
+<svg width="80" height="80" data-jdenticon-hash="ff8adece0631821959f443c9d956fc39"></svg>
+
+<!-- OR -->
+
+<!-- Raster icon -->
 <canvas width="80" height="80" data-jdenticon-hash="ff8adece0631821959f443c9d956fc39"></canvas>
 ```
 
-Include the Jdenticon library somewhere on your page.
+Not sure about ```data-jdenticon-hash```? A hashed username works perfectly fine! Sensitive information 
+is not recommended as input to the hash algorithm for this purpose.
+
+### 2. Add reference to Jdenticon
+Include the Jdenticon library somewhere on your page. You can either host it yourself or 
+use it right off [jsDelivr](https://www.jsdelivr.com).
 
 ```HTML
-<script type="text/javascript" src="jdenticon.min.js"></script>
+<!-- Using jsDelivr -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jdenticon/1.3.2/jdenticon.min.js"></script>
+
+<!-- OR -->
+
+<!-- Hosting it yourself -->
+<script type="text/javascript" src="-path-to-/jdenticon.min.js"></script>
 ```
+That's it!
 
-That's it! For more usage examples, please see:
+## Other resources
+### API documentation
+For more usage examples and API documentation, please see:
 
-http://jdenticon.com
+https://jdenticon.com
+
+### Third-party extensions
+If your're into Polymer, Pascal Gula has created a nice Polymer element.
+
+https://github.com/MeTaNoV/identicon-element
+
+## License
+Jdenticon is released under the [zlib license](https://github.com/dmester/jdenticon/blob/master/license.txt).
