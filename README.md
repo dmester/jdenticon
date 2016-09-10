@@ -48,6 +48,11 @@ For more usage examples and API documentation, please see:
 
 https://jdenticon.com
 
+### Jdenticon .NET Edition
+Same icons, same configuration options, but ported to .NET and easily integrated into your ASP.NET websites.
+
+https://github.com/dmester/jdenticon-net/
+
 ### Third-party extensions
 If your're into Polymer, Pascal Gula has created a nice Polymer element.
 
