@@ -25,11 +25,6 @@ define([
         padding = (size * (padding === undefined ? 0.08 : padding)) | 0;
         size -= padding * 2;
         
-        // Sizes smaller than 30 px are not supported. If really needed, apply a scaling transformation 
-        // to the context before passing it to this function.
-        if (size < 30) {
-            throw new Error("Jdenticon cannot render identicons smaller than 30 pixels.");
-        }
         if (!/^[0-9a-f]{11,}$/i.test(hash)) {
             throw new Error("Invalid hash passed to Jdenticon.");
         }
