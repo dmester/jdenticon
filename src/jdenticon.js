@@ -9,9 +9,13 @@
 define([
     "./iconGenerator", 
     "./svgRenderer", 
+    "./svgElement", 
+    "./svgWriter", 
     "./canvasRenderer"], function (
     iconGenerator, 
     SvgRenderer, 
+    SvgElement, 
+    SvgWriter, 
     CanvasRenderer) {
     "use strict";
          
@@ -87,38 +91,12 @@ define([
             return;
         }
         
-        // Don't use the clientWidth nad clientHeight properties on SVG elements
-        // since Firefox won't serve a proper value of these properties on SVG
-        // elements (https://bugzilla.mozilla.org/show_bug.cgi?id=874811)
-        // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
-        // the icon to the correct dimensions)
-        var width = isCanvas ? el.width : (Number(el.getAttribute("width")) || 100),
-            height = isCanvas ? el.height : (Number(el.getAttribute("height")) || 100),
-            renderer = isSvg ? new SvgRenderer(width, height) : new CanvasRenderer(el.getContext("2d"), width, height),
-            size = Math.min(width, height);
+        var renderer = isSvg ? 
+            new SvgRenderer(new SvgElement(el)) : 
+            new CanvasRenderer(el.getContext("2d"));
         
         // Draw icon
-        iconGenerator(renderer, hash, 0, 0, size, padding, getCurrentConfig());
-        
-        // SVG needs postprocessing
-        if (isSvg) {
-            // Parse svg to a temporary span element.
-            // Simply using innerHTML does unfortunately not work on IE.
-            var wrapper = document.createElement("span");
-            wrapper.innerHTML = renderer.toSvg(false);
-            
-            // Then replace the content of the target element with the parsed svg.
-            while (el.firstChild) {
-                el.removeChild(el.firstChild);
-            }
-            var newNodes = wrapper.firstChild.childNodes;
-            while (newNodes.length) {
-                el.appendChild(newNodes[0]);
-            }
-            
-            // Set viewBox attribute to ensure the svg scales nicely.
-            el.setAttribute("viewBox", "0 0 " + width + " " + height);
-        }
+        iconGenerator(renderer, hash, 0, 0, renderer.size, padding, getCurrentConfig());
     }
     
     /**
@@ -129,7 +107,7 @@ define([
             throw new Error("No canvas specified.");
         }
         
-        var renderer = new CanvasRenderer(ctx, size, size);
+        var renderer = new CanvasRenderer(ctx, size);
         iconGenerator(renderer, hash, 0, 0, size, 0, getCurrentConfig());
     }
     
@@ -138,9 +116,10 @@ define([
      * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
      */
     function toSvg(hash, size, padding) {
-        var renderer = new SvgRenderer(size, size);
+        var writer = new SvgWriter(size);
+        var renderer = new SvgRenderer(writer);
         iconGenerator(renderer, hash, 0, 0, size, padding, getCurrentConfig());
-        return renderer.toSvg();
+        return writer.toString();
     }
 
     /**

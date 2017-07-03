@@ -11,8 +11,13 @@ define([], function () {
      * @private
      * @constructor
      */
-    function CanvasRenderer(ctx, width, height) {
+    function CanvasRenderer(ctx, size) {
+        var width = ctx.canvas.width,
+            height = ctx.canvas.height;
+                
         this._ctx = ctx;
+        this.size = size || Math.min(width, height);
+        
         ctx.clearRect(0, 0, width, height);
     }
     CanvasRenderer.prototype = {
@@ -53,7 +58,11 @@ define([], function () {
                 radius = diameter / 2;
             ctx.arc(point.x + radius, point.y + radius, radius, 0, Math.PI * 2, counterClockwise);
             ctx.closePath();
-        }
+        },
+        /**
+         * Called when the icon has been completely drawn.
+         */
+        finish: function () { }
     };
     
     return CanvasRenderer;

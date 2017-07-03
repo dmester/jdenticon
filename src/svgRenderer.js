@@ -10,10 +10,12 @@ define(["./svgPath"], function (SvgPath) {
      * Renderer producing SVG output.
      * @private
      * @constructor
+     * @param {SvgElement|SvgWriter} target 
      */
-    function SvgRenderer(width, height) {
+    function SvgRenderer(target) {
         this._pathsByColor = { };
-        this._size = { w: width, h: height };
+        this._target = target;
+        this.size = target.size;
     }
     SvgRenderer.prototype = {
         /**
@@ -44,21 +46,12 @@ define(["./svgPath"], function (SvgPath) {
             this._path.addCircle(point, diameter, counterClockwise);
         },
         /**
-         * Gets the rendered image as an SVG string.
-         * @param {boolean=} fragment If true, the container svg element is not included in the result.
+         * Called when the icon has been completely drawn.
          */
-        toSvg: function (fragment) {
-            var svg = fragment ? '' : 
-                '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
-                this._size.w + '" height="' + this._size.h + '" viewBox="0 0 ' + 
-                this._size.w + ' ' + this._size.h + '" preserveAspectRatio="xMidYMid meet">';
-            
+        finish: function () { 
             for (var color in this._pathsByColor) {
-                svg += '<path fill="' + color + '" d="' + this._pathsByColor[color].dataString + '"/>';
+                this._target.append(color, this._pathsByColor[color].dataString);
             }
-
-            return fragment ? svg : 
-                svg + '</svg>';
         }
     };
     

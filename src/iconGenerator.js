@@ -89,6 +89,8 @@ define([
         renderShape(1, shapes.outer, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
         // Center
         renderShape(2, shapes.center, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
+        
+        renderer.finish();
     };
 
     return iconGenerator;
