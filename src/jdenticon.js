@@ -87,8 +87,13 @@ define([
             return;
         }
         
-        var width = Number(el.getAttribute("width")) || el.clientWidth || 0,
-            height = Number(el.getAttribute("height")) || el.clientHeight || 0,
+        // Don't use the clientWidth nad clientHeight properties on SVG elements
+        // since Firefox won't serve a proper value of these properties on SVG
+        // elements (https://bugzilla.mozilla.org/show_bug.cgi?id=874811)
+        // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
+        // the icon to the correct dimensions)
+        var width = isCanvas ? el.width : (Number(el.getAttribute("width")) || 100),
+            height = isCanvas ? el.height : (Number(el.getAttribute("height")) || 100),
             renderer = isSvg ? new SvgRenderer(width, height) : new CanvasRenderer(el.getContext("2d"), width, height),
             size = Math.min(width, height);
         
