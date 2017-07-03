@@ -18,7 +18,7 @@ define([], function () {
         this._ctx = ctx;
         this.size = size || Math.min(width, height);
         
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, this.size, this.size);
     }
     CanvasRenderer.prototype = {
         /**
