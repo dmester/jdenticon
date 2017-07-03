@@ -16,7 +16,17 @@ define([], function () {
             height = ctx.canvas.height;
                 
         this._ctx = ctx;
-        this.size = size || Math.min(width, height);
+        
+        if (size) {
+            this.size = size;
+        }
+        else {
+            this.size = Math.min(width, height);
+            
+            ctx.translate(
+                ((width - this.size) / 2) | 0,
+                ((height - this.size) / 2) | 0);
+        }
         
         ctx.clearRect(0, 0, this.size, this.size);
     }
