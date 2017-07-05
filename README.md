@@ -53,10 +53,15 @@ Same icons, same configuration options, but ported to .NET and easily integrated
 
 https://github.com/dmester/jdenticon-net/
 
-### Third-party extensions
-If your're into Polymer, Pascal Gula has created a nice Polymer element.
+### Hosted Jdenticon
+Same icons but generated server-side without a server. Service provided by [Aaroh Mankad](https://github.com/aarohmankad).
 
-https://github.com/MeTaNoV/identicon-element
+http://identicon-api.herokuapp.com/
+
+### Third-party extensions
+If your're into Polymer, [Pascal Gula](https://github.com/MeTaNoV) has created a nice Polymer element.
+
+https://github.com/GeoloeG/identicon-element
 
 ## License
 Jdenticon is released under the [zlib license](https://github.com/dmester/jdenticon/blob/master/license.txt).
