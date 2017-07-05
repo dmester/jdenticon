@@ -9,8 +9,8 @@
         <projectUrl>http://jdenticon.com/</projectUrl>
         <iconUrl>http://jdenticon.com/hosted/nuget-logo-js.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Jdenticon is a free Javascript library for generating highly recogizable identicons.</description>
-        <summary>Javascript identicon generator.</summary>
+        <description>Javascript library generating identicons using SVG graphics or HTML5 canvas.</description>
+        <summary>Javascript library generating identicons using SVG graphics or HTML5 canvas.</summary>
         <tags>Javascript identicon avatar library</tags>
     </metadata>
     <files>
