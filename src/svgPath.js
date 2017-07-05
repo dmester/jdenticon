@@ -6,6 +6,16 @@
 
 define([], function () {
     "use strict";
+    
+    /**
+     * Prepares a measure to be used as a measure in an SVG path, by
+     * rounding the measure to a single decimal. This reduces the file
+     * size of the generated SVG with more than 50% in some cases.
+     */
+    function svgValue(value) {
+        return ((value * 10 + 0.5) | 0) / 10;
+    }
+    
     /**
      * Represents an SVG path element.
      * @private
@@ -23,9 +33,9 @@ define([], function () {
          * @param points An array of Point objects.
          */
         addPolygon: function (points) {
-            var dataString = "M" + points[0].x + " " + points[0].y;
+            var dataString = "M" + svgValue(points[0].x) + " " + svgValue(points[0].y);
             for (var i = 1; i < points.length; i++) {
-                dataString += "L" + points[i].x + " " + points[i].y;
+                dataString += "L" + svgValue(points[i].x) + " " + svgValue(points[i].y);
             }
             this.dataString += dataString + "Z";
         },
@@ -37,11 +47,13 @@ define([], function () {
          */
         addCircle: function (point, diameter, counterClockwise) {
             var sweepFlag = counterClockwise ? 0 : 1,
-                radius = diameter / 2;
+                svgRadius = svgValue(diameter / 2),
+                svgDiameter = svgValue(diameter);
+                
             this.dataString += 
-                "M" + (point.x) + " " + (point.y + radius) +
-                "a" + radius + "," + radius + " 0 1," + sweepFlag + " " + diameter + ",0" + 
-                "a" + radius + "," + radius + " 0 1," + sweepFlag + " " + (-diameter) + ",0";
+                "M" + svgValue(point.x) + " " + svgValue(point.y + diameter / 2) +
+                "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " " + svgDiameter + ",0" + 
+                "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " " + (-svgDiameter) + ",0";
         }
     };
     
