@@ -26,7 +26,7 @@ define([
     
     var /** @const */
         HASH_ATTRIBUTE = "data-jdenticon-hash",
-        supportsQuerySelectorAll = "document" in global && "querySelectorAll" in document;
+        supportsQuerySelectorAll = typeof document !== "undefined" && "querySelectorAll" in document;
     
     /**
      * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
