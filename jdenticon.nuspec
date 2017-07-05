@@ -7,6 +7,7 @@
         <authors>Daniel Mester Pirttijärvi</authors>
         <licenseUrl>http://opensource.org/licenses/zlib-license.php</licenseUrl>
         <projectUrl>http://jdenticon.com/</projectUrl>
+        <iconUrl>http://jdenticon.com/hosted/nuget-logo-js.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Jdenticon is a free Javascript library for generating highly recogizable identicons.</description>
         <summary>Javascript identicon generator.</summary>
