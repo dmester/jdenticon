@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Jdenticon
  * http://jdenticon.com
  * 
- * Copyright (c) 2014-2017 Daniel Mester Pirttij�rvi
+ * Copyright (c) 2014-2017 Daniel Mester Pirttijärvi
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
