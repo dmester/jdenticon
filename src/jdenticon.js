@@ -11,11 +11,13 @@ define([
     "./svgRenderer", 
     "./svgElement", 
     "./svgWriter", 
+    "./sha1", 
     "./canvasRenderer"], function (
     iconGenerator, 
     SvgRenderer, 
     SvgElement, 
     SvgWriter, 
+    sha1,
     CanvasRenderer) {
     "use strict";
          
@@ -26,6 +28,7 @@ define([
     
     var /** @const */
         HASH_ATTRIBUTE = "data-jdenticon-hash",
+        VALUE_ATTRIBUTE = "data-jdenticon-value",
         supportsQuerySelectorAll = typeof document !== "undefined" && "querySelectorAll" in document;
     
     /**
@@ -59,6 +62,22 @@ define([
     }
     
     /**
+     * Inputs a value that might be a valid hash string for Jdenticon and returns it 
+     * if it is determined valid, otherwise a falsy value is returned.
+     */
+    function getValidHash(hashCandidate) {
+        return /^[0-9a-f]{11,}$/i.test(hashCandidate) && hashCandidate;
+    }
+    
+    /**
+     * Computes a hash for the specified value. Currnently SHA1 is used. This function
+     * always returns a valid hash.
+     */
+    function computeHash(value) {
+        return sha1(value == null ? "" : "" + value);
+    }
+    
+    /**
      * Updates the identicon in the specified canvas or svg elements.
      * @param {string=} hash Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
      * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
@@ -77,17 +96,36 @@ define([
             // No element found
             return;
         }
-        hash = hash || el.getAttribute(HASH_ATTRIBUTE);
-        if (!hash) {
-            // No hash specified
-            return;
-        }
         
-        var isSvg = el["tagName"].toLowerCase() == "svg",
-            isCanvas = el["tagName"].toLowerCase() == "canvas";
+        var isSvg = /svg/i.test(el["tagName"]),
+            isCanvas = /canvas/i.test(el["tagName"]);
         
         // Ensure we have a supported element
         if (!isSvg && !(isCanvas && "getContext" in el)) {
+            return;
+        }
+        
+        // Hash selection. The result from getValidHash or computeHash is 
+        // accepted as a valid hash.
+        hash = 
+            // 1. Explicit valid hash
+            getValidHash(hash) ||
+            
+            // 2. Explicit value
+            hash && computeHash(hash) ||
+            
+            // 3. `data-jdenticon-hash` attribute
+            getValidHash(el.getAttribute(HASH_ATTRIBUTE)) ||
+            
+            // 4. `data-jdenticon-value` attribute. 
+            // We want to treat an empty attribute as an empty value. 
+            // Some browsers return empty string even if the attribute 
+            // is not specified, so use hasAttribute to determine if 
+            // the attribute is specified.
+            el.hasAttribute(VALUE_ATTRIBUTE) && computeHash(el.getAttribute(VALUE_ATTRIBUTE));
+        
+        if (!hash) {
+            // No hash specified. Don't render an icon.
             return;
         }
         
@@ -102,23 +140,27 @@ define([
     /**
      * Draws an identicon to a context.
      */
-    function drawIcon(ctx, hash, size) {
+    function drawIcon(ctx, hashOrValue, size) {
         if (!ctx) {
             throw new Error("No canvas specified.");
         }
         
         var renderer = new CanvasRenderer(ctx, size);
-        iconGenerator(renderer, hash, 0, 0, size, 0, getCurrentConfig());
+        iconGenerator(renderer, 
+            getValidHash(hashOrValue) || computeHash(hashOrValue), 
+            0, 0, size, 0, getCurrentConfig());
     }
     
     /**
      * Draws an identicon to a context.
      * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
      */
-    function toSvg(hash, size, padding) {
+    function toSvg(hashOrValue, size, padding) {
         var writer = new SvgWriter(size);
         var renderer = new SvgRenderer(writer);
-        iconGenerator(renderer, hash, 0, 0, size, padding, getCurrentConfig());
+        iconGenerator(renderer, 
+            getValidHash(hashOrValue) || computeHash(hashOrValue),
+            0, 0, size, padding, getCurrentConfig());
         return writer.toString();
     }
 
@@ -127,7 +169,7 @@ define([
      */
     function jdenticon() {
         if (supportsQuerySelectorAll) {
-            update("svg[" + HASH_ATTRIBUTE + "],canvas[" + HASH_ATTRIBUTE + "]");
+            update("[" + HASH_ATTRIBUTE + "],[" + VALUE_ATTRIBUTE + "]");
         }
     }
     

@@ -25,10 +25,6 @@ define([
         padding = (size * (padding === undefined ? 0.08 : padding)) | 0;
         size -= padding * 2;
         
-        if (!/^[0-9a-f]{11,}$/i.test(hash)) {
-            throw new Error("Invalid hash passed to Jdenticon.");
-        }
-        
         var graphics = new Graphics(renderer);
         
         // Calculate cell size and ensure it is an integer
