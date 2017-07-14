@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Javascript identicon generator",
   "main": "index.js",
+  "browser": "dist/jdenticon.min.js",
   "dependencies": {
     "canvas-renderer": "~1.0.0"
   },
