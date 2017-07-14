@@ -22,8 +22,8 @@ define([
     "use strict";
          
     // <debug>
-    var global = window,
-        jQuery = window.jQuery;
+    var global = typeof window !== "undefined" ? window : {},
+        jQuery = global.jQuery;
     // </debug>
     
     var /** @const */
