@@ -36,7 +36,14 @@ if (typeof require !== "function" ||
 }
 
 var canvasRenderer = require("canvas-renderer");
-var jdenticon = require("./dist/jdenticon");
+var requirejs = require("requirejs");
+
+requirejs.config({    
+    baseUrl: "./src",
+    nodeRequire: require
+});
+
+var jdenticon = requirejs("jdenticon");
 
 /**
  * Draws an identicon as PNG.

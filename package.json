@@ -15,7 +15,8 @@
     "gulp-replace": "^0.5.3",
     "gulp-requirejs-optimize": "^0.1.3",
     "gulp-wrap": "^0.11.0",
-    "gulp-zip": "^3.0.2"
+    "gulp-zip": "^3.0.2",
+    "requirejs": "^2.3.3"
   },
   "repository": {
     "type": "git",
