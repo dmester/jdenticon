@@ -1,0 +1,218 @@
+<html>
+    <head>
+    <title>Jdenticon browser test</title>
+    <style>
+
+        h1 {
+            font: bold 16px Arial;
+            margin: 30px 0 15px;
+        }
+
+        canvas,
+        svg,
+        img {
+          border: 6px solid #444;
+          margin-bottom: 5px;
+        }
+
+
+        #hej {
+          width: 50%;
+          height: 400px;
+        }
+        
+        figure {
+            width: 116px;
+            font: 10px Arial;
+            margin: 0 10px 16px 0;
+            display: inline-block;
+            vertical-align: top;
+        }
+        
+        figure strong {
+            display: block;
+        }
+        
+        .using-dist-info,
+        .using-src-info {
+            display: none;
+            font: 16px Arial;
+            padding: 10px;
+            background: #C0E5B2;
+        }
+        
+        .using-dist-info {
+            background: #C1D1EA;
+        }
+        
+        .using-dist .using-dist-info,
+        .using-src .using-src-info {
+            display: block;
+        }
+        
+    </style>
+    </head>
+<body>
+    <div class="using-dist-info">
+        Using <strong>dist/jdenticon.min.js</strong>. Delete or rename <code>dist</code> folder to use source files.
+    </div>
+    <div class="using-src-info">
+        Using <strong>src/jdenticon.js</strong>. Run <code>gulp build</code> to use dist/jdenticon.min.js.
+    </div>
+
+    <h1>"Icon0" - Should be equal</h1>
+    <figure>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAASFBMVEX////o6OhMTEz8/Pzr6+v39/fl5eXHx8d5eXl4eHhXV1fm5ua7u7vy8vKlpaVWVlbu5ff69vz19fWmddGrfdO2jtm2j9mmpqYLOVEwAAABiElEQVR4Xu2ZyYrEMBBDx3b2tZdZ/v9PhyYEdUboUJg6DNQ7CsTrzobAH84EQRCUdm3L3zD1P30SoaprStO9aC6aNOQXQ9Ih1zWPuTuYHwiXKR9Miwy5LilzdzKXM0xTPpmSDLmuaDrQnOGQwSBDrgtK9045wpTfSSJUdaa9SNoj7C+SXoSqzqwXyXqE20WyiVDW/f+J/z0xPV1jBqMKuW58T/Z8sicVct36xp+WfVEh1+3fruPijEmEom7/Cm99kqGu+xMEYh541jEPBPV1ngdMbZ3ngcZe1/NAY6/LeaCx1+U80Njreh4w95u1bv8p9+/Pm7muL6pwPJ+wGOs8D6QDFmud54FywGKt8zxQDlisdZ4HygGLuc7zQDtg0XUz7IClHnb4WeBwt9y/PCWw+DtggcNhCcACh8OQgAWO+iHBFjgchgQscHgMCVjgqB8SwsKO+iHBFjj+65AAnkMCeA4J4DkkgMeQYDyGBOMwJIBPHQRBHG3E0cYYRxtxtBFHG3G04UcQBMEv9DQ30nYw8TAAAAAASUVORK5CYII=" width="100" height="100">
+        <figcaption><strong>IMG</strong> static image</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas data-jdenticon-value="Icon0" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+    </figure>
+
+    <h1>"Icon1" - Should be equal but different to the icon above</h1>
+    <figure>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAYFBMVEX///+BzGbv+ezX78/A5bLL6cCIz2+Y1YKg2Yyg2Iuo3Jbn9uLz+vHY78+o3JX3/PXH6by44qjP7MWQ0nmQ0njP68XA5rPM6sDH6Lv7/vrE5rbQ68XD5rbI6by44qnX784Iiv7qAAACKElEQVR4Xu2Z2U4DMRAEGXuPXOTgvvn/v4TArsxSs5kd2Y+ut7TUKiHLUQdflaJSqTy/7qww3/HYvOysMN/RwILQQbh+uA50wIIQ9VnCSs6sAhyjhaFRBzed/NLd0JEsDFmfJXQy0gU6koUh63OsJLFKDlgQztZJkL8EOAaLHrKuEyeSODhgUUOlrtNMJM138tmQJzVkfflf0sLxtlND1h1n0sKhhmpdZy2J9XAhWji0kHXfPWnhQKjVnTe+hYMh6xcIazmznnx3tXAgRP0yITZxUCQLHAhZt6Fl6mBI/BY4GOZb7ndW6N8MZC8jZt2/GXiHHHVgzYMjJJ66Pg9ID4mjTodu2ULiqdOhW06QOOp06JbDHSSOOh26JUJi1+mwLHtIrDodpiV0kHjq+mbgZYHEVdfnAehVSdgsquvzgGw1yXsndn1+M5CTwNuLiF2/tBl4Wf59/pAzC+ucBzpx+ulWflhY5zywCRsZWFjnPCA88BGj7pgHOPCEUXfMAxx4wqg75gEOPIH68iUgE+4iCplDgpLTAYW8IUFJv0WhzJBIku6IQqEhkST7gEK5IaEeeCw8JNQDvz2UHRLqgcup7JBQD1xkW3RIqAcu0pcfEpTIsfCQIOov6OwhQYlskGYPCUokIs4eEpTgsuQPCUpwWfKHBCW4LPlDghJclvwhQQkuS+Ehof67qfSQkJGNs07q00Z92qhPG/Vpoz5t1KeN+rRRnzbyqVQqX0NxU2VJCOsRAAAAAElFTkSuQmCC" width="100" height="100">
+        <figcaption><strong>IMG</strong> static image</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas data-jdenticon-value="Icon1" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas data-jdenticon-hash="9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> data-jdenticon-hash</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Jdenticon-update-hash" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> update(hash)</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Jdenticon-update-value" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> update(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Jdenticon-drawIcon-hash" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> drawIcon(hash)</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Jdenticon-drawIcon-value" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> drawIcon(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <svg data-jdenticon-value="Icon1" width="100" height="100"></svg>
+        <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+    </figure>
+    
+    <figure>
+        <svg data-jdenticon-hash="9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a" width="100" height="100"></svg>
+        <figcaption><strong>SVG</strong> data-jdenticon-hash</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Jdenticon-update-hash" width="100" height="100"></svg>
+        <figcaption><strong>SVG</strong> update(hash)</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Jdenticon-update-value" width="100" height="100"></svg>
+        <figcaption><strong>SVG</strong> update(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <span id="svg-Jdenticon-toSvg-hash"></span>
+        <figcaption><strong>SVG</strong> toSvg(hash)</figcaption>
+    </figure>
+    
+    <figure>
+        <span id="svg-Jdenticon-toSvg-value"></span>
+        <figcaption><strong>SVG</strong> toSvg(value)</figcaption>
+    </figure>
+    
+    <h1>"Icon2" - Should be centered vertically and horizontally</h1>
+    <figure>
+        <canvas data-jdenticon-value="Icon2" width="60" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Icon2-update-vert" width="60" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> update(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <svg data-jdenticon-value="Icon2" width="60" height="100"></svg>
+        <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Icon2-update-vert" width="60" height="100"></svg>
+        <figcaption><strong>SVG</strong> update(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas data-jdenticon-value="Icon2" width="100" height="60"></canvas>
+        <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Icon2-update-hori" width="100" height="60"></canvas>
+        <figcaption><strong>Canvas</strong> update(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <svg data-jdenticon-value="Icon2" width="100" height="60"></svg>
+        <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Icon2-update-hori" width="100" height="60"></svg>
+        <figcaption><strong>SVG</strong> update(value)</figcaption>
+    </figure>
+    
+    <script src="../dist/jdenticon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/requirejs/2.1.22/require.min.js"></script>
+    <script>
+
+function init(jdenticon) {
+    jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon1");
+    jdenticon.update("#canvas-Jdenticon-update-hash,#svg-Jdenticon-update-hash", "9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a");
+
+    var ctx = document.getElementById("canvas-Jdenticon-drawIcon-value").getContext("2d");
+    ctx.translate((100*0.08)|0, (100*0.08)|0);
+    jdenticon.drawIcon(ctx, "Icon1", 100 * 0.84);
+
+    var ctx = document.getElementById("canvas-Jdenticon-drawIcon-hash").getContext("2d");
+    ctx.translate((100*0.08)|0, (100*0.08)|0);
+    jdenticon.drawIcon(ctx, "9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100 * 0.84);
+
+    document.getElementById("svg-Jdenticon-toSvg-value").innerHTML = 
+        jdenticon.toSvg("Icon1", 100);
+
+    document.getElementById("svg-Jdenticon-toSvg-hash").innerHTML = 
+        jdenticon.toSvg("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100);
+
+    jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
+    jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
+}
+
+if (typeof jdenticon !== "undefined") {
+    document.body.className = "using-dist";
+    init(jdenticon);
+}
+else {
+    document.body.className = "using-src";
+    requirejs(["../src/jdenticon"], init);
+}
+         
+    </script>
+</body>
+</html>

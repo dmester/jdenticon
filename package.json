@@ -16,7 +16,11 @@
     "gulp-requirejs-optimize": "^0.1.3",
     "gulp-wrap": "^0.11.0",
     "gulp-zip": "^3.0.2",
-    "requirejs": "^2.3.3"
+    "requirejs": "^2.3.3",
+    "tap": "^10.7.0"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
   },
   "repository": {
     "type": "git",
