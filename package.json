@@ -1,6 +1,6 @@
 {
   "name": "jdenticon",
-  "version": "0.0.0",
+  "version": "1.7.0",
   "description": "Javascript identicon generator",
   "main": "index.js",
   "browser": "dist/jdenticon.min.js",
