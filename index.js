@@ -47,10 +47,12 @@ var jdenticon = requirejs("jdenticon");
 
 /**
  * Draws an identicon as PNG.
+ * @param {any} hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {number} size Icon size in pixels.
  * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
  * @returns {Buffer}
  */
-jdenticon.toPng = function (hash, size, padding) {
+jdenticon.toPng = function (hashOrValue, size, padding) {
     var canvas = canvasRenderer.createCanvas(size, size);
     var ctx = canvas.getContext("2d");
     
@@ -62,7 +64,7 @@ jdenticon.toPng = function (hash, size, padding) {
     size -= padding * 2;
     ctx.translate(padding, padding);
     
-    jdenticon.drawIcon(ctx, hash, size);
+    jdenticon.drawIcon(ctx, hashOrValue, size);
     
     return canvas.toPng();
 };
