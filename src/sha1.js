@@ -8,6 +8,20 @@ define([], function () {
     "use strict";
     
     function sha1(message) {
+        function wordsToHexString(words) {
+            var hashOctets = [];
+            for (var i = 0; i < words.length; i++) {
+                var val = words[i];
+               
+                for (var shift = 28; shift >= 0; shift -= 4) {
+                    var octet = (val >>> shift) & 0xf;
+                    hashOctets.push(octet.toString(16));
+                }
+            }
+
+            return hashOctets.join("");
+        }
+        
         function getBlocks(message) {
             var percentEncoded = encodeURI(message),
                 binaryMessage = [],
@@ -127,20 +141,10 @@ define([], function () {
                 hash[4] = e = ((hash[4] + e) | 0);
             }
 
-            var hashOctets = [];
-            for (var i = 0; i < 5; i++) {
-                var val = hash[i];
-               
-                for (var shift = 28; shift >= 0; shift -= 4) {
-                    var octet = (val >>> shift) & 0xf;
-                    hashOctets.push(octet.toString(16));
-                }
-            }
-
-            return hashOctets.join("");
+            return hash;
         }
 
-        return computeHash(getBlocks(message));
+        return wordsToHexString(computeHash(getBlocks(message)));
     }
     
     return sha1;
