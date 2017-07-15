@@ -181,9 +181,9 @@ define([
     
     // Basic jQuery plugin
     if (jQuery) {
-        jQuery["fn"]["jdenticon"] = function (hash, padding) {
+        jQuery["fn"]["jdenticon"] = function (hashOrValue, padding) {
             this["each"](function (index, el) {
-                update(el, hash, padding);
+                update(el, hashOrValue, padding);
             });
             return this;
         };
