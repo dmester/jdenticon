@@ -98,6 +98,16 @@
     </figure>
     
     <figure>
+        <canvas id="canvas-Jdenticon-jquery-hash" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> jQuery(hash)</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Jdenticon-jquery-value" width="100" height="100"></canvas>
+        <figcaption><strong>Canvas</strong> jQuery(value)</figcaption>
+    </figure>
+    
+    <figure>
         <canvas id="canvas-Jdenticon-drawIcon-hash" width="100" height="100"></canvas>
         <figcaption><strong>Canvas</strong> drawIcon(hash)</figcaption>
     </figure>
@@ -125,6 +135,16 @@
     <figure>
         <svg id="svg-Jdenticon-update-value" width="100" height="100"></svg>
         <figcaption><strong>SVG</strong> update(value)</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Jdenticon-jquery-hash" width="100" height="100"></svg>
+        <figcaption><strong>SVG</strong> jQuery(hash)</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Jdenticon-jquery-value" width="100" height="100"></svg>
+        <figcaption><strong>SVG</strong> jQuery(value)</figcaption>
     </figure>
     
     <figure>
@@ -178,6 +198,7 @@
         <figcaption><strong>SVG</strong> update(value)</figcaption>
     </figure>
     
+    <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
     <script src="../dist/jdenticon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/requirejs/2.1.22/require.min.js"></script>
     <script>
@@ -202,6 +223,9 @@ function init(jdenticon) {
 
     jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
     jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
+    
+    $("#canvas-Jdenticon-jquery-value,#svg-Jdenticon-jquery-value").jdenticon("Icon1");
+    $("#canvas-Jdenticon-jquery-hash,#svg-Jdenticon-jquery-hash").jdenticon("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a");
 }
 
 if (typeof jdenticon !== "undefined") {
