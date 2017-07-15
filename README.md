@@ -16,12 +16,12 @@ Add a canvas to render a raster icon, and an inline svg element to render a vect
 
 ```HTML
 <!-- Vector icon -->
-<svg width="80" height="80" data-jdenticon-hash="ff8adece0631821959f443c9d956fc39"></svg>
+<svg width="80" height="80" data-jdenticon-value="icon value"></svg>
 
 <!-- OR -->
 
 <!-- Raster icon -->
-<canvas width="80" height="80" data-jdenticon-hash="ff8adece0631821959f443c9d956fc39"></canvas>
+<canvas width="80" height="80" data-jdenticon-value="icon value"></canvas>
 ```
 
 Not sure about ```data-jdenticon-hash```? A hashed username works perfectly fine! Sensitive information 
@@ -33,7 +33,7 @@ use it right off [jsDelivr](https://www.jsdelivr.com).
 
 ```HTML
 <!-- Using jsDelivr -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jdenticon/1.4.0/jdenticon.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jdenticon@1.7.0"></script>
 
 <!-- OR -->
 
