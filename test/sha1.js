@@ -11,6 +11,7 @@ requirejs.config({
 var sha1 = requirejs("sha1");
 
 tap.equal("92cfceb39d57d914ed8b14d0e37643de0797ae56", sha1(42));
+tap.equal("21d90aad4d34f48f4aad9b5fa3c37c118af16df9", sha1("Value to be hashed"));
 tap.equal("d5d4cd07616a542891b7ec2d0257b3a24b69856e", sha1()); // undefined
 tap.equal("2be88ca4242c76e8253ac62474851065032d6833", sha1(null));
 tap.equal("08a73daac75982601504c4ba956f49e73ee52667", sha1("abcåäö")); // non-ASCII chars
