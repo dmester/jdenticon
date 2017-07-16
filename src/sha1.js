@@ -49,7 +49,7 @@ define([], function () {
             // UTF8 encode message
             for (i = 0; i < percentEncoded.length; i++) {
                 if (percentEncoded[i] == "%") {
-                    b = parseInt(percentEncoded.substr(i + 1), 16);
+                    b = parseInt(percentEncoded.substr(i + 1, 2), 16);
                     i += 2;
                 }
                 else {
