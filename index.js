@@ -39,7 +39,7 @@ var canvasRenderer = require("canvas-renderer");
 var requirejs = require("requirejs");
 
 requirejs.config({    
-    baseUrl: "./src",
+    baseUrl: path.join(__dirname, "src"),
     nodeRequire: require
 });
 
