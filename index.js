@@ -37,6 +37,7 @@ if (typeof require !== "function" ||
 
 var canvasRenderer = require("canvas-renderer");
 var requirejs = require("requirejs");
+var path = require("path");
 
 requirejs.config({    
     baseUrl: path.join(__dirname, "src"),
