@@ -9,6 +9,5 @@ gulpfile.js
 node_modules
 obj
 releases
-src
 template*.js
 utils
