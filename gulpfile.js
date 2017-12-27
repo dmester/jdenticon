@@ -1,14 +1,22 @@
-﻿var gulp     = require("gulp"),
-    del      = require("del"),
-    rename   = require("gulp-rename"),
-    nuget    = require("gulp-nuget"),
-    closure  = require("gulp-closure-compiler-service"),
-    zip      = require("gulp-zip"),
-    optimize = require("gulp-requirejs-optimize"),
-    replace  = require("gulp-replace"),
-    wrap     = require("gulp-wrap"),
-    exec     = require("child_process").exec,
-    pack     = require("./package.json");
+﻿/**
+ * Jdenticon
+ * https://github.com/dmester/jdenticon
+ * Copyright © Daniel Mester Pirttijärvi
+ * 
+ * This file contains the public interface of Jdenticon.
+ */
+"use strict";
+
+const gulp     = require("gulp"),
+      del      = require("del"),
+      rename   = require("gulp-rename"),
+      closure  = require("gulp-closure-compiler-service"),
+      zip      = require("gulp-zip"),
+      replace  = require("gulp-replace"),
+      wrap     = require("gulp-wrap"),
+      exec     = require("child_process").exec,
+      merge    = require("./build/mergeRequire"),
+      pack     = require("./package.json");
 
 gulp.task("clean", function (cb) {
     del(["./~jdenticon.nuspec", "./obj"], cb);
@@ -16,19 +24,24 @@ gulp.task("clean", function (cb) {
 
 gulp.task("build", ["clean"], function () {
     return gulp.src("./src/jdenticon.js")
-        .pipe(optimize({ optimize: "none" }))
+        .pipe(merge(function (source) {
+            // Remove license banner
+            source = source.replace(/^\/\*(?:[\s\S]*?)\*\//, "");
+            
+            // Remove use strict
+            source = source.replace(/^\s+\"use strict\";\r?\n/g, "");
+            
+            // Remove require
+            source = source.replace(/\b(?:var|const)\s+\w+\s*=\s*require\([^)]+\);\r?\n/g, "");
+            
+            // Remove module exports
+            source = source.replace(/\bmodule\.exports\s*=[^;]+;/g, "");
+            
+            return source;
+        }))
         
         // Debug section
         .pipe(replace(/\/\/\s*\<debug\>[\s\S]*?\/\/\s*\<\/debug\>/g, ""))
-        
-        // Remove define wrappers
-        .pipe(replace(/^\/\*(?:[\s\S]*?)\*\//, "")) // Header
-        .pipe(replace(/return[^;]+;[\r\n]+\}\);[\r\n]\s*(?:(?:\/\*(?:[\s\S]*?)\*\/)\s*|(?:\/\/(?:.*)\s*))*define\([^{]+{/g, ""))
-        .pipe(replace(/define\([^{]+{/g, ""))
-        .pipe(replace(/\}\);\s*$/g, ""))
-        
-        // Remove "use strict" from source files
-        .pipe(replace(/\"use strict\";/g, ""))
         
         // Replace variables
         .pipe(wrap({ src: "./template.js" }))
