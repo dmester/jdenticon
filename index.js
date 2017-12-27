@@ -48,6 +48,12 @@ module.exports = {};
 module.exports.version = pack.version;
 
 /**
+ * Specifies the color options for the generated icons. See options at http://jdenticon.com/js-api.html#jdenticon-config
+ * @type {object} 
+ */
+module.exports.config = {};
+
+/**
  * Draws an identicon as an SVG string.
  * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
@@ -55,6 +61,9 @@ module.exports.version = pack.version;
  * @returns {string} SVG string
  */
 module.exports.toSvg = function toSvg(hashOrValue, size, padding) {
+    // Copy config to base jdenticon object
+    jdenticon.config = module.exports.config;
+    
     return jdenticon.toSvg(hashOrValue, size, padding);
 };
 
@@ -77,6 +86,8 @@ module.exports.toPng = function toPng(hashOrValue, size, padding) {
     size -= padding * 2;
     ctx.translate(padding, padding);
     
+    // Copy config to base jdenticon object
+    jdenticon.config = module.exports.config;
     jdenticon.drawIcon(ctx, hashOrValue, size);
     
     return canvas.toPng({ "Software": "Jdenticon" });
