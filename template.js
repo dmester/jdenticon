@@ -47,4 +47,6 @@
 })(this, "jdenticon", function (global, jQuery) {
     "use strict";
 <%=contents%>
+
+    return jdenticon;
 });
