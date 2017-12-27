@@ -35,18 +35,37 @@ if (typeof require !== "function" ||
         "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
 
-var canvasRenderer = require("canvas-renderer"),
-    pack           = require("./package.json"),
-    jdenticon      = require("./src/jdenticon");
+const canvasRenderer = require("canvas-renderer"),
+      pack           = require("./package.json"),
+      jdenticon      = require("./src/jdenticon");
+
+module.exports = {};
+
+/**
+ * Specifies the version of the Jdenticon package in use.
+ * @type {string}
+ */
+module.exports.version = pack.version;
+
+/**
+ * Draws an identicon as an SVG string.
+ * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {number} size - Icon size in pixels.
+ * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
+ * @returns {string} SVG string
+ */
+module.exports.toSvg = function toSvg(hashOrValue, size, padding) {
+    return jdenticon.toSvg(hashOrValue, size, padding);
+};
 
 /**
  * Draws an identicon as PNG.
- * @param {any} hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
- * @param {number} size Icon size in pixels.
- * @param {number=} padding Optional padding in percents. Extra padding might be added to center the rendered identicon.
- * @returns {Buffer}
+ * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {number} size - Icon size in pixels.
+ * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
+ * @returns {Buffer} PNG data
  */
-jdenticon.toPng = function (hashOrValue, size, padding) {
+module.exports.toPng = function toPng(hashOrValue, size, padding) {
     var canvas = canvasRenderer.createCanvas(size, size);
     var ctx = canvas.getContext("2d");
     
@@ -62,6 +81,3 @@ jdenticon.toPng = function (hashOrValue, size, padding) {
     
     return canvas.toPng({ "Software": "Jdenticon" });
 };
-jdenticon.version = pack.version;
-
-module.exports = jdenticon;
