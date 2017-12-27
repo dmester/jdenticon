@@ -13,6 +13,8 @@
 function CanvasRenderer(ctx, size) {
     var width = ctx.canvas.width,
         height = ctx.canvas.height;
+    
+    ctx.save();
             
     this._ctx = ctx;
     
@@ -71,7 +73,9 @@ CanvasRenderer.prototype = {
     /**
      * Called when the icon has been completely drawn.
      */
-    finish: function () { }
+    finish: function () {
+        this._ctx.restore();
+    }
 };
 
 module.exports = CanvasRenderer;
