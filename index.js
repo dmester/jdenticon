@@ -35,9 +35,10 @@ if (typeof require !== "function" ||
         "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
 
-var canvasRenderer = require("canvas-renderer");
-var path = require("path");
-var jdenticon = require("./src/jdenticon");
+var canvasRenderer = require("canvas-renderer"),
+    path           = require("path"),
+    pack           = require("./package.json"),
+    jdenticon      = require("./src/jdenticon");
 
 /**
  * Draws an identicon as PNG.
@@ -62,5 +63,6 @@ jdenticon.toPng = function (hashOrValue, size, padding) {
     
     return canvas.toPng();
 };
+jdenticon.version = pack.version;
 
 module.exports = jdenticon;
