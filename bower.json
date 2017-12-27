@@ -21,12 +21,14 @@
     "*.bat",
     "*.nuspec",
     "bin",
+    "build",
     "gulpfile.js",
     "node_modules",
     "obj",
     "releases",
     "src",
     "template.*",
+    "test",
     "utils"
   ]
 }
