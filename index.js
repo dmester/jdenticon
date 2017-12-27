@@ -61,7 +61,7 @@ jdenticon.toPng = function (hashOrValue, size, padding) {
     
     jdenticon.drawIcon(ctx, hashOrValue, size);
     
-    return canvas.toPng();
+    return canvas.toPng({ "Software": "Jdenticon" });
 };
 jdenticon.version = pack.version;
 
