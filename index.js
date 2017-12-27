@@ -36,7 +36,6 @@ if (typeof require !== "function" ||
 }
 
 var canvasRenderer = require("canvas-renderer"),
-    path           = require("path"),
     pack           = require("./package.json"),
     jdenticon      = require("./src/jdenticon");
 
