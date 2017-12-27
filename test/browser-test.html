@@ -16,9 +16,12 @@
         }
 
 
-        #hej {
-          width: 50%;
-          height: 400px;
+        .version-info {
+            font: 14px Arial;
+            margin: 1em 0;
+        }
+        .version-info--error {
+            color: #f00;
         }
         
         figure {
@@ -34,7 +37,8 @@
         }
         
         .using-dist-info,
-        .using-src-info {
+        .using-src-info,
+        .using-fileprotocol-info {
             display: none;
             font: 16px Arial;
             padding: 10px;
@@ -45,9 +49,22 @@
             background: #C1D1EA;
         }
         
+        .using-fileprotocol-info {
+            background: #BC140B;
+            color: #fff;
+        }
+        
         .using-dist .using-dist-info,
-        .using-src .using-src-info {
+        .using-src .using-src-info,
+        .using-fileprotocol .using-fileprotocol-info {
             display: block;
+        }
+        
+        .amd {
+            display: none;
+        }
+        .using-dist .amd {
+            display: inline;
         }
         
     </style>
@@ -59,7 +76,12 @@
     <div class="using-src-info">
         Using <strong>src/jdenticon.js</strong>. Run <code>gulp build</code> to use dist/jdenticon.min.js.
     </div>
-
+    <div class="using-fileprotocol-info">
+        Using <strong>src/jdenticon.js</strong> over the file:// protocol will probably not work. Open <code>browser-test.html</code> through a web server or run <code>gulp build</code> to use dist/jdenticon.min.js.
+    </div>
+    
+    <div class="version-info version-info--error">Could not detect Jdenticon version.</div>
+    
     <h1>"Icon0" - Should be equal</h1>
     <figure>
         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAASFBMVEX////o6OhMTEz8/Pzr6+v39/fl5eXHx8d5eXl4eHhXV1fm5ua7u7vy8vKlpaVWVlbu5ff69vz19fWmddGrfdO2jtm2j9mmpqYLOVEwAAABiElEQVR4Xu2ZyYrEMBBDx3b2tZdZ/v9PhyYEdUboUJg6DNQ7CsTrzobAH84EQRCUdm3L3zD1P30SoaprStO9aC6aNOQXQ9Ih1zWPuTuYHwiXKR9Miwy5LilzdzKXM0xTPpmSDLmuaDrQnOGQwSBDrgtK9045wpTfSSJUdaa9SNoj7C+SXoSqzqwXyXqE20WyiVDW/f+J/z0xPV1jBqMKuW58T/Z8sicVct36xp+WfVEh1+3fruPijEmEom7/Cm99kqGu+xMEYh541jEPBPV1ngdMbZ3ngcZe1/NAY6/LeaCx1+U80Njreh4w95u1bv8p9+/Pm7muL6pwPJ+wGOs8D6QDFmud54FywGKt8zxQDlisdZ4HygGLuc7zQDtg0XUz7IClHnb4WeBwt9y/PCWw+DtggcNhCcACh8OQgAWO+iHBFjgchgQscHgMCVjgqB8SwsKO+iHBFjj+65AAnkMCeA4J4DkkgMeQYDyGBOMwJIBPHQRBHG3E0cYYRxtxtBFHG3G04UcQBMEv9DQ30nYw8TAAAAAASUVORK5CYII=" width="100" height="100">
@@ -70,6 +92,14 @@
         <canvas data-jdenticon-value="Icon0" width="100" height="100"></canvas>
         <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
     </figure>
+    
+    <div class="amd">
+        <figure>
+            <canvas id="AMDIcon0" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> update(value) AMD</figcaption>
+        </figure>
+    </div>
+
 
     <h1>"Icon1" - Should be equal but different to the icon above</h1>
     <figure>
@@ -200,43 +230,71 @@
     
     <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
     <script src="../dist/jdenticon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
     <script src="https://cdn.jsdelivr.net/requirejs/2.1.22/require.min.js"></script>
     <script>
 
-function init(jdenticon) {
-    jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon1");
-    jdenticon.update("#canvas-Jdenticon-update-hash,#svg-Jdenticon-update-hash", "9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a");
+        function init(jdenticon) {
+            jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon1");
+            jdenticon.update("#canvas-Jdenticon-update-hash,#svg-Jdenticon-update-hash", "9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a");
 
-    var ctx = document.getElementById("canvas-Jdenticon-drawIcon-value").getContext("2d");
-    ctx.translate((100*0.08)|0, (100*0.08)|0);
-    jdenticon.drawIcon(ctx, "Icon1", 100 * 0.84);
+            var ctx = document.getElementById("canvas-Jdenticon-drawIcon-value").getContext("2d");
+            ctx.translate((100*0.08)|0, (100*0.08)|0);
+            jdenticon.drawIcon(ctx, "Icon1", 100 * 0.84);
 
-    var ctx = document.getElementById("canvas-Jdenticon-drawIcon-hash").getContext("2d");
-    ctx.translate((100*0.08)|0, (100*0.08)|0);
-    jdenticon.drawIcon(ctx, "9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100 * 0.84);
+            var ctx = document.getElementById("canvas-Jdenticon-drawIcon-hash").getContext("2d");
+            ctx.translate((100*0.08)|0, (100*0.08)|0);
+            jdenticon.drawIcon(ctx, "9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100 * 0.84);
 
-    document.getElementById("svg-Jdenticon-toSvg-value").innerHTML = 
-        jdenticon.toSvg("Icon1", 100);
+            document.getElementById("svg-Jdenticon-toSvg-value").innerHTML = 
+                jdenticon.toSvg("Icon1", 100);
 
-    document.getElementById("svg-Jdenticon-toSvg-hash").innerHTML = 
-        jdenticon.toSvg("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100);
+            document.getElementById("svg-Jdenticon-toSvg-hash").innerHTML = 
+                jdenticon.toSvg("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100);
 
-    jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
-    jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
-    
-    $("#canvas-Jdenticon-jquery-value,#svg-Jdenticon-jquery-value").jdenticon("Icon1");
-    $("#canvas-Jdenticon-jquery-hash,#svg-Jdenticon-jquery-hash").jdenticon("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a");
-}
+            jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
+            jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
+            
+            $("#canvas-Jdenticon-jquery-value,#svg-Jdenticon-jquery-value").jdenticon("Icon1");
+            $("#canvas-Jdenticon-jquery-hash,#svg-Jdenticon-jquery-hash").jdenticon("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a");
+            
+            var versionInfo = document.querySelector(".version-info");
+            if (jdenticon.version == "{version}") {
+                // Don't show version info when running from source
+                versionInfo.outerHTML = "";
+            }
+            else if (jdenticon.version) {
+                versionInfo.innerHTML = "Running Jdenticon version <strong>" + jdenticon.version + "</strong>.";
+                versionInfo.className = versionInfo.className.replace("version-info--error", "");
+            }
+        }
 
-if (typeof jdenticon !== "undefined") {
-    document.body.className = "using-dist";
-    init(jdenticon);
-}
-else {
-    document.body.className = "using-src";
-    requirejs(["../src/jdenticon"], init);
-}
-         
+        if (typeof jdenticon !== "undefined") {
+            document.body.className = "using-dist";
+            init(jdenticon);
+            
+            requirejs(["../dist/jdenticon"], function (jd) {
+                jd.update("#AMDIcon0", "Icon0");
+            });
+        }
+        else {
+            if (location.protocol == "file:") {
+                document.body.className = "using-fileprotocol";
+            }
+            else {
+                document.body.className = "using-src";
+
+                R("../src/jdenticon", function (err, jdenticon) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        init(jdenticon);
+                    }
+                });
+            }
+        }
+
     </script>
 </body>
 </html>
