@@ -1,5 +1,5 @@
 # [Jdenticon](https://jdenticon.com)
-JavaScript library for generating highly recognizable identicons.
+JavaScript library for generating highly recognizable identicons using HTML5 canvas or SVG.
 
 ![Sample identicons](https://jdenticon.com/hosted/github-samples.png)
 
