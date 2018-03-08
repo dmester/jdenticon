@@ -140,7 +140,7 @@ function update(el, hash, padding) {
  * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  */
-function drawIcon(ctx, hashOrValue, size) {
+function drawIcon(ctx, hashOrValue, size, padding) {
     if (!ctx) {
         throw new Error("No canvas specified.");
     }
@@ -148,7 +148,7 @@ function drawIcon(ctx, hashOrValue, size) {
     var renderer = new CanvasRenderer(ctx, size);
     iconGenerator(renderer, 
         getValidHash(hashOrValue) || computeHash(hashOrValue), 
-        0, 0, size, 0, getCurrentConfig());
+        0, 0, size, padding || 0, getCurrentConfig());
 }
 
 /**
