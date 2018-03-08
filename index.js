@@ -83,13 +83,9 @@ module.exports.toPng = function toPng(hashOrValue, size, padding) {
         padding = 0.08;
     }
     
-    padding = (padding * size) | 0;
-    size -= padding * 2;
-    ctx.translate(padding, padding);
-    
     // Copy config to base jdenticon object
     jdenticon.config = module.exports.config;
-    jdenticon.drawIcon(ctx, hashOrValue, size);
+    jdenticon.drawIcon(ctx, hashOrValue, size, padding);
     
     return canvas.toPng({ "Software": "Jdenticon" });
 };
