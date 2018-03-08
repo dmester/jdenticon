@@ -58,8 +58,8 @@ var shapes = {
 
             g.addRectangle(0, 0, cell, cell);
             g.addPolygon([
-                outer, outer,
-                cell - inner, outer,
+                outer, 0 | outer,
+                cell - inner, 0 | outer,
                 outer + (cell - outer - inner) / 2, cell - inner
             ], true);
         },
