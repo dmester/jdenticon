@@ -39,7 +39,7 @@ var color = {
      * @param {any} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
      */
     parse: function (color) {
-        if (/^\#[0-9a-fA-F]{3,8}$/.test(color)) {
+        if (/^#[0-9a-f]{3,8}$/i.test(color)) {
             if (color.length < 6) {
                 var r = color[1],
                     g = color[2],
