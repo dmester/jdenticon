@@ -67,6 +67,7 @@ CanvasRenderer.prototype = {
     addCircle: function (point, diameter, counterClockwise) {
         var ctx = this._ctx,
             radius = diameter / 2;
+        ctx.moveTo(point.x + radius, point.y + radius);
         ctx.arc(point.x + radius, point.y + radius, radius, 0, Math.PI * 2, counterClockwise);
         ctx.closePath();
     },
