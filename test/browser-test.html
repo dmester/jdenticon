@@ -228,6 +228,11 @@
         <figcaption><strong>SVG</strong> update(value)</figcaption>
     </figure>
     
+    <script>
+    var jdenticon_config = {
+        backColor: "#00f1"
+    };
+    </script>
     <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
     <script src="../dist/jdenticon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
@@ -237,10 +242,6 @@
 
 
         function init(jdenticon) {
-            jdenticon.config = {
-                backColor: "#00f1"
-            };
-        
             jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon04");
             jdenticon.update("#canvas-Jdenticon-update-hash,#svg-Jdenticon-update-hash", "f97deee25dde01afb80ec1c7e4fae746492ddacb");
 
