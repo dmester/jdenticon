@@ -13,6 +13,7 @@ const SvgElement = require("./svgElement");
 const SvgWriter = require("./svgWriter");
 const sha1 = require("./sha1");
 const CanvasRenderer = require("./canvasRenderer");
+const color = require("./color");
  
 // <debug>
 var global = typeof window !== "undefined" ? window : {},
@@ -30,7 +31,8 @@ var /** @const */
 function getCurrentConfig() {
     var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
         lightnessConfig = configObject["lightness"] || { },
-        saturation = configObject["saturation"];
+        saturation = configObject["saturation"],
+        backColor = configObject["backColor"];
     
     /**
      * Creates a lightness range.
@@ -50,7 +52,8 @@ function getCurrentConfig() {
     return {
         saturation: typeof saturation == "number" ? saturation : 0.5,
         colorLightness: lightness("color", 0.4, 0.8),
-        grayscaleLightness: lightness("grayscale", 0.3, 0.9)
+        grayscaleLightness: lightness("grayscale", 0.3, 0.9),
+        backColor: color.parse(backColor)
     }
 }
 

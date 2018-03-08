@@ -36,6 +36,23 @@ var color = {
         return "#" + decToHex(r) + decToHex(g) + decToHex(b);
     },
     /**
+     * @param {any} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+     */
+    parse: function (color) {
+        if (/^\#[0-9a-fA-F]{3,8}$/.test(color)) {
+            if (color.length < 6) {
+                var r = color[1],
+                    g = color[2],
+                    b = color[3],
+                    a = color[4] || "";
+                return "#" + r + r + g + g + b + b + a + a;
+            }
+            if (color.length == 7 || color.length > 8) {
+                return color;
+            }
+        }
+    },
+    /**
      * @param h Hue [0, 1]
      * @param s Saturation [0, 1]
      * @param l Lightness [0, 1]

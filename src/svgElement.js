@@ -33,6 +33,21 @@ function SvgElement(element) {
 }
 SvgElement.prototype = {
     /**
+     * Fills the background with the specified color.
+     * @param {string} fillColor  Fill color on the format #rrggbb.
+     * @param {number} opacity  Opacity in the range [0.0, 1.0].
+     */
+    setBackground: function (fillColor, opacity) {
+        if (opacity) {
+            var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("width", "100%");
+            rect.setAttribute("height", "100%");
+            rect.setAttribute("fill", fillColor);
+            rect.setAttribute("opacity", opacity.toFixed(2));
+            this._el.appendChild(rect);
+        }
+    },
+    /**
      * Appends a path to the SVG element.
      * @param {string} color Fill color on format #xxxxxx.
      * @param {string} dataString The SVG path data string.

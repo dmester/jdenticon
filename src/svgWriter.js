@@ -19,8 +19,19 @@ function SvgWriter(size) {
 }
 SvgWriter.prototype = {
     /**
+     * Fills the background with the specified color.
+     * @param {string} fillColor  Fill color on the format #rrggbb.
+     * @param {number} opacity  Opacity in the range [0.0, 1.0].
+     */
+    setBackground: function (fillColor, opacity) {
+        if (opacity) {
+            this._s += '<rect width="100%" height="100%" fill="' + 
+                fillColor + '" opacity="' + opacity.toFixed(2) + '"/>';
+        }
+    },
+    /**
      * Writes a path to the SVG string.
-     * @param {string} color Fill color on format #xxxxxx.
+     * @param {string} color Fill color on format #rrggbb.
      * @param {string} dataString The SVG path data string.
      */
     append: function (color, dataString) {

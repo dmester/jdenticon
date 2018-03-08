@@ -5,6 +5,8 @@
  */
 "use strict";
 
+const color = require("./color");
+
 /**
  * Renderer redirecting drawing commands to a canvas context.
  * @private
@@ -15,7 +17,7 @@ function CanvasRenderer(ctx, size) {
         height = ctx.canvas.height;
     
     ctx.save();
-            
+    
     this._ctx = ctx;
     
     if (size) {
@@ -33,8 +35,19 @@ function CanvasRenderer(ctx, size) {
 }
 CanvasRenderer.prototype = {
     /**
+     * Fills the background with the specified color.
+     * @param {string} fillColor  Fill color on the format #rrggbb[aa].
+     */
+    setBackground: function (fillColor) {
+        var ctx = this._ctx,
+            size = this.size;
+                
+        ctx.fillStyle = fillColor;
+        ctx.fillRect(0, 0, size, size);
+    },
+    /**
      * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
-     * @param {string} color Fill color on format #xxxxxx.
+     * @param {string} color Fill color on format #rrggbb[aa].
      */
     beginShape: function (color) {
         this._ctx.fillStyle = color;

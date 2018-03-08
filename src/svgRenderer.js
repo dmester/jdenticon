@@ -20,6 +20,15 @@ function SvgRenderer(target) {
 }
 SvgRenderer.prototype = {
     /**
+     * Fills the background with the specified color.
+     * @param {string} fillColor  Fill color on the format #rrggbb[aa].
+     */
+    setBackground: function (fillColor) {
+        var match = /^(#......)(..)?/.exec(fillColor),
+            opacity = match[2] ? parseInt(match[2], 16) / 255 : 1;
+        this._target.setBackground(match[1], opacity);
+    },
+    /**
      * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
      * @param {string} color Fill color on format #xxxxxx.
      */

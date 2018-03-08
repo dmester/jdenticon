@@ -16,6 +16,11 @@ const colorTheme = require("./colorTheme");
 function iconGenerator(renderer, hash, x, y, size, padding, config) {
     var undefined;
     
+    // Set background color
+    if (config.backColor) {
+        renderer.setBackground(config.backColor);
+    }
+    
     // Calculate padding
     padding = (size * (padding === undefined ? 0.08 : padding)) | 0;
     size -= padding * 2;
