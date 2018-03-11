@@ -42,15 +42,15 @@ CanvasRenderer.prototype = {
         var ctx = this._ctx,
             size = this.size;
                 
-        ctx.fillStyle = fillColor;
+        ctx.fillStyle = color.toCss3(fillColor);
         ctx.fillRect(0, 0, size, size);
     },
     /**
      * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
-     * @param {string} color Fill color on format #rrggbb[aa].
+     * @param {string} fillColor Fill color on format #rrggbb[aa].
      */
-    beginShape: function (color) {
-        this._ctx.fillStyle = color;
+    beginShape: function (fillColor) {
+        this._ctx.fillStyle = color.toCss3(fillColor);
         this._ctx.beginPath();
     },
     /**

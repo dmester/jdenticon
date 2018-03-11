@@ -53,6 +53,19 @@ var color = {
         }
     },
     /**
+     * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
+     */
+    toCss3: function (hexColor) {
+        var a = parseInt(hexColor.substr(7, 2), 16);
+        if (isNaN(a)) {
+            return hexColor;
+        }
+        var r = parseInt(hexColor.substr(1, 2), 16),
+            g = parseInt(hexColor.substr(3, 2), 16),
+            b = parseInt(hexColor.substr(5, 2), 16);
+        return "rgba(" + r + "," + g + "," + b + "," + (a / 255).toFixed(2) + ")";
+    },
+    /**
      * @param h Hue [0, 1]
      * @param s Saturation [0, 1]
      * @param l Lightness [0, 1]
