@@ -70,7 +70,7 @@ gulp.task("build", ["clean"], function () {
 });
 
 gulp.task("preparerelease", ["build"], function () {
-    return gulp.src(["./license.txt", "./readme.md"])
+    return gulp.src(["./LICENSE", "./README.md"])
         .pipe(replace(/\{version\}/g, pack.version))
         .pipe(replace(/\{year\}/g, new Date().getFullYear()))
         .pipe(replace(/\{date\}/g, new Date().toISOString()))

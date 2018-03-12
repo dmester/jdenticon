@@ -5,7 +5,7 @@
         <version>{version}</version>
         <title>Jdenticon JS</title>
         <authors>Daniel Mester Pirttijärvi</authors>
-        <licenseUrl>http://opensource.org/licenses/zlib-license.php</licenseUrl>
+        <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
         <projectUrl>http://jdenticon.com/</projectUrl>
         <iconUrl>http://jdenticon.com/hosted/nuget-logo-js.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
