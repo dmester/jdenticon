@@ -2,8 +2,6 @@
  * Jdenticon
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
- * 
- * This file contains the public interface of Jdenticon.
  */
 "use strict";
 
