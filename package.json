@@ -5,7 +5,7 @@
   "main": "index.js",
   "browser": "dist/jdenticon.min.js",
   "dependencies": {
-    "canvas-renderer": "~1.0.0"
+    "canvas-renderer": "~2.0.0"
   },
   "devDependencies": {
     "del": "^1.2.1",
