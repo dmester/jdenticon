@@ -53,6 +53,11 @@ Same icons, same configuration options, but ported to .NET and easily integrated
 
 https://github.com/dmester/jdenticon-net/
 
+### Jdenticon Swift Edition
+Ported also to Swift. Easily integrate into your iOS application.
+
+https://github.com/aleph7/jdenticon-swift
+
 ### Hosted Jdenticon
 Same icons but generated server-side without a server. Service provided by [Aaroh Mankad](https://github.com/aarohmankad).
 
