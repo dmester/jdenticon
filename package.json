@@ -37,6 +37,6 @@
     "avatar"
   ],
   "author": "Daniel Mester Pirttijärvi",
-  "license": "Zlib",
+  "license": "MIT",
   "homepage": "https://github.com/dmester/jdenticon"
 }

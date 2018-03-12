@@ -64,4 +64,4 @@ If your're into Polymer, [Pascal Gula](https://github.com/MeTaNoV) has created a
 https://github.com/GeoloeG/identicon-element
 
 ## License
-Jdenticon is released under the [zlib license](https://github.com/dmester/jdenticon/blob/master/license.txt).
+Jdenticon is released under the [MIT license](https://github.com/dmester/jdenticon/blob/master/LICENSE).
