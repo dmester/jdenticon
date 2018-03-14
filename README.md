@@ -12,7 +12,7 @@ Using Jdenticon is simple. Follow the steps below to integrate Jdenticon into yo
 ### 1. Add identicon placeholders
 Jdenticon is able to render both raster and vector identicons. Raster icons are rendered 
 slightly faster than vector icons, but vector icons scale better on high resolution screens.
-Add a canvas to render a raster icon, and an inline svg element to render a vector icon.
+Add a canvas to render a raster icon, or an inline svg element to render a vector icon.
 
 ```HTML
 <!-- Vector icon -->
@@ -23,9 +23,6 @@ Add a canvas to render a raster icon, and an inline svg element to render a vect
 <!-- Raster icon -->
 <canvas width="80" height="80" data-jdenticon-value="icon value"></canvas>
 ```
-
-Not sure about ```data-jdenticon-hash```? A hashed username works perfectly fine! Sensitive information 
-is not recommended as input to the hash algorithm for this purpose.
 
 ### 2. Add reference to Jdenticon
 Include the Jdenticon library somewhere on your page. You can either host it yourself or 
