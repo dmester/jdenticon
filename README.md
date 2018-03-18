@@ -45,25 +45,18 @@ For more usage examples and API documentation, please see:
 
 https://jdenticon.com
 
-### Jdenticon .NET Edition
-Same icons, same configuration options, but ported to .NET and easily integrated into your ASP.NET websites.
+### Other platforms
+There are ports or bindings for Jdenticon available for the following platforms:
 
-https://github.com/dmester/jdenticon-net/
-
-### Jdenticon Swift Edition
-Ported also to Swift. Easily integrate into your iOS application.
-
-https://github.com/aleph7/jdenticon-swift
+* [.NET](https://github.com/dmester/jdenticon-net/)
+* [Swift](https://github.com/aleph7/jdenticon-swift)
+* [Kotlin](https://github.com/WycliffeAssociates/jdenticon-kotlin)
+* [Polymer](https://github.com/GeoloeG/identicon-element)
 
 ### Hosted Jdenticon
-Same icons but generated server-side without a server. Service provided by [Aaroh Mankad](https://github.com/aarohmankad).
+Same icons but generated server-side. Service provided by [Aaroh Mankad](https://github.com/aarohmankad).
 
 http://identicon-api.herokuapp.com/
 
-### Third-party extensions
-If your're into Polymer, [Pascal Gula](https://github.com/MeTaNoV) has created a nice Polymer element.
-
-https://github.com/GeoloeG/identicon-element
-
 ## License
-Jdenticon is released under the [MIT license](https://github.com/dmester/jdenticon/blob/master/LICENSE).
+Jdenticon is available under the [MIT license](https://github.com/dmester/jdenticon/blob/master/LICENSE).
