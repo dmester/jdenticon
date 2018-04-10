@@ -56,10 +56,15 @@ var shapes = {
             var inner = cell * 0.1,
                 outer = inner * 4;
 
+            // Align edge to nearest pixel in large icons
+            if (outer > 3) {
+                outer = 0 | outer;
+            }
+
             g.addRectangle(0, 0, cell, cell);
             g.addPolygon([
-                outer, 0 | outer,
-                cell - inner, 0 | outer,
+                outer, outer,
+                cell - inner, outer,
                 outer + (cell - outer - inner) / 2, cell - inner
             ], true);
         },
