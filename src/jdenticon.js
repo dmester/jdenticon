@@ -14,16 +14,12 @@ const SvgWriter = require("./svgWriter");
 const sha1 = require("./sha1");
 const CanvasRenderer = require("./canvasRenderer");
 const color = require("./color");
+const dom = require("./dom");
  
 // <debug>
 var global = typeof window !== "undefined" ? window : {},
     jQuery = global.jQuery;
 // </debug>
-
-var /** @const */
-    HASH_ATTRIBUTE = "data-jdenticon-hash",
-    VALUE_ATTRIBUTE = "data-jdenticon-value",
-    supportsQuerySelectorAll = typeof document !== "undefined" && "querySelectorAll" in document;
 
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
@@ -121,7 +117,7 @@ function computeHash(value) {
  */
 function update(el, hash, padding) {
     if (typeof(el) === "string") {
-        if (supportsQuerySelectorAll) {
+        if (dom.supportsQuerySelectorAll) {
             var elements = document.querySelectorAll(el);
             for (var i = 0; i < elements.length; i++) {
                 update(elements[i], hash, padding);
@@ -129,16 +125,9 @@ function update(el, hash, padding) {
         }
         return;
     }
-    if (!el || !el["tagName"]) {
-        // No element found
-        return;
-    }
-    
-    var isSvg = /svg/i.test(el["tagName"]),
-        isCanvas = /canvas/i.test(el["tagName"]);
-    
-    // Ensure we have a supported element
-    if (!isSvg && !(isCanvas && "getContext" in el)) {
+
+    var iconType = dom.getIdenticonType(el);
+    if (!iconType) {
         return;
     }
     
@@ -152,21 +141,21 @@ function update(el, hash, padding) {
         hash && computeHash(hash) ||
         
         // 3. `data-jdenticon-hash` attribute
-        getValidHash(el.getAttribute(HASH_ATTRIBUTE)) ||
+        getValidHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
         
         // 4. `data-jdenticon-value` attribute. 
         // We want to treat an empty attribute as an empty value. 
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(VALUE_ATTRIBUTE) && computeHash(el.getAttribute(VALUE_ATTRIBUTE));
+        el.hasAttribute(dom.VALUE_ATTRIBUTE) && computeHash(el.getAttribute(dom.VALUE_ATTRIBUTE));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
         return;
     }
     
-    var renderer = isSvg ? 
+    var renderer = iconType == dom.ICON_TYPE_SVG ? 
         new SvgRenderer(new SvgElement(el)) : 
         new CanvasRenderer(el.getContext("2d"));
     
@@ -211,8 +200,8 @@ function toSvg(hashOrValue, size, padding) {
  * Updates all canvas elements with the data-jdenticon-hash attribute.
  */
 function jdenticon() {
-    if (supportsQuerySelectorAll) {
-        update("[" + HASH_ATTRIBUTE + "],[" + VALUE_ATTRIBUTE + "]");
+    if (dom.supportsQuerySelectorAll) {
+        update("[" + dom.HASH_ATTRIBUTE + "],[" + dom.VALUE_ATTRIBUTE + "]");
     }
 }
 
