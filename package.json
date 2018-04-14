@@ -9,16 +9,16 @@
   },
   "devDependencies": {
     "del": "^1.2.1",
+    "google-closure-compiler-js": "^20180402.0.0",
     "gulp": "^3.9.0",
-    "gulp-closure-compiler-service": "^0.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
     "gulp-wrap": "^0.11.0",
     "gulp-zip": "^3.0.2",
-    "through2": "^2.0.3",
     "module-deps": "^4.1.1",
     "strip-bom": "^3.0.0",
-    "tap": "^10.7.0"
+    "tap": "^10.7.0",
+    "through2": "^2.0.3"
   },
   "scripts": {
     "test": "tap test/*.js"

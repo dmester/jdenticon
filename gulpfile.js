@@ -10,7 +10,7 @@
 const gulp     = require("gulp"),
       del      = require("del"),
       rename   = require("gulp-rename"),
-      closure  = require("gulp-closure-compiler-service"),
+      closure  = require('google-closure-compiler-js').gulp(),
       zip      = require("gulp-zip"),
       replace  = require("gulp-replace"),
       wrap     = require("gulp-wrap"),
@@ -56,7 +56,14 @@ gulp.task("build", ["clean"], function () {
         .pipe(gulp.dest("obj"))
         
         // Minified file
-        .pipe(closure({ compilation_level: "ADVANCED_OPTIMIZATIONS" }))
+        .pipe(closure({ 
+            compilation_level: "ADVANCED_OPTIMIZATIONS" ,
+            rewritePolyfills: false,
+            createSourceMap: true,
+            externs: [
+                { src: "var module; function define(deps, cb) { }" }
+            ],
+        }))
         .pipe(wrap({ src: "./template.min.js" }))
         .pipe(replace(/\{version\}/g, pack.version))
         .pipe(replace(/\{year\}/g, new Date().getFullYear()))
