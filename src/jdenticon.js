@@ -14,6 +14,7 @@ const SvgWriter = require("./svgWriter");
 const sha1 = require("./sha1");
 const CanvasRenderer = require("./canvasRenderer");
 const color = require("./color");
+const observer = require("./observer");
 const dom = require("./dom");
  
 // <debug>
@@ -161,6 +162,8 @@ function update(el, hash, padding) {
     
     // Draw icon
     iconGenerator(renderer, hash, 0, 0, renderer.size, padding, getCurrentConfig());
+
+    observer.observeAttributes(el);
 }
 
 /**
@@ -205,6 +208,19 @@ function jdenticon() {
     }
 }
 
+function jdenticonStartup() {
+    var replaceMode = (jdenticon["config"] || global["jdenticon_config"] || { })["replaceMode"];
+    if (replaceMode != "none") {
+        if (replaceMode == "continuous") {
+            observer.initObserver();
+        }
+
+        jdenticon();
+        observer.updateCallback = update;
+        observer.observeNewElements();
+    }
+}
+
 // Public API
 jdenticon["drawIcon"] = drawIcon;
 jdenticon["toSvg"] = toSvg;
@@ -223,7 +239,7 @@ if (jQuery) {
 
 // Schedule to render all identicons on the page once it has been loaded.
 if (typeof setTimeout === "function") {
-    setTimeout(jdenticon, 0);
+    setTimeout(jdenticonStartup, 0);
 }
 
 module.exports = jdenticon;

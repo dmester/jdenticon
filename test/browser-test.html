@@ -230,7 +230,8 @@
     
     <script>
     var jdenticon_config = {
-        backColor: "#00f1"
+        backColor: "#00f1",
+        replaceMode: "continuous"
     };
     </script>
     <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
@@ -272,6 +273,24 @@
                 versionInfo.innerHTML = "Running Jdenticon version <strong>" + jdenticon.version + "</strong>.";
                 versionInfo.className = versionInfo.className.replace("version-info--error", "");
             }
+            
+            setTimeout(function() {
+                var child = document.createElement("span");
+                child.innerHTML ="<svg data-jdenticon-value=\"hejsan\" id=\"gfdgfdgd\" width=\"55\" height=\"55\"></svg> <canvas data-jdenticon-value=\"hejsan\" id=\"gfdgfdgd2\" width=\"80\" height=\"80\"></canvas>";
+                document.body.appendChild(child);
+                
+                setInterval(function() {
+                    document.getElementById("gfdgfdgd").setAttribute("data-jdenticon-value", new Date().valueOf().toString());
+                    document.getElementById("gfdgfdgd2").setAttribute("data-jdenticon-value", new Date().valueOf().toString() + "-");
+                }, 5000);
+                var w = 70;
+                setInterval(function() {
+                    document.getElementById("gfdgfdgd2").setAttribute("width", w += 10);
+                    document.getElementById("gfdgfdgd2").setAttribute("height", w += 10);
+                }, 8000);
+            }, 5000);
+            
+            
         }
 
         if (typeof jdenticon !== "undefined") {
