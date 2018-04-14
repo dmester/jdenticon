@@ -43,9 +43,15 @@ function getCurrentConfig() {
     /**
      * Creates a lightness range.
      */
-    function lightness(configName, defaultMin, defaultMax) {
-        var range = lightnessConfig[configName] instanceof Array ? lightnessConfig[configName] : [defaultMin, defaultMax];
+    function lightness(configName, defaultRange) {
+        var range = lightnessConfig[configName];
         
+        // Check if the lightness range is an array-like object. This way we ensure the
+        // array contain two values at the same time.
+        if (!(range && range.length > 1)) {
+            range = defaultRange;
+        }
+
         /**
          * Gets a lightness relative the specified value in the specified lightness range.
          */
@@ -85,8 +91,8 @@ function getCurrentConfig() {
         hue: hueFunction,
         colorSaturation: typeof colorSaturation == "number" ? colorSaturation : 0.5,
         grayscaleSaturation: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
-        colorLightness: lightness("color", 0.4, 0.8),
-        grayscaleLightness: lightness("grayscale", 0.3, 0.9),
+        colorLightness: lightness("color", [0.4, 0.8]),
+        grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
         backColor: color.parse(backColor)
     }
 }
