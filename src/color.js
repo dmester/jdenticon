@@ -36,7 +36,7 @@ var color = {
         return "#" + decToHex(r) + decToHex(g) + decToHex(b);
     },
     /**
-     * @param {any} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+     * @param {string} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
      */
     parse: function (color) {
         if (/^#[0-9a-f]{3,8}$/i.test(color)) {

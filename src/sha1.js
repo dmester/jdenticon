@@ -7,12 +7,12 @@
 
 /**
  * Computes a SHA1 hash for any value and returns it as a hexadecimal string.
- * @param {any} message 
+ * @param {string} message 
  */
 function sha1(message) {
     /**
      * Converts an array of 32-bit unsigned numbers to a hexadecimal string in big endian format.
-     * @param {Number[]} words
+     * @param {Array<number>} words
      */
     function wordsToHexString(words) {
         var hashOctets = [];
@@ -30,7 +30,7 @@ function sha1(message) {
     
     /**
      * Converts the specified message to a sequence of UTF8 encoded and padded 64 byte blocks.
-     * @param {any} message  Any value that will be padded to 64 byte blocks.
+     * @param {string} message  Any value that will be padded to 64 byte blocks.
      */
     function getBlocks(message) {
         var percentEncoded = encodeURI(message),
@@ -104,8 +104,8 @@ function sha1(message) {
 
     /**
      * Rotates the value a specified number of bits to the left.
-     * @param {Number} value  Value to rotate
-     * @param {Number} shift  Bit count to shift.
+     * @param {number} value  Value to rotate
+     * @param {number} shift  Bit count to shift.
      */
     function rotl(value, shift) {
         return (value << shift) | (value >>> (32 - shift));
@@ -113,7 +113,7 @@ function sha1(message) {
     
     /**
      * Computes a SHA1 hash for the specified array of 64 byte blocks.
-     * @param {Number[][]} blocks 
+     * @param {Array<Array<number>>} blocks 
      */
     function computeHash(blocks) {
         var a = 0x67452301,

@@ -9,6 +9,7 @@ const color = require("./color");
 
 /**
  * Renderer redirecting drawing commands to a canvas context.
+ * @param {number=} size
  * @private
  * @constructor
  */

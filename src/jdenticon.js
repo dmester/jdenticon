@@ -115,7 +115,7 @@ function computeHash(value) {
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
- * @param {(string|HTMLElement)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
  * @param {string=} hash - Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
  * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
  */
@@ -177,7 +177,7 @@ function update(el, hash, padding) {
 /**
  * Draws an identicon to a context.
  * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
- * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  */
 function drawIcon(ctx, hashOrValue, size, padding) {
@@ -193,7 +193,7 @@ function drawIcon(ctx, hashOrValue, size, padding) {
 
 /**
  * Draws an identicon as an SVG string.
- * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
  * @returns {string} SVG string

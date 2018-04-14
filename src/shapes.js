@@ -32,17 +32,17 @@ var shapes = {
         /** @param {Graphics} g */
         function (g, cell, index) { 
             var inner = cell * 0.1,
-                inner = 
-                    inner > 1 ? (0 | inner) : // large icon => truncate decimals
-                    inner > 0.5 ? 1 :         // medium size icon => fixed width
-                    inner,                    // small icon => anti-aliased border
-                
                 // Use fixed outer border widths in small icons to ensure the border is drawn
                 outer = 
                     cell < 6 ? 1 :
                     cell < 8 ? 2 :
                     (0 | (cell * 0.25));
-            
+                
+            inner = 
+                inner > 1 ? (0 | inner) : // large icon => truncate decimals
+                inner > 0.5 ? 1 :         // medium size icon => fixed width
+                inner;                    // small icon => anti-aliased border
+
             g.addRectangle(outer, outer, cell - inner - outer, cell - inner - outer);
         },
         /** @param {Graphics} g */
@@ -92,16 +92,16 @@ var shapes = {
         /** @param {Graphics} g */
         function (g, cell, index) {
             var inner = cell * 0.14,
-                inner = 
-                    cell < 8 ? inner : // small icon => anti-aliased border
-                    (0 | inner),       // large icon => truncate decimals
-                
                 // Use fixed outer border widths in small icons to ensure the border is drawn
                 outer = 
                     cell < 4 ? 1 :
                     cell < 6 ? 2 :
                     (0 | (cell * 0.35));
-                    
+
+            inner = 
+                cell < 8 ? inner : // small icon => anti-aliased border
+                (0 | inner);       // large icon => truncate decimals
+
             g.addRectangle(0, 0, cell, cell);
             g.addRectangle(outer, outer, cell - outer - inner, cell - outer - inner, true);
         },
