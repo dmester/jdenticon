@@ -48,8 +48,35 @@ function getCurrentConfig() {
             return value < 0 ? 0 : value > 1 ? 1 : value;
         };
     }
+
+    /**
+     * Gets a hue allowed by the configured hue restriction,
+     * provided the originally computed hue.
+     */
+    function hueFunction(originalHue) {
+        var hueConfig = configObject["hues"], hue;
+        
+        // Check if 'hues' is an array-like object. This way we also ensure that
+        // the array is not empty, which would mean no hue restriction.
+        if (hueConfig && hueConfig.length > 0) {
+            // originalHue is in the range [0, 1]
+            // Multiply with 0.999 to change the range to [0, 1) and then truncate the index.
+            hue = hueConfig[0 | (0.999 * originalHue * hueConfig.length)];
+        }
+
+        return typeof hue == "number" ?
+            
+            // A hue was specified. We need to convert the hue from
+            // degrees on any turn - e.g. 746° is a perfectly valid hue -
+            // to turns in the range [0, 1).
+            ((((hue / 360) % 1) + 1) % 1) :
+
+            // No hue configured => use original hue
+            originalHue;
+    }
         
     return {
+        hue: hueFunction,
         saturation: typeof saturation == "number" ? saturation : 0.5,
         colorLightness: lightness("color", 0.4, 0.8),
         grayscaleLightness: lightness("grayscale", 0.3, 0.9),

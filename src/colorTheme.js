@@ -11,6 +11,7 @@ const color = require("./color");
  * Gets a set of identicon color candidates for a specified hue and config.
  */
 function colorTheme(hue, config) {
+    hue = config.hue(hue);
     return [
         // Dark gray
         color.hsl(0, 0, config.grayscaleLightness(0)),
