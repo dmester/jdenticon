@@ -6,6 +6,22 @@
 "use strict";
 
 /**
+ * Creates a new element and adds it to the specified parent.
+ * @param {Element} parentNode
+ * @param {string} name
+ * @param {...*} keyValuePairs
+ */
+function SvgElement_append(parentNode, name, keyValuePairs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", name);
+    
+    for (var i = 2; i + 1 < arguments.length; i += 2) {
+        el.setAttribute(arguments[i], arguments[i + 1]);
+    }
+
+    parentNode.appendChild(el);
+}
+
+/**
  * Renderer producing SVG output.
  * @private
  * @constructor
@@ -39,12 +55,11 @@ SvgElement.prototype = {
      */
     setBackground: function (fillColor, opacity) {
         if (opacity) {
-            var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            rect.setAttribute("width", "100%");
-            rect.setAttribute("height", "100%");
-            rect.setAttribute("fill", fillColor);
-            rect.setAttribute("opacity", opacity.toFixed(2));
-            this._el.appendChild(rect);
+            SvgElement_append(this._el, "rect",
+                "width", "100%",
+                "height", "100%",
+                "fill", fillColor,
+                "opacity", opacity);
         }
     },
     /**
@@ -53,10 +68,9 @@ SvgElement.prototype = {
      * @param {string} dataString The SVG path data string.
      */
     append: function (color, dataString) {
-        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("fill", color);
-        path.setAttribute("d", dataString);
-        this._el.appendChild(path);
+        SvgElement_append(this._el, "path",
+            "fill", color,
+            "d", dataString);
     }
 };
 
