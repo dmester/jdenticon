@@ -14,15 +14,15 @@ function colorTheme(hue, config) {
     hue = config.hue(hue);
     return [
         // Dark gray
-        color.hsl(0, 0, config.grayscaleLightness(0)),
+        color.correctedHsl(hue, config.grayscaleSaturation, config.grayscaleLightness(0)),
         // Mid color
-        color.correctedHsl(hue, config.saturation, config.colorLightness(0.5)),
+        color.correctedHsl(hue, config.colorSaturation, config.colorLightness(0.5)),
         // Light gray
-        color.hsl(0, 0, config.grayscaleLightness(1)),
+        color.correctedHsl(hue, config.grayscaleSaturation, config.grayscaleLightness(1)),
         // Light color
-        color.correctedHsl(hue, config.saturation, config.colorLightness(1)),
+        color.correctedHsl(hue, config.colorSaturation, config.colorLightness(1)),
         // Dark color
-        color.correctedHsl(hue, config.saturation, config.colorLightness(0))
+        color.correctedHsl(hue, config.colorSaturation, config.colorLightness(0))
     ];
 }
 

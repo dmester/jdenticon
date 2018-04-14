@@ -31,7 +31,13 @@ var /** @const */
 function getCurrentConfig() {
     var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
         lightnessConfig = configObject["lightness"] || { },
-        saturation = configObject["saturation"],
+        
+        // In versions < 2.1.0 there was no grayscale saturation -
+        // saturation was the color saturation.
+        saturation = configObject["saturation"] || { },
+        colorSaturation = "color" in saturation ? saturation["color"] : saturation,
+        grayscaleSaturation = saturation["grayscale"],
+
         backColor = configObject["backColor"];
     
     /**
@@ -77,7 +83,8 @@ function getCurrentConfig() {
         
     return {
         hue: hueFunction,
-        saturation: typeof saturation == "number" ? saturation : 0.5,
+        colorSaturation: typeof colorSaturation == "number" ? colorSaturation : 0.5,
+        grayscaleSaturation: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
         colorLightness: lightness("color", 0.4, 0.8),
         grayscaleLightness: lightness("grayscale", 0.3, 0.9),
         backColor: color.parse(backColor)
