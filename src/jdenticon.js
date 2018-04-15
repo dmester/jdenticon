@@ -211,10 +211,10 @@ function jdenticon() {
  */
 function jdenticonStartup() {
     var replaceMode = (jdenticon["config"] || global["jdenticon_config"] || { })["replaceMode"];
-    if (replaceMode != "none") {
+    if (replaceMode != "never") {
         jdenticon();
         
-        if (replaceMode == "continuous") {
+        if (replaceMode == "observe") {
             observer(update);
         }
     }
