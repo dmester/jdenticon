@@ -2,8 +2,6 @@
  * Jdenticon
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
- * 
- * This file contains the public interface of Jdenticon.
  */
 "use strict";
 
@@ -19,11 +17,14 @@ var dom = {
     
     /** @const */
     VALUE_ATTRIBUTE: "data-jdenticon-value",
-    
+
     supportsQuerySelectorAll: typeof document !== "undefined" && "querySelectorAll" in document,
 
     getIdenticonType: dom_getIdenticonType
 };
+
+/** @const */
+dom.ICON_SELECTOR = "[" + dom.HASH_ATTRIBUTE +"],[" + dom.VALUE_ATTRIBUTE +"]";
 
 function dom_getIdenticonType(el) {
     if (el) {

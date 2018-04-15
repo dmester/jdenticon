@@ -162,8 +162,6 @@ function update(el, hash, padding) {
     
     // Draw icon
     iconGenerator(renderer, hash, 0, 0, renderer.size, padding, getCurrentConfig());
-
-    observer.observeAttributes(el);
 }
 
 /**
@@ -204,20 +202,21 @@ function toSvg(hashOrValue, size, padding) {
  */
 function jdenticon() {
     if (dom.supportsQuerySelectorAll) {
-        update("[" + dom.HASH_ATTRIBUTE + "],[" + dom.VALUE_ATTRIBUTE + "]");
+        update(dom.ICON_SELECTOR);
     }
 }
 
+/**
+ * This function is called once upon page load.
+ */
 function jdenticonStartup() {
     var replaceMode = (jdenticon["config"] || global["jdenticon_config"] || { })["replaceMode"];
     if (replaceMode != "none") {
-        if (replaceMode == "continuous") {
-            observer.initObserver();
-        }
-
         jdenticon();
-        observer.updateCallback = update;
-        observer.observeNewElements();
+        
+        if (replaceMode == "continuous") {
+            observer(update);
+        }
     }
 }
 
