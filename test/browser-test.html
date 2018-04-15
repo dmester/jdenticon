@@ -148,6 +148,17 @@
     </figure>
     
     <figure>
+        <span id="placeholder-canvas-Jdenticon-dynamic"></span>
+        <figcaption><strong>Canvas</strong> dynamic</figcaption>
+    </figure>
+    
+    <figure>
+        <canvas id="canvas-Jdenticon-resize" data-jdenticon-value="Icon04" width="10" height="10"></canvas>
+        <figcaption><strong>Canvas</strong> resize</figcaption>
+    </figure>
+    
+    
+    <figure>
         <svg data-jdenticon-value="Icon04" width="100" height="100"></svg>
         <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
     </figure>
@@ -186,6 +197,18 @@
         <span id="svg-Jdenticon-toSvg-value"></span>
         <figcaption><strong>SVG</strong> toSvg(value)</figcaption>
     </figure>
+    
+    
+    <figure>
+        <span id="placeholder-svg-Jdenticon-dynamic"></span>
+        <figcaption><strong>SVG</strong> dynamic</figcaption>
+    </figure>
+    
+    <figure>
+        <svg id="svg-Jdenticon-resize" data-jdenticon-value="Icon04" width="10" height="10"></svg>
+        <figcaption><strong>SVG</strong> resize</figcaption>
+    </figure>
+    
     
     <h1>"Icon2" - Should be centered vertically and horizontally</h1>
     <figure>
@@ -231,7 +254,7 @@
     <script>
     var jdenticon_config = {
         backColor: "#00f1",
-        replaceMode: "continuous"
+        replaceMode: "observe"
     };
     </script>
     <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
@@ -239,8 +262,6 @@
     <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
     <script src="https://cdn.jsdelivr.net/requirejs/2.1.22/require.min.js"></script>
     <script>
-
-
 
         function init(jdenticon) {
             jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon04");
@@ -274,22 +295,18 @@
                 versionInfo.className = versionInfo.className.replace("version-info--error", "");
             }
             
-            setTimeout(function() {
-                var child = document.createElement("span");
-                child.innerHTML ="<svg data-jdenticon-value=\"hejsan\" id=\"gfdgfdgd\" width=\"55\" height=\"55\"></svg> <canvas data-jdenticon-value=\"hejsan\" id=\"gfdgfdgd2\" width=\"80\" height=\"80\"></canvas>";
-                document.body.appendChild(child);
+            setTimeout(function () {
+                // Dynamic icons
+                document.getElementById("placeholder-canvas-Jdenticon-dynamic").innerHTML = 
+                    '<canvas data-jdenticon-value="Icon04" width="100" height="100"> Error </canvas>';
+                document.getElementById("canvas-Jdenticon-resize").setAttribute("width", "100");
+                document.getElementById("canvas-Jdenticon-resize").setAttribute("height", "100");
                 
-                setInterval(function() {
-                    document.getElementById("gfdgfdgd").setAttribute("data-jdenticon-value", new Date().valueOf().toString());
-                    document.getElementById("gfdgfdgd2").setAttribute("data-jdenticon-value", new Date().valueOf().toString() + "-");
-                }, 5000);
-                var w = 70;
-                setInterval(function() {
-                    document.getElementById("gfdgfdgd2").setAttribute("width", w += 10);
-                    document.getElementById("gfdgfdgd2").setAttribute("height", w += 10);
-                }, 8000);
-            }, 5000);
-            
+                document.getElementById("placeholder-svg-Jdenticon-dynamic").innerHTML = 
+                    '<svg data-jdenticon-value="Icon04" width="100" height="100"> Error </svg>';
+                document.getElementById("svg-Jdenticon-resize").setAttribute("width", "100");
+                document.getElementById("svg-Jdenticon-resize").setAttribute("height", "100");
+            }, 1000);
             
         }
 
