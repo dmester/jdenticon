@@ -6,6 +6,7 @@
 "use strict";
 
 const SvgPath = require("./svgPath");
+const parseHex = require("./parseHex");
 
 /**
  * Renderer producing SVG output.
@@ -25,7 +26,7 @@ SvgRenderer.prototype = {
      */
     setBackground: function (fillColor) {
         var match = /^(#......)(..)?/.exec(fillColor),
-            opacity = match[2] ? parseInt(match[2], 16) / 255 : 1;
+            opacity = match[2] ? parseHex(match[2], 0) / 255 : 1;
         this._target.setBackground(match[1], opacity);
     },
     /**

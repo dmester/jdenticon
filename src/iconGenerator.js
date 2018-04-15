@@ -9,6 +9,7 @@ const Transform = require("./transform");
 const Graphics = require("./graphics");
 const shapes = require("./shapes");
 const colorTheme = require("./colorTheme");
+const parseHex = require("./parseHex");
      
 /**
  * Draws an identicon to a specified renderer.
@@ -35,8 +36,8 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     y += 0 | (padding + size / 2 - cell * 2);
 
     function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
-        var r = rotationIndex ? parseInt(hash.charAt(rotationIndex), 16) : 0,
-            shape = shapes[parseInt(hash.charAt(index), 16) % shapes.length],
+        var r = rotationIndex ? parseHex(hash, rotationIndex, 1) : 0,
+            shape = shapes[parseHex(hash, index, 1) % shapes.length],
             i;
         
         renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
@@ -50,7 +51,7 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     }
 
     // AVAILABLE COLORS
-    var hue = parseInt(hash.substr(-7), 16) / 0xfffffff,
+    var hue = parseHex(hash, -7) / 0xfffffff,
     
         // Available colors for this icon
         availableColors = colorTheme(hue, config),
@@ -70,7 +71,7 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     }
 
     for (var i = 0; i < 3; i++) {
-        index = parseInt(hash.charAt(8 + i), 16) % availableColors.length;
+        index = parseHex(hash, 8 + i, 1) % availableColors.length;
         if (isDuplicate([0, 4]) || // Disallow dark gray and dark color combo
             isDuplicate([2, 3])) { // Disallow light gray and light color combo
             index = 1;

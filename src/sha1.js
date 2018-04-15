@@ -5,6 +5,8 @@
  */
 "use strict";
 
+const parseHex = require("./parseHex");
+
 /**
  * Computes a SHA1 hash for any value and returns it as a hexadecimal string.
  * @param {string} message 
@@ -47,7 +49,7 @@ function sha1(message) {
         // UTF8 encode message
         for (i = 0; i < percentEncoded.length; i++) {
             if (percentEncoded[i] == "%") {
-                b = parseInt(percentEncoded.substr(i + 1, 2), 16);
+                b = parseHex(percentEncoded, i + 1, 2);
                 i += 2;
             }
             else {

@@ -5,6 +5,8 @@
  */
 "use strict";
 
+const parseHex = require("./parseHex");
+
 function decToHex(v) {
     v |= 0; // Ensure integer value
     return v < 0 ? "00" :
@@ -56,13 +58,13 @@ var color = {
      * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
      */
     toCss3: function (hexColor) {
-        var a = parseInt(hexColor.substr(7, 2), 16);
+        var a = parseHex(hexColor, 7, 2);
         if (isNaN(a)) {
             return hexColor;
         }
-        var r = parseInt(hexColor.substr(1, 2), 16),
-            g = parseInt(hexColor.substr(3, 2), 16),
-            b = parseInt(hexColor.substr(5, 2), 16);
+        var r = parseHex(hexColor, 1, 2),
+            g = parseHex(hexColor, 3, 2),
+            b = parseHex(hexColor, 5, 2);
         return "rgba(" + r + "," + g + "," + b + "," + (a / 255).toFixed(2) + ")";
     },
     /**
