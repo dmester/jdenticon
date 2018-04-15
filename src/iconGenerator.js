@@ -21,8 +21,8 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
         renderer.setBackground(config.backColor);
     }
     
-    // Calculate padding
-    padding = (size * (padding === undefined ? 0.08 : padding)) | 0;
+    // Calculate padding and round to nearest integer
+    padding = (0.5 + size * (padding === undefined ? 0.08 : padding)) | 0;
     size -= padding * 2;
     
     var graphics = new Graphics(renderer);
