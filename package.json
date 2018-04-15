@@ -13,6 +13,8 @@
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
+    "gulp-replace-with-sourcemaps": "^0.7.1",
+    "gulp-sourcemaps": "^2.6.4",
     "gulp-wrap": "^0.11.0",
     "gulp-zip": "^3.0.2",
     "module-deps": "^4.1.1",

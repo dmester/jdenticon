@@ -2,28 +2,38 @@
  * Jdenticon
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
- * 
- * This file contains the public interface of Jdenticon.
  */
 "use strict";
 
-const gulp     = require("gulp"),
-      del      = require("del"),
-      rename   = require("gulp-rename"),
-      closure  = require('google-closure-compiler-js').gulp(),
-      zip      = require("gulp-zip"),
-      replace  = require("gulp-replace"),
-      wrap     = require("gulp-wrap"),
-      exec     = require("child_process").exec,
-      merge    = require("./build/mergeRequire"),
-      pack     = require("./package.json");
+const gulp       = require("gulp"),
+      del        = require("del"),
+      fs         = require("fs"),
+      rename     = require("gulp-rename"),
+      closure    = require('google-closure-compiler-js').gulp(),
+      zip        = require("gulp-zip"),
+      replace    = require("gulp-replace"),
+      replacejs  = require('gulp-replace-with-sourcemaps'),
+      wrap       = require("gulp-wrap"),
+      exec       = require("child_process").exec,
+      merge      = require("./build/mergeRequire"),
+      pack       = require("./package.json"),
+      sourcemaps = require('gulp-sourcemaps');
+
+function getWrapper(source, placeholder) {
+    return fs.readFileSync(source)
+        .toString()
+        .replace(/<%=contents%>/, placeholder)
+        .replace(/\{version\}/g, pack.version)
+        .replace(/\{year\}/g, new Date().getFullYear())
+        .replace(/\{date\}/g, new Date().toISOString());
+}
 
 gulp.task("clean", function (cb) {
     del(["./~jdenticon.nuspec", "./obj"], cb);
 });
 
 gulp.task("build", ["clean"], function () {
-    return gulp.src("./src/jdenticon.js")
+    return gulp.src("./src/jdenticon.js")   
         .pipe(merge(function (source) {
             // Remove license banner
             source = source.replace(/^\/\*(?:[\s\S]*?)\*\//, "");
@@ -44,35 +54,42 @@ gulp.task("build", ["clean"], function () {
         .pipe(replace(/\/\/\s*\<debug\>[\s\S]*?\/\/\s*\<\/debug\>/g, ""))
         
         // Replace variables
-        .pipe(wrap({ src: "./template.js" }))
+        .pipe(wrap(getWrapper("./template.js", "<%=contents%>")))
         .pipe(replace(/\{version\}/g, pack.version))
-        .pipe(replace(/\{year\}/g, new Date().getFullYear()))
-        .pipe(replace(/\{date\}/g, new Date().toISOString()))
         
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-" + pack.version; path.extname = ".js" }))
         .pipe(gulp.dest("obj"))
+
+        // Prepare for minification
+        .pipe(sourcemaps.init())
+        
+        // Closure does not know that ELEMENT_NODE is a constant. Replace it before passing it on to Closure.
+        .pipe(replacejs(/Node\.ELEMENT_NODE/g, "1"))
         
         // Minified file
         .pipe(closure({ 
             compilation_level: "ADVANCED_OPTIMIZATIONS" ,
             rewritePolyfills: false,
             createSourceMap: true,
+            outputWrapper: getWrapper("./template.min.js", "%output%"),
             externs: [
                 { src: "var module; function define(deps, cb) { }" }
             ],
         }))
-        .pipe(wrap({ src: "./template.min.js" }))
-        .pipe(replace(/\{version\}/g, pack.version))
-        .pipe(replace(/\{year\}/g, new Date().getFullYear()))
-        .pipe(replace(/\{date\}/g, new Date().toISOString()))
-        
+
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".min.js" }))
+        .pipe(sourcemaps.write('.', { 
+            mapSources: (path) => "jdenticon.js"
+        }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-" + pack.version; path.extname = ".min.js" }))
+        .pipe(sourcemaps.write('.', { 
+            mapSources: (path) => `jdenticon-${pack.version}.js`
+        }))
         .pipe(gulp.dest("obj"));
 });
 
