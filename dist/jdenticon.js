@@ -1,8 +1,8 @@
 /**
- * Jdenticon 2.0.0
+ * Jdenticon 2.1.0
  * http://jdenticon.com
  *  
- * Built: 2018-03-12T19:39:43.855Z
+ * Built: 2018-04-15T17:32:59.846Z
  *
  * Copyright (c) 2014-2018 Daniel Mester Pirttijärvi
  *
@@ -48,6 +48,22 @@
     "use strict";
 
 /**
+ * Creates a new element and adds it to the specified parent.
+ * @param {Element} parentNode
+ * @param {string} name
+ * @param {...*} keyValuePairs
+ */
+function SvgElement_append(parentNode, name, keyValuePairs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", name);
+    
+    for (var i = 2; i + 1 < arguments.length; i += 2) {
+        el.setAttribute(arguments[i], arguments[i + 1]);
+    }
+
+    parentNode.appendChild(el);
+}
+
+/**
  * Renderer producing SVG output.
  * @private
  * @constructor
@@ -81,12 +97,11 @@ SvgElement.prototype = {
      */
     setBackground: function (fillColor, opacity) {
         if (opacity) {
-            var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            rect.setAttribute("width", "100%");
-            rect.setAttribute("height", "100%");
-            rect.setAttribute("fill", fillColor);
-            rect.setAttribute("opacity", opacity.toFixed(2));
-            this._el.appendChild(rect);
+            SvgElement_append(this._el, "rect",
+                "width", "100%",
+                "height", "100%",
+                "fill", fillColor,
+                "opacity", opacity);
         }
     },
     /**
@@ -95,23 +110,103 @@ SvgElement.prototype = {
      * @param {string} dataString The SVG path data string.
      */
     append: function (color, dataString) {
-        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("fill", color);
-        path.setAttribute("d", dataString);
-        this._el.appendChild(path);
+        SvgElement_append(this._el, "path",
+            "fill", color,
+            "d", dataString);
     }
 };
 
 
 
 /**
+ * Renderer producing SVG output.
+ * @private
+ * @constructor
+ */
+function SvgWriter(size) {
+    this.size = size;
+    this._s =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
+        size + '" height="' + size + '" viewBox="0 0 ' + 
+        size + ' ' + size + '" preserveAspectRatio="xMidYMid meet">';
+}
+SvgWriter.prototype = {
+    /**
+     * Fills the background with the specified color.
+     * @param {string} fillColor  Fill color on the format #rrggbb.
+     * @param {number} opacity  Opacity in the range [0.0, 1.0].
+     */
+    setBackground: function (fillColor, opacity) {
+        if (opacity) {
+            this._s += '<rect width="100%" height="100%" fill="' + 
+                fillColor + '" opacity="' + opacity.toFixed(2) + '"/>';
+        }
+    },
+    /**
+     * Writes a path to the SVG string.
+     * @param {string} color Fill color on format #rrggbb.
+     * @param {string} dataString The SVG path data string.
+     */
+    append: function (color, dataString) {
+        this._s += 
+            '<path fill="' + color + '" d="' + dataString + '"/>';
+    },
+    /**
+     * Gets the rendered image as an SVG string.
+     */
+    toString: function () {
+        return this._s + "</svg>";
+    }
+};
+
+
+
+var dom = {
+    /** @const */
+    ICON_TYPE_SVG: 1,
+
+    /** @const */
+    ICON_TYPE_CANVAS: 2,
+    
+    /** @const */
+    HASH_ATTRIBUTE: "data-jdenticon-hash",
+    
+    /** @const */
+    VALUE_ATTRIBUTE: "data-jdenticon-value",
+
+    supportsQuerySelectorAll: typeof document !== "undefined" && "querySelectorAll" in document,
+
+    getIdenticonType: dom_getIdenticonType
+};
+
+/** @const */
+dom.ICON_SELECTOR = "[" + dom.HASH_ATTRIBUTE +"],[" + dom.VALUE_ATTRIBUTE +"]";
+
+function dom_getIdenticonType(el) {
+    if (el) {
+        var tagName = el["tagName"];
+
+        if (/svg/i.test(tagName)) {
+            return dom.ICON_TYPE_SVG;
+        }
+
+        if (/canvas/i.test(tagName) && "getContext" in el) {
+            return dom.ICON_TYPE_CANVAS;
+        }
+    }
+}
+
+
+
+
+/**
  * Computes a SHA1 hash for any value and returns it as a hexadecimal string.
- * @param {any} message 
+ * @param {string} message 
  */
 function sha1(message) {
     /**
      * Converts an array of 32-bit unsigned numbers to a hexadecimal string in big endian format.
-     * @param {Number[]} words
+     * @param {Array<number>} words
      */
     function wordsToHexString(words) {
         var hashOctets = [];
@@ -129,7 +224,7 @@ function sha1(message) {
     
     /**
      * Converts the specified message to a sequence of UTF8 encoded and padded 64 byte blocks.
-     * @param {any} message  Any value that will be padded to 64 byte blocks.
+     * @param {string} message  Any value that will be padded to 64 byte blocks.
      */
     function getBlocks(message) {
         var percentEncoded = encodeURI(message),
@@ -146,7 +241,7 @@ function sha1(message) {
         // UTF8 encode message
         for (i = 0; i < percentEncoded.length; i++) {
             if (percentEncoded[i] == "%") {
-                b = parseInt(percentEncoded.substr(i + 1, 2), 16);
+                b = parseHex(percentEncoded, i + 1, 2);
                 i += 2;
             }
             else {
@@ -203,8 +298,8 @@ function sha1(message) {
 
     /**
      * Rotates the value a specified number of bits to the left.
-     * @param {Number} value  Value to rotate
-     * @param {Number} shift  Bit count to shift.
+     * @param {number} value  Value to rotate
+     * @param {number} shift  Bit count to shift.
      */
     function rotl(value, shift) {
         return (value << shift) | (value >>> (32 - shift));
@@ -212,7 +307,7 @@ function sha1(message) {
     
     /**
      * Computes a SHA1 hash for the specified array of 64 byte blocks.
-     * @param {Number[][]} blocks 
+     * @param {Array<Array<number>>} blocks 
      */
     function computeHash(blocks) {
         var a = 0x67452301,
@@ -267,147 +362,10 @@ function sha1(message) {
 
 
 
-/**
- * Renderer producing SVG output.
- * @private
- * @constructor
- */
-function SvgWriter(size) {
-    this.size = size;
-    this._s =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
-        size + '" height="' + size + '" viewBox="0 0 ' + 
-        size + ' ' + size + '" preserveAspectRatio="xMidYMid meet">';
-}
-SvgWriter.prototype = {
-    /**
-     * Fills the background with the specified color.
-     * @param {string} fillColor  Fill color on the format #rrggbb.
-     * @param {number} opacity  Opacity in the range [0.0, 1.0].
-     */
-    setBackground: function (fillColor, opacity) {
-        if (opacity) {
-            this._s += '<rect width="100%" height="100%" fill="' + 
-                fillColor + '" opacity="' + opacity.toFixed(2) + '"/>';
-        }
-    },
-    /**
-     * Writes a path to the SVG string.
-     * @param {string} color Fill color on format #rrggbb.
-     * @param {string} dataString The SVG path data string.
-     */
-    append: function (color, dataString) {
-        this._s += 
-            '<path fill="' + color + '" d="' + dataString + '"/>';
-    },
-    /**
-     * Gets the rendered image as an SVG string.
-     */
-    toString: function () {
-        return this._s + "</svg>";
-    }
-};
-
-
-
-function decToHex(v) {
-    v |= 0; // Ensure integer value
-    return v < 0 ? "00" :
-        v < 16 ? "0" + v.toString(16) :
-        v < 256 ? v.toString(16) :
-        "ff";
-}
-
-function hueToRgb(m1, m2, h) {
-    h = h < 0 ? h + 6 : h > 6 ? h - 6 : h;
-    return decToHex(255 * (
-        h < 1 ? m1 + (m2 - m1) * h :
-        h < 3 ? m2 :
-        h < 4 ? m1 + (m2 - m1) * (4 - h) :
-        m1));
-}
-    
-/**
- * Functions for converting colors to hex-rgb representations.
- * @private
- */
-var color = {
-    /**
-     * @param {number} r Red channel [0, 255]
-     * @param {number} g Green channel [0, 255]
-     * @param {number} b Blue channel [0, 255]
-     */
-    rgb: function (r, g, b) {
-        return "#" + decToHex(r) + decToHex(g) + decToHex(b);
-    },
-    /**
-     * @param {any} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
-     */
-    parse: function (color) {
-        if (/^#[0-9a-f]{3,8}$/i.test(color)) {
-            if (color.length < 6) {
-                var r = color[1],
-                    g = color[2],
-                    b = color[3],
-                    a = color[4] || "";
-                return "#" + r + r + g + g + b + b + a + a;
-            }
-            if (color.length == 7 || color.length > 8) {
-                return color;
-            }
-        }
-    },
-    /**
-     * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
-     */
-    toCss3: function (hexColor) {
-        var a = parseInt(hexColor.substr(7, 2), 16);
-        if (isNaN(a)) {
-            return hexColor;
-        }
-        var r = parseInt(hexColor.substr(1, 2), 16),
-            g = parseInt(hexColor.substr(3, 2), 16),
-            b = parseInt(hexColor.substr(5, 2), 16);
-        return "rgba(" + r + "," + g + "," + b + "," + (a / 255).toFixed(2) + ")";
-    },
-    /**
-     * @param h Hue [0, 1]
-     * @param s Saturation [0, 1]
-     * @param l Lightness [0, 1]
-     */
-    hsl: function (h, s, l) {
-        // Based on http://www.w3.org/TR/2011/REC-css3-color-20110607/#hsl-color
-        if (s == 0) {
-            var partialHex = decToHex(l * 255);
-            return "#" + partialHex + partialHex + partialHex;
-        }
-        else {
-            var m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s,
-                m1 = l * 2 - m2;
-            return "#" +
-                hueToRgb(m1, m2, h * 6 + 2) +
-                hueToRgb(m1, m2, h * 6) +
-                hueToRgb(m1, m2, h * 6 - 2);
-        }
-    },
-    // This function will correct the lightness for the "dark" hues
-    correctedHsl: function (h, s, l) {
-        // The corrector specifies the perceived middle lightnesses for each hue
-        var correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
-            corrector = correctors[(h * 6 + 0.5) | 0];
-        
-        // Adjust the input lightness relative to the corrector
-        l = l < 0.5 ? l * corrector * 2 : corrector + (l - 0.5) * (1 - corrector) * 2;
-        
-        return color.hsl(h, s, l);
-    }
-};
-
-
-
 
 /**
  * Renderer redirecting drawing commands to a canvas context.
+ * @param {number=} size
  * @private
  * @constructor
  */
@@ -493,6 +451,307 @@ CanvasRenderer.prototype = {
 
 
 
+
+function decToHex(v) {
+    v |= 0; // Ensure integer value
+    return v < 0 ? "00" :
+        v < 16 ? "0" + v.toString(16) :
+        v < 256 ? v.toString(16) :
+        "ff";
+}
+
+function hueToRgb(m1, m2, h) {
+    h = h < 0 ? h + 6 : h > 6 ? h - 6 : h;
+    return decToHex(255 * (
+        h < 1 ? m1 + (m2 - m1) * h :
+        h < 3 ? m2 :
+        h < 4 ? m1 + (m2 - m1) * (4 - h) :
+        m1));
+}
+    
+/**
+ * Functions for converting colors to hex-rgb representations.
+ * @private
+ */
+var color = {
+    /**
+     * @param {number} r Red channel [0, 255]
+     * @param {number} g Green channel [0, 255]
+     * @param {number} b Blue channel [0, 255]
+     */
+    rgb: function (r, g, b) {
+        return "#" + decToHex(r) + decToHex(g) + decToHex(b);
+    },
+    /**
+     * @param {string} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+     */
+    parse: function (color) {
+        if (/^#[0-9a-f]{3,8}$/i.test(color)) {
+            if (color.length < 6) {
+                var r = color[1],
+                    g = color[2],
+                    b = color[3],
+                    a = color[4] || "";
+                return "#" + r + r + g + g + b + b + a + a;
+            }
+            if (color.length == 7 || color.length > 8) {
+                return color;
+            }
+        }
+    },
+    /**
+     * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
+     */
+    toCss3: function (hexColor) {
+        var a = parseHex(hexColor, 7, 2);
+        if (isNaN(a)) {
+            return hexColor;
+        }
+        var r = parseHex(hexColor, 1, 2),
+            g = parseHex(hexColor, 3, 2),
+            b = parseHex(hexColor, 5, 2);
+        return "rgba(" + r + "," + g + "," + b + "," + (a / 255).toFixed(2) + ")";
+    },
+    /**
+     * @param h Hue [0, 1]
+     * @param s Saturation [0, 1]
+     * @param l Lightness [0, 1]
+     */
+    hsl: function (h, s, l) {
+        // Based on http://www.w3.org/TR/2011/REC-css3-color-20110607/#hsl-color
+        if (s == 0) {
+            var partialHex = decToHex(l * 255);
+            return "#" + partialHex + partialHex + partialHex;
+        }
+        else {
+            var m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s,
+                m1 = l * 2 - m2;
+            return "#" +
+                hueToRgb(m1, m2, h * 6 + 2) +
+                hueToRgb(m1, m2, h * 6) +
+                hueToRgb(m1, m2, h * 6 - 2);
+        }
+    },
+    // This function will correct the lightness for the "dark" hues
+    correctedHsl: function (h, s, l) {
+        // The corrector specifies the perceived middle lightnesses for each hue
+        var correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
+            corrector = correctors[(h * 6 + 0.5) | 0];
+        
+        // Adjust the input lightness relative to the corrector
+        l = l < 0.5 ? l * corrector * 2 : corrector + (l - 0.5) * (1 - corrector) * 2;
+        
+        return color.hsl(h, s, l);
+    }
+};
+
+
+
+
+function observer(updateCallback) {
+    if (typeof MutationObserver != "undefined") {
+        var mutationObserver = new MutationObserver(function onmutation(mutations) {
+            for (var mutationIndex = 0; mutationIndex < mutations.length; mutationIndex++) {
+                var mutation = mutations[mutationIndex];
+                var addedNodes = mutation.addedNodes;
+        
+                for (var addedNodeIndex = 0; addedNodes && addedNodeIndex < addedNodes.length; addedNodeIndex++) {
+                    var addedNode = addedNodes[addedNodeIndex];
+        
+                    // Skip other types of nodes than element nodes, since they might not support
+                    // the querySelectorAll method => runtime error.
+                    if (addedNode.nodeType == Node.ELEMENT_NODE) {
+                        if (dom.getIdenticonType(addedNode)) {
+                            updateCallback(addedNode);
+                        }
+                        else {
+                            var icons = addedNode.querySelectorAll(dom.ICON_SELECTOR);
+                            for (var iconIndex = 0; iconIndex < icons.length; iconIndex++) {
+                                updateCallback(icons[iconIndex]);
+                            }
+                        }
+                    }
+                }
+                
+                if (mutation.type == "attributes" && dom.getIdenticonType(mutation.target)) {
+                    updateCallback(mutation.target);
+                }
+            }
+        });
+
+        mutationObserver.observe(document.body, { 
+            "childList": true, 
+            "attributes": true, 
+            "attributeFilter": [dom.VALUE_ATTRIBUTE, dom.HASH_ATTRIBUTE, "width", "height"], 
+            "subtree": true 
+        });
+    }
+}
+
+
+
+var shapes = {
+    center: [
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var k = cell * 0.42;
+            g.addPolygon([
+                0, 0,
+                cell, 0,
+                cell, cell - k * 2,
+                cell - k, cell,
+                0, cell
+            ]);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var w = 0 | (cell * 0.5), 
+                h = 0 | (cell * 0.8);
+            g.addTriangle(cell - w, 0, w, h, 2);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) { 
+            var s = 0 | (cell / 3);
+            g.addRectangle(s, s, cell - s, cell - s);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) { 
+            var inner = cell * 0.1,
+                // Use fixed outer border widths in small icons to ensure the border is drawn
+                outer = 
+                    cell < 6 ? 1 :
+                    cell < 8 ? 2 :
+                    (0 | (cell * 0.25));
+                
+            inner = 
+                inner > 1 ? (0 | inner) : // large icon => truncate decimals
+                inner > 0.5 ? 1 :         // medium size icon => fixed width
+                inner;                    // small icon => anti-aliased border
+
+            g.addRectangle(outer, outer, cell - inner - outer, cell - inner - outer);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) { 
+            var m = 0 | (cell * 0.15),
+                s = 0 | (cell * 0.5);
+            g.addCircle(cell - s - m, cell - s - m, s);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var inner = cell * 0.1,
+                outer = inner * 4;
+
+            // Align edge to nearest pixel in large icons
+            if (outer > 3) {
+                outer = 0 | outer;
+            }
+
+            g.addRectangle(0, 0, cell, cell);
+            g.addPolygon([
+                outer, outer,
+                cell - inner, outer,
+                outer + (cell - outer - inner) / 2, cell - inner
+            ], true);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addPolygon([
+                0, 0,
+                cell, 0,
+                cell, cell * 0.7,
+                cell * 0.4, cell * 0.4,
+                cell * 0.7, cell,
+                0, cell
+            ]);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addRectangle(0, 0, cell, cell / 2);
+            g.addRectangle(0, cell / 2, cell / 2, cell / 2);
+            g.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 1);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var inner = cell * 0.14,
+                // Use fixed outer border widths in small icons to ensure the border is drawn
+                outer = 
+                    cell < 4 ? 1 :
+                    cell < 6 ? 2 :
+                    (0 | (cell * 0.35));
+
+            inner = 
+                cell < 8 ? inner : // small icon => anti-aliased border
+                (0 | inner);       // large icon => truncate decimals
+
+            g.addRectangle(0, 0, cell, cell);
+            g.addRectangle(outer, outer, cell - outer - inner, cell - outer - inner, true);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var inner = cell * 0.12,
+                outer = inner * 3;
+
+            g.addRectangle(0, 0, cell, cell);
+            g.addCircle(outer, outer, cell - inner - outer, true);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var m = cell * 0.25;
+            g.addRectangle(0, 0, cell, cell);
+            g.addRhombus(m, m, cell - m, cell - m, true);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var m = cell * 0.4, s = cell * 1.2;
+            if (!index) {
+                g.addCircle(m, m, s);
+            }
+        }
+    ],
+    
+    outer: [
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addTriangle(0, 0, cell, cell, 0);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addTriangle(0, cell / 2, cell, cell / 2, 0);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            g.addRhombus(0, 0, cell, cell);
+        },
+        /** @param {Graphics} g */
+        function (g, cell, index) {
+            var m = cell / 6;
+            g.addCircle(m, m, cell - 2 * m);
+        }
+    ]
+};
+
+
+
+/**
+ * Parses a substring of the hash as a number.
+ * @param {number} startPosition 
+ * @param {number=} octets 
+ * @noinline
+ */
+function parseHex(hash, startPosition, octets) {
+    return parseInt(hash.substr(startPosition, octets), 16);
+}
+
+
+
 /**
  * Prepares a measure to be used as a measure in an SVG path, by
  * rounding the measure to a single decimal. This reduces the file
@@ -564,7 +823,7 @@ SvgRenderer.prototype = {
      */
     setBackground: function (fillColor) {
         var match = /^(#......)(..)?/.exec(fillColor),
-            opacity = match[2] ? parseInt(match[2], 16) / 255 : 1;
+            opacity = match[2] ? parseHex(match[2], 0) / 255 : 1;
         this._target.setBackground(match[1], opacity);
     },
     /**
@@ -602,151 +861,6 @@ SvgRenderer.prototype = {
             this._target.append(color, this._pathsByColor[color].dataString);
         }
     }
-};
-
-
-
-var shapes = {
-    center: [
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var k = cell * 0.42;
-            g.addPolygon([
-                0, 0,
-                cell, 0,
-                cell, cell - k * 2,
-                cell - k, cell,
-                0, cell
-            ]);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var w = 0 | (cell * 0.5), 
-                h = 0 | (cell * 0.8);
-            g.addTriangle(cell - w, 0, w, h, 2);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) { 
-            var s = 0 | (cell / 3);
-            g.addRectangle(s, s, cell - s, cell - s);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) { 
-            var inner = cell * 0.1,
-                inner = 
-                    inner > 1 ? (0 | inner) : // large icon => truncate decimals
-                    inner > 0.5 ? 1 :         // medium size icon => fixed width
-                    inner,                    // small icon => anti-aliased border
-                
-                // Use fixed outer border widths in small icons to ensure the border is drawn
-                outer = 
-                    cell < 6 ? 1 :
-                    cell < 8 ? 2 :
-                    (0 | (cell * 0.25));
-            
-            g.addRectangle(outer, outer, cell - inner - outer, cell - inner - outer);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) { 
-            var m = 0 | (cell * 0.15),
-                s = 0 | (cell * 0.5);
-            g.addCircle(cell - s - m, cell - s - m, s);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var inner = cell * 0.1,
-                outer = inner * 4;
-
-            g.addRectangle(0, 0, cell, cell);
-            g.addPolygon([
-                outer, 0 | outer,
-                cell - inner, 0 | outer,
-                outer + (cell - outer - inner) / 2, cell - inner
-            ], true);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addPolygon([
-                0, 0,
-                cell, 0,
-                cell, cell * 0.7,
-                cell * 0.4, cell * 0.4,
-                cell * 0.7, cell,
-                0, cell
-            ]);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addRectangle(0, 0, cell, cell / 2);
-            g.addRectangle(0, cell / 2, cell / 2, cell / 2);
-            g.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 1);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var inner = cell * 0.14,
-                inner = 
-                    cell < 8 ? inner : // small icon => anti-aliased border
-                    (0 | inner),       // large icon => truncate decimals
-                
-                // Use fixed outer border widths in small icons to ensure the border is drawn
-                outer = 
-                    cell < 4 ? 1 :
-                    cell < 6 ? 2 :
-                    (0 | (cell * 0.35));
-                    
-            g.addRectangle(0, 0, cell, cell);
-            g.addRectangle(outer, outer, cell - outer - inner, cell - outer - inner, true);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var inner = cell * 0.12,
-                outer = inner * 3;
-
-            g.addRectangle(0, 0, cell, cell);
-            g.addCircle(outer, outer, cell - inner - outer, true);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addTriangle(cell / 2, cell / 2, cell / 2, cell / 2, 3);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var m = cell * 0.25;
-            g.addRectangle(0, 0, cell, cell);
-            g.addRhombus(m, m, cell - m, cell - m, true);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var m = cell * 0.4, s = cell * 1.2;
-            if (!index) {
-                g.addCircle(m, m, s);
-            }
-        }
-    ],
-    
-    outer: [
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addTriangle(0, 0, cell, cell, 0);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addTriangle(0, cell / 2, cell, cell / 2, 0);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            g.addRhombus(0, 0, cell, cell);
-        },
-        /** @param {Graphics} g */
-        function (g, cell, index) {
-            var m = cell / 6;
-            g.addCircle(m, m, cell - 2 * m);
-        }
-    ]
 };
 
 
@@ -855,17 +969,18 @@ Graphics.prototype = {
  * Gets a set of identicon color candidates for a specified hue and config.
  */
 function colorTheme(hue, config) {
+    hue = config.hue(hue);
     return [
         // Dark gray
-        color.hsl(0, 0, config.grayscaleLightness(0)),
+        color.correctedHsl(hue, config.grayscaleSaturation, config.grayscaleLightness(0)),
         // Mid color
-        color.correctedHsl(hue, config.saturation, config.colorLightness(0.5)),
+        color.correctedHsl(hue, config.colorSaturation, config.colorLightness(0.5)),
         // Light gray
-        color.hsl(0, 0, config.grayscaleLightness(1)),
+        color.correctedHsl(hue, config.grayscaleSaturation, config.grayscaleLightness(1)),
         // Light color
-        color.correctedHsl(hue, config.saturation, config.colorLightness(1)),
+        color.correctedHsl(hue, config.colorSaturation, config.colorLightness(1)),
         // Dark color
-        color.correctedHsl(hue, config.saturation, config.colorLightness(0))
+        color.correctedHsl(hue, config.colorSaturation, config.colorLightness(0))
     ];
 }
 
@@ -933,8 +1048,8 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
         renderer.setBackground(config.backColor);
     }
     
-    // Calculate padding
-    padding = (size * (padding === undefined ? 0.08 : padding)) | 0;
+    // Calculate padding and round to nearest integer
+    padding = (0.5 + size * (padding === undefined ? 0.08 : padding)) | 0;
     size -= padding * 2;
     
     var graphics = new Graphics(renderer);
@@ -947,8 +1062,8 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     y += 0 | (padding + size / 2 - cell * 2);
 
     function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
-        var r = rotationIndex ? parseInt(hash.charAt(rotationIndex), 16) : 0,
-            shape = shapes[parseInt(hash.charAt(index), 16) % shapes.length],
+        var r = rotationIndex ? parseHex(hash, rotationIndex, 1) : 0,
+            shape = shapes[parseHex(hash, index, 1) % shapes.length],
             i;
         
         renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
@@ -962,7 +1077,7 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     }
 
     // AVAILABLE COLORS
-    var hue = parseInt(hash.substr(-7), 16) / 0xfffffff,
+    var hue = parseHex(hash, -7) / 0xfffffff,
     
         // Available colors for this icon
         availableColors = colorTheme(hue, config),
@@ -982,7 +1097,7 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     }
 
     for (var i = 0; i < 3; i++) {
-        index = parseInt(hash.charAt(8 + i), 16) % availableColors.length;
+        index = parseHex(hash, 8 + i, 1) % availableColors.length;
         if (isDuplicate([0, 4]) || // Disallow dark gray and dark color combo
             isDuplicate([2, 3])) { // Disallow light gray and light color combo
             index = 1;
@@ -1006,26 +1121,33 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
  
 
 
-var /** @const */
-    HASH_ATTRIBUTE = "data-jdenticon-hash",
-    VALUE_ATTRIBUTE = "data-jdenticon-value",
-    supportsQuerySelectorAll = typeof document !== "undefined" && "querySelectorAll" in document;
-
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
  */
 function getCurrentConfig() {
     var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
         lightnessConfig = configObject["lightness"] || { },
-        saturation = configObject["saturation"],
+        
+        // In versions < 2.1.0 there was no grayscale saturation -
+        // saturation was the color saturation.
+        saturation = configObject["saturation"] || { },
+        colorSaturation = "color" in saturation ? saturation["color"] : saturation,
+        grayscaleSaturation = saturation["grayscale"],
+
         backColor = configObject["backColor"];
     
     /**
      * Creates a lightness range.
      */
-    function lightness(configName, defaultMin, defaultMax) {
-        var range = lightnessConfig[configName] instanceof Array ? lightnessConfig[configName] : [defaultMin, defaultMax];
+    function lightness(configName, defaultRange) {
+        var range = lightnessConfig[configName];
         
+        // Check if the lightness range is an array-like object. This way we ensure the
+        // array contain two values at the same time.
+        if (!(range && range.length > 1)) {
+            range = defaultRange;
+        }
+
         /**
          * Gets a lightness relative the specified value in the specified lightness range.
          */
@@ -1034,11 +1156,39 @@ function getCurrentConfig() {
             return value < 0 ? 0 : value > 1 ? 1 : value;
         };
     }
+
+    /**
+     * Gets a hue allowed by the configured hue restriction,
+     * provided the originally computed hue.
+     */
+    function hueFunction(originalHue) {
+        var hueConfig = configObject["hues"], hue;
+        
+        // Check if 'hues' is an array-like object. This way we also ensure that
+        // the array is not empty, which would mean no hue restriction.
+        if (hueConfig && hueConfig.length > 0) {
+            // originalHue is in the range [0, 1]
+            // Multiply with 0.999 to change the range to [0, 1) and then truncate the index.
+            hue = hueConfig[0 | (0.999 * originalHue * hueConfig.length)];
+        }
+
+        return typeof hue == "number" ?
+            
+            // A hue was specified. We need to convert the hue from
+            // degrees on any turn - e.g. 746° is a perfectly valid hue -
+            // to turns in the range [0, 1).
+            ((((hue / 360) % 1) + 1) % 1) :
+
+            // No hue configured => use original hue
+            originalHue;
+    }
         
     return {
-        saturation: typeof saturation == "number" ? saturation : 0.5,
-        colorLightness: lightness("color", 0.4, 0.8),
-        grayscaleLightness: lightness("grayscale", 0.3, 0.9),
+        hue: hueFunction,
+        colorSaturation: typeof colorSaturation == "number" ? colorSaturation : 0.5,
+        grayscaleSaturation: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
+        colorLightness: lightness("color", [0.4, 0.8]),
+        grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
         backColor: color.parse(backColor)
     }
 }
@@ -1061,13 +1211,13 @@ function computeHash(value) {
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
- * @param {(string|HTMLElement)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
  * @param {string=} hash - Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
  * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
  */
 function update(el, hash, padding) {
     if (typeof(el) === "string") {
-        if (supportsQuerySelectorAll) {
+        if (dom.supportsQuerySelectorAll) {
             var elements = document.querySelectorAll(el);
             for (var i = 0; i < elements.length; i++) {
                 update(elements[i], hash, padding);
@@ -1075,16 +1225,9 @@ function update(el, hash, padding) {
         }
         return;
     }
-    if (!el || !el["tagName"]) {
-        // No element found
-        return;
-    }
-    
-    var isSvg = /svg/i.test(el["tagName"]),
-        isCanvas = /canvas/i.test(el["tagName"]);
-    
-    // Ensure we have a supported element
-    if (!isSvg && !(isCanvas && "getContext" in el)) {
+
+    var iconType = dom.getIdenticonType(el);
+    if (!iconType) {
         return;
     }
     
@@ -1094,25 +1237,25 @@ function update(el, hash, padding) {
         // 1. Explicit valid hash
         getValidHash(hash) ||
         
-        // 2. Explicit value
-        hash && computeHash(hash) ||
+        // 2. Explicit value (`!= null` catches both null and undefined)
+        hash != null && computeHash(hash) ||
         
         // 3. `data-jdenticon-hash` attribute
-        getValidHash(el.getAttribute(HASH_ATTRIBUTE)) ||
+        getValidHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
         
         // 4. `data-jdenticon-value` attribute. 
         // We want to treat an empty attribute as an empty value. 
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(VALUE_ATTRIBUTE) && computeHash(el.getAttribute(VALUE_ATTRIBUTE));
+        el.hasAttribute(dom.VALUE_ATTRIBUTE) && computeHash(el.getAttribute(dom.VALUE_ATTRIBUTE));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
         return;
     }
     
-    var renderer = isSvg ? 
+    var renderer = iconType == dom.ICON_TYPE_SVG ? 
         new SvgRenderer(new SvgElement(el)) : 
         new CanvasRenderer(el.getContext("2d"));
     
@@ -1123,7 +1266,7 @@ function update(el, hash, padding) {
 /**
  * Draws an identicon to a context.
  * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
- * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  */
 function drawIcon(ctx, hashOrValue, size, padding) {
@@ -1139,7 +1282,7 @@ function drawIcon(ctx, hashOrValue, size, padding) {
 
 /**
  * Draws an identicon as an SVG string.
- * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
  * @returns {string} SVG string
@@ -1157,8 +1300,22 @@ function toSvg(hashOrValue, size, padding) {
  * Updates all canvas elements with the data-jdenticon-hash attribute.
  */
 function jdenticon() {
-    if (supportsQuerySelectorAll) {
-        update("[" + HASH_ATTRIBUTE + "],[" + VALUE_ATTRIBUTE + "]");
+    if (dom.supportsQuerySelectorAll) {
+        update(dom.ICON_SELECTOR);
+    }
+}
+
+/**
+ * This function is called once upon page load.
+ */
+function jdenticonStartup() {
+    var replaceMode = (jdenticon["config"] || global["jdenticon_config"] || { })["replaceMode"];
+    if (replaceMode != "never") {
+        jdenticon();
+        
+        if (replaceMode == "observe") {
+            observer(update);
+        }
     }
 }
 
@@ -1166,7 +1323,7 @@ function jdenticon() {
 jdenticon["drawIcon"] = drawIcon;
 jdenticon["toSvg"] = toSvg;
 jdenticon["update"] = update;
-jdenticon["version"] = "2.0.0";
+jdenticon["version"] = "2.1.0";
 
 // Basic jQuery plugin
 if (jQuery) {
@@ -1180,7 +1337,7 @@ if (jQuery) {
 
 // Schedule to render all identicons on the page once it has been loaded.
 if (typeof setTimeout === "function") {
-    setTimeout(jdenticon, 0);
+    setTimeout(jdenticonStartup, 0);
 }
 
 
