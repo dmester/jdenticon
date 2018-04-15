@@ -49,6 +49,7 @@ https://jdenticon.com
 There are ports or bindings for Jdenticon available for the following platforms:
 
 * [.NET](https://github.com/dmester/jdenticon-net/)
+* [PHP](https://github.com/dmester/jdenticon-php/)
 * [Swift](https://github.com/aleph7/jdenticon-swift)
 * [Kotlin](https://github.com/WycliffeAssociates/jdenticon-kotlin)
 * [Polymer](https://github.com/GeoloeG/identicon-element)
