@@ -138,8 +138,8 @@ function update(el, hash, padding) {
         // 1. Explicit valid hash
         getValidHash(hash) ||
         
-        // 2. Explicit value
-        hash && computeHash(hash) ||
+        // 2. Explicit value (`!= null` catches both null and undefined)
+        hash != null && computeHash(hash) ||
         
         // 3. `data-jdenticon-hash` attribute
         getValidHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
