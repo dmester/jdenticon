@@ -1,6 +1,7 @@
 /jdenticon.js
 .gitignore
 .npmignore
+.travis.yml
 .vs
 *.bat
 *.nuspec
