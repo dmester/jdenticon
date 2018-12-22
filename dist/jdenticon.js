@@ -1,8 +1,8 @@
 /**
- * Jdenticon 2.1.0
+ * Jdenticon 2.1.1
  * http://jdenticon.com
  *  
- * Built: 2018-04-15T17:32:59.846Z
+ * Built: 2018-12-22T10:15:41.611Z
  *
  * Copyright (c) 2014-2018 Daniel Mester Pirttijärvi
  *
@@ -1323,7 +1323,7 @@ function jdenticonStartup() {
 jdenticon["drawIcon"] = drawIcon;
 jdenticon["toSvg"] = toSvg;
 jdenticon["update"] = update;
-jdenticon["version"] = "2.1.0";
+jdenticon["version"] = "2.1.1";
 
 // Basic jQuery plugin
 if (jQuery) {
