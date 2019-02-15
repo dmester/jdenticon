@@ -52,11 +52,12 @@ https://jdenticon.com
 ### Other platforms
 There are ports or bindings for Jdenticon available for the following platforms:
 
-* [.NET](https://github.com/dmester/jdenticon-net/)
 * [PHP](https://github.com/dmester/jdenticon-php/)
-* [Swift](https://github.com/aleph7/jdenticon-swift)
-* [Kotlin](https://github.com/WycliffeAssociates/jdenticon-kotlin)
+* [.NET](https://github.com/dmester/jdenticon-net/)
 * [Polymer](https://github.com/GeoloeG/identicon-element)
+* [Swift](https://github.com/aleph7/jdenticon-swift)
+* [Dart/Flutter](https://pub.dartlang.org/packages/jdenticon_dart)
+* [Kotlin](https://github.com/WycliffeAssociates/jdenticon-kotlin)
 
 ### Hosted Jdenticon
 Same icons but generated server-side. Service provided by [Aaroh Mankad](https://github.com/aarohmankad).
