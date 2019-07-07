@@ -28,7 +28,7 @@
 
 /*jslint bitwise: true */
 
-(function (global, name, factory) {
+(function (global, factory) {
     var jQuery = global && global["jQuery"],
         jdenticon = factory(global, jQuery);
 
@@ -42,9 +42,9 @@
     }
     // No module loader
     else {
-        global[name] = jdenticon;
+        global["jdenticon"] = jdenticon;
     }
-})(typeof self !== "undefined" ? self : this, "jdenticon", function (global, jQuery) {
+})(typeof self !== "undefined" ? self : this, function (global, jQuery) {
     "use strict";
 <%=contents%>
 
