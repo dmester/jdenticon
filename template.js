@@ -29,7 +29,7 @@
 /*jslint bitwise: true */
 
 (function (global, name, factory) {
-    var jQuery = global["jQuery"],
+    var jQuery = global && global["jQuery"],
         jdenticon = factory(global, jQuery);
 
     // Node.js
