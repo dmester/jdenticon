@@ -24,8 +24,10 @@ var global = typeof window !== "undefined" ? window : {},
 
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
+ * @param {number} explicitPadding - Padding specified to the called API method. This overrides whatever is specified in the style.
+ * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor explicitly to the API method.
  */
-function getCurrentConfig() {
+function getCurrentConfig(explicitPadding, defaultPadding) {
     var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
         lightnessConfig = configObject["lightness"] || { },
         
@@ -35,7 +37,8 @@ function getCurrentConfig() {
         colorSaturation = "color" in saturation ? saturation["color"] : saturation,
         grayscaleSaturation = saturation["grayscale"],
 
-        backColor = configObject["backColor"];
+        backColor = configObject["backColor"],
+        padding = configObject["padding"];
     
     /**
      * Creates a lightness range.
@@ -90,7 +93,11 @@ function getCurrentConfig() {
         grayscaleSaturation: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
         colorLightness: lightness("color", [0.4, 0.8]),
         grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
-        backColor: color.parse(backColor)
+        backColor: color.parse(backColor),
+        padding: 
+            typeof explicitPadding == "number" ? explicitPadding : 
+            typeof padding == "number" ? padding : 
+            defaultPadding
     }
 }
 
@@ -161,7 +168,7 @@ function update(el, hash, padding) {
         new CanvasRenderer(el.getContext("2d"));
     
     // Draw icon
-    iconGenerator(renderer, hash, 0, 0, renderer.size, padding, getCurrentConfig());
+    iconGenerator(renderer, hash, 0, 0, renderer.size, getCurrentConfig(padding, 0.08));
 }
 
 /**
@@ -178,7 +185,7 @@ function drawIcon(ctx, hashOrValue, size, padding) {
     var renderer = new CanvasRenderer(ctx, size);
     iconGenerator(renderer, 
         getValidHash(hashOrValue) || computeHash(hashOrValue), 
-        0, 0, size, padding || 0, getCurrentConfig());
+        0, 0, size, getCurrentConfig(padding, 0));
 }
 
 /**
@@ -193,7 +200,7 @@ function toSvg(hashOrValue, size, padding) {
     var renderer = new SvgRenderer(writer);
     iconGenerator(renderer, 
         getValidHash(hashOrValue) || computeHash(hashOrValue),
-        0, 0, size, padding, getCurrentConfig());
+        0, 0, size, getCurrentConfig(padding, 0.08));
     return writer.toString();
 }
 

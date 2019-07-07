@@ -14,7 +14,7 @@ const parseHex = require("./parseHex");
 /**
  * Draws an identicon to a specified renderer.
  */
-function iconGenerator(renderer, hash, x, y, size, padding, config) {
+function iconGenerator(renderer, hash, x, y, size, config) {
     var undefined;
     
     // Set background color
@@ -23,7 +23,7 @@ function iconGenerator(renderer, hash, x, y, size, padding, config) {
     }
     
     // Calculate padding and round to nearest integer
-    padding = (0.5 + size * (padding === undefined ? 0.08 : padding)) | 0;
+    var padding = (0.5 + size * config.padding) | 0;
     size -= padding * 2;
     
     var graphics = new Graphics(renderer);

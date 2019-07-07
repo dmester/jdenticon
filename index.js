@@ -79,12 +79,18 @@ module.exports.toPng = function toPng(hashOrValue, size, padding) {
     var canvas = canvasRenderer.createCanvas(size, size);
     var ctx = canvas.getContext("2d");
     
-    if (typeof padding !== "number") {
-        padding = 0.08;
-    }
-    
     // Copy config to base jdenticon object
     jdenticon.config = module.exports.config;
+
+    if (typeof padding !== "number") {
+        padding = jdenticon.config.padding;
+    
+        // Unfortunately drawIcon has default padding 0 instead of 0.08 as all other methods.
+        if (typeof padding !== "number") {
+            padding = 0.08;
+        }
+    }
+    
     jdenticon.drawIcon(ctx, hashOrValue, size, padding);
     
     return canvas.toPng({ "Software": "Jdenticon" });
