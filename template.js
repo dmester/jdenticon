@@ -44,7 +44,7 @@
     else {
         global[name] = jdenticon;
     }
-})(this, "jdenticon", function (global, jQuery) {
+})(typeof self !== "undefined" ? self : this, "jdenticon", function (global, jQuery) {
     "use strict";
 <%=contents%>
 
