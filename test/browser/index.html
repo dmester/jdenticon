@@ -258,7 +258,7 @@
     };
     </script>
     <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
-    <script src="../dist/jdenticon.min.js"></script>
+    <script src="../../dist/jdenticon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
     <script src="https://cdn.jsdelivr.net/requirejs/2.1.22/require.min.js"></script>
     <script>
@@ -314,7 +314,7 @@
             document.body.className = "using-dist";
             init(jdenticon);
             
-            requirejs(["../dist/jdenticon"], function (jd) {
+            requirejs(["../../dist/jdenticon"], function (jd) {
                 jd.update("#AMDIcon0", "Icon0");
             });
         }
@@ -325,7 +325,7 @@
             else {
                 document.body.className = "using-src";
 
-                R("../src/jdenticon", function (err, jdenticon) {
+                R("../../src/jdenticon", function (err, jdenticon) {
                     if (err) {
                         console.log(err);
                     }
