@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jdenticon</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <body>
+        
+        <h1>"Icon2" - Should be centered vertically and horizontally</h1>
+        <figure>
+            <canvas data-jdenticon-value="Icon2" width="60" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Icon2-update-vert" width="60" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <svg data-jdenticon-value="Icon2" width="60" height="100"></svg>
+            <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Icon2-update-vert" width="60" height="100"></svg>
+            <figcaption><strong>SVG</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas data-jdenticon-value="Icon2" width="100" height="60"></canvas>
+            <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Icon2-update-hori" width="100" height="60"></canvas>
+            <figcaption><strong>Canvas</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <svg data-jdenticon-value="Icon2" width="100" height="60"></svg>
+            <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Icon2-update-hori" width="100" height="60"></svg>
+            <figcaption><strong>SVG</strong> update(value)</figcaption>
+        </figure>
+        
+        <script>
+        var jdenticon_config = {
+            backColor: "#00f1",
+        };
+        </script>
+        <script src="../../dist/jdenticon.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
+        <script>
+    
+            function init(jdenticon) {
+                jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
+                jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
+            }
+    
+            if (typeof jdenticon !== "undefined") {
+                init(jdenticon);
+            }
+            else {
+                R("../../src/jdenticon", function (err, jdenticon) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        init(jdenticon);
+                    }
+                });
+            }
+    
+        </script>
+        <script src="common.js"></script>
+    </body>
+</html>

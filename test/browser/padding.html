@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jdenticon</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <body>
+        <h1>"Icon04" - Should be equal - <span id="padding-percent"></span>% padding in style</h1>
+        <figure class="padding-0-only">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAUVBMVEUAAP8fH6JtgPNrgu1vhe5yiO81NXE4OGU/P1RCQlJBQVJCQk1DQ05ERExDQ0xERElEREqoxuSoxuSox+SqyeOqyeJFRUZFRUZGRkZZl8esy+Mq/AT0AAAAGHRSTlMSISorLi8/TnqIiaantbbExMTFzeLm8PFg+1g3AAABrUlEQVR4AazS2W6DMBQG4XEW0yQsTZsEyvs/aJEqy0AzF5b8337SHLGw2vHrSJ156vCYHwfKZymBucIVSWWocEVSGYTi5fZ5u0RwsJTAPwrd9Lcu4GApgR01rynt1eBgKYENhSWVYwEHT2UQ6qb1OjDwVAahOG0XwcBTCYS47lofgIGnBNKVdtdqARQ8dZ/f7w4w7FoDgIKnTs+38DyVP4mnFhIo/yaeWkig9O+SVCIB6DepHhwsJZSBMK5SY8DBU5kEaHJsbHDw1JoECOnF9AEHTe1IAOK1HdprBAdLCWUomaSEatyQVCKB8nmK8/eZGitI/RTvtz07RmEYBqAYev9bt1uXPgIaTDDfYweJYkME36wmmeSXalUCFFItS4ByqhUJUE61IgHKqfb/Ovnb9wClj2mTAKUsaBKgFDhNApRSrUmAOvBPjtzJkdflVGsSoJBqUQIUUi1KgEKqRQlQSLUoIcqnSxYSk7xK0p+w4y5IStwFSYi7IAlx1ySLu8Xd4u6CuHs+Le6CJMRdkIS4SxKiFhLvlWyW3Sy7WXaz7GbZzbKbZTfLbpa9YJb9AArjwlhWWmFfAAAAAElFTkSuQmCC" width="100" height="100">
+            <figcaption><strong>IMG</strong> static image</figcaption>
+        </figure>
+
+        <figure class="padding-30-only">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAJ1BMVEUAAP8wMIU4OGc4OGU+PlibteekwuOlwuRFRUZFRUZGRkZZl8esy+M8HoHgAAAACnRSTlMSME1Oa2ump/DxPobHuQAAANNJREFUeAHt1sEKgzAQhGFjklqN7/+8tSV1PCx42D0E+b+LCwO7IAxkwvMBAAAA9XWX+tV973vSPCdNSkNu9D1lOxRNSgNu9D1p+3onTUr9N/qevP3kSZPSmCOLeURpxJXl/5PWpOmSOtVzS1mPzeU6KfWq55aUc7pOSv3qcpPGaYYphtrdDEpd1O5mUOqidp9/R9+m1EPFM48oHf6I2m0eUeqhdptHlDqo3fYRpaOVcYDG278rtPH2ERr//MYb4htvGLLxvOp51fOq51U/PgAAAAAfGl0flQBGOTMAAAAASUVORK5CYII=" width="100" height="100">
+            <figcaption><strong>IMG</strong> static image</figcaption>
+        </figure>
+    
+
+        <figure>
+            <canvas data-jdenticon-value="Icon04" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-update-value" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-jquery-value" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> jQuery(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-drawIcon-value" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> drawIcon(value)</figcaption>
+        </figure>
+
+        
+        <figure>
+            <svg data-jdenticon-value="Icon04" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+        </figure>
+    
+        <figure>
+            <svg id="svg-Jdenticon-update-value" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Jdenticon-jquery-value" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> jQuery(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <span id="svg-Jdenticon-toSvg-value"></span>
+            <figcaption><strong>SVG</strong> toSvg(value)</figcaption>
+        </figure>
+        
+     
+        <script>
+            var padding = 0;
+
+            // Load padding from query string
+            var match = /\?padding=(\d+)/.exec(location.href);
+            if (match) {
+                padding = Number(match[1]);
+            }
+
+            document.getElementById("padding-percent").innerHTML = padding;
+            document.body.classList.add("padding-" + padding);
+
+            var jdenticon_config = {
+                padding: padding / 100,
+                backColor: "#00f1",
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
+        <script src="../../dist/jdenticon.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
+        <script>
+            function init(jdenticon) {
+                jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon04");
+
+                var ctx = document.getElementById("canvas-Jdenticon-drawIcon-value").getContext("2d");
+                jdenticon.drawIcon(ctx, "Icon04", 100);
+
+                document.getElementById("svg-Jdenticon-toSvg-value").innerHTML = 
+                    jdenticon.toSvg("Icon04", 100);
+
+                $("#canvas-Jdenticon-jquery-value,#svg-Jdenticon-jquery-value").jdenticon("Icon04");
+            }
+
+            if (typeof jdenticon !== "undefined") {
+                init(jdenticon);
+            }
+            else {
+                R("../../src/jdenticon", function (err, jdenticon) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        init(jdenticon);
+                    }
+                });
+            }
+    
+        </script>
+        <script src="common.js"></script>
+    </body>
+</html>

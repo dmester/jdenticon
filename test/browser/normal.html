@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jdenticon</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <body>
+        <h1>"Icon0" - Should be equal</h1>
+        <figure>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAWlBMVEUAAP9aOuYxMYKdne+CXN5AQGLHx+lDQ2TIyOlDQ13NzedHR1ZHR1jW1ufY2OdLS1Dg4OVKSk/g4OWjc9Gjc9FLS02ldNDj4+RLS0yldNDj4+VMTEymddHl5eU2yqFLAAAAG3RSTlMRHy8vPVtbXFxra4iIiIjDw8TE0tPw8PDx8fEmYw1hAAABrUlEQVR42u2ZYWvCQBBE6542UVuT2Kaxnvf//2aR45hrl2mgxyKFfR+HjM9EggP35DiOY0x4fn0OP0PZveyEhLTOFWO6M367ToZ4ZxAe6jrnsKTMckC4n2Nm3tNQ1ylhSYUllFDmWJiFhrrOGBMYSzhEMNBQ1wkh1YQcSqwRErK6pk81fQ67WNORkNU1p1RzyuEx1hxJSOrmd/KA3wScEziXcIpgoqGuM8I1Fa54Ty6xcBEa6jrlcC0X1W/8pXzcnoe6zgnnfLOhDmXKj0VISOtc0596dY10x05oqOuO8xAwD2zrmAeEprqeB4Smup4HhJa6ngeMlrr+KyK01PWfKqOhTuaBYrNtqKuvQhxvn9uG+q8PFY7b7WP7x7qeB9TBLOt1PQ+Yg1nW63oeMAezrNf1POAObuF1Mg+Yg1t4ncMdsFDaHbBYOMwtm3ctwatvYYHDygKHwRKABQ6DIQELHO1DQlvgMBgSsMBhMSRggaN9SBBLdtgMCVjg+K9DAlgOCWA5JIDlkAA2Q4LTPiQ4JkMCrNcdx482/Gij5Whj8qMNP9rwow0/2nAcx7HjC8pg1fBM8ggRAAAAAElFTkSuQmCC" width="100" height="100">
+            <figcaption><strong>IMG</strong> static image</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas data-jdenticon-value="Icon0" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+    
+        <h1>"Icon04" - Should be equal but different to the icon above</h1>
+        <figure>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAARVBMVEUAAP9tgO1thu1xiO50i+4xMYJAQGJDQ2RDQ11HR1ZHR1hLS1Cpx+RKSk+oxuSox+SqyeOqyuNLS01LS0xMTExZl8esy+PUIpVsAAAAFHRSTlMRKiotLi9bXGuIiMPDxMXN4uXw8Y2KdJAAAAGXSURBVHgB7JHbioNAEAVPLh11zewmY6///6lLWCTi1MjQkDfrsanyIKODAAcH5+/zx/PTY36cFAZzkOb4CuckgWa3r5tJeGzIQSo0G/3FaOIj5fsbpdZn/yf34iPn9Y1Ss+wL2VQ/ck4boI3+ZpT4yDlvgGa+xiQ+ck4bpHW+ppOER8633OeSu6TB1wyS8Mj5lsuzkJ6X9j/hHFZQan0TzmEFpeRvksRHznmFJJt8YTLxkfPaCkn9tHyuFx85r6+QZMlfJBMfOd9bQcm6oTMJjg05ruxLgZy0+EZ7fv25Kk4g/21Gcf7as2NUhYIwisErePvf7gPbbwrDKKKcdBaHILeYwP+FEvKgS5wLedAlzIE86BLmYh5ECXM458Hhq/r7gfMzPkVN4lx8VKPEuZgHUeL8/f/kk9/EPEgS52IeRIlzMQ+ixLmYB1HiXMyDKHEu0iW/9TJO0j98D4ki6SGRJT0kuqSHRJEsJBYSCwmR65AQuQ4JkeuQEGH+JHt+ZaeNnTZ22vjbaWOnjZ02dtrYaQNeNh9j/APLmwnC0xscngAAAABJRU5ErkJggg==" width="100" height="100">
+            <figcaption><strong>IMG</strong> static image</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas data-jdenticon-value="Icon04" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas data-jdenticon-hash="f97deee25dde01afb80ec1c7e4fae746492ddacb" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> data-jdenticon-hash</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-update-hash" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> update(hash)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-update-value" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-jquery-hash" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> jQuery(hash)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-jquery-value" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> jQuery(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-drawIcon-hash" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> drawIcon(hash)</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-drawIcon-value" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> drawIcon(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <span id="placeholder-canvas-Jdenticon-dynamic"></span>
+            <figcaption><strong>Canvas</strong> dynamic</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="canvas-Jdenticon-resize" data-jdenticon-value="Icon04" width="10" height="10"></canvas>
+            <figcaption><strong>Canvas</strong> resize</figcaption>
+        </figure>
+        
+        
+        <figure>
+            <svg data-jdenticon-value="Icon04" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> data-jdenticon-value</figcaption>
+        </figure>
+        
+        <figure>
+            <svg data-jdenticon-hash="f97deee25dde01afb80ec1c7e4fae746492ddacb" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> data-jdenticon-hash</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Jdenticon-update-hash" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> update(hash)</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Jdenticon-update-value" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> update(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Jdenticon-jquery-hash" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> jQuery(hash)</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Jdenticon-jquery-value" width="100" height="100"></svg>
+            <figcaption><strong>SVG</strong> jQuery(value)</figcaption>
+        </figure>
+        
+        <figure>
+            <span id="svg-Jdenticon-toSvg-hash"></span>
+            <figcaption><strong>SVG</strong> toSvg(hash)</figcaption>
+        </figure>
+        
+        <figure>
+            <span id="svg-Jdenticon-toSvg-value"></span>
+            <figcaption><strong>SVG</strong> toSvg(value)</figcaption>
+        </figure>
+        
+        
+        <figure>
+            <span id="placeholder-svg-Jdenticon-dynamic"></span>
+            <figcaption><strong>SVG</strong> dynamic</figcaption>
+        </figure>
+        
+        <figure>
+            <svg id="svg-Jdenticon-resize" data-jdenticon-value="Icon04" width="10" height="10"></svg>
+            <figcaption><strong>SVG</strong> resize</figcaption>
+        </figure>
+        
+        
+        <script>
+        var jdenticon_config = {
+            backColor: "#00f1",
+            replaceMode: "observe"
+        };
+        </script>
+        <script src="https://cdn.jsdelivr.net/jquery/3.2.1/jquery.slim.min.js"></script>
+        <script src="../../dist/jdenticon.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
+        <script>
+    
+            function init(jdenticon) {
+                jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon04");
+                jdenticon.update("#canvas-Jdenticon-update-hash,#svg-Jdenticon-update-hash", "f97deee25dde01afb80ec1c7e4fae746492ddacb");
+    
+                var ctx = document.getElementById("canvas-Jdenticon-drawIcon-value").getContext("2d");
+                jdenticon.drawIcon(ctx, "Icon04", 100, 0.08);
+    
+                var ctx = document.getElementById("canvas-Jdenticon-drawIcon-hash").getContext("2d");
+                jdenticon.drawIcon(ctx, "f97deee25dde01afb80ec1c7e4fae746492ddacb", 100, 0.08);
+    
+                document.getElementById("svg-Jdenticon-toSvg-value").innerHTML = 
+                    jdenticon.toSvg("Icon04", 100);
+    
+                document.getElementById("svg-Jdenticon-toSvg-hash").innerHTML = 
+                    jdenticon.toSvg("f97deee25dde01afb80ec1c7e4fae746492ddacb", 100);
+    
+                $("#canvas-Jdenticon-jquery-value,#svg-Jdenticon-jquery-value").jdenticon("Icon04");
+                $("#canvas-Jdenticon-jquery-hash,#svg-Jdenticon-jquery-hash").jdenticon("f97deee25dde01afb80ec1c7e4fae746492ddacb");
+                
+                setTimeout(function () {
+                    // Dynamic icons
+                    document.getElementById("placeholder-canvas-Jdenticon-dynamic").innerHTML = 
+                        '<canvas data-jdenticon-value="Icon04" width="100" height="100"> Error </canvas>';
+                    document.getElementById("canvas-Jdenticon-resize").setAttribute("width", "100");
+                    document.getElementById("canvas-Jdenticon-resize").setAttribute("height", "100");
+                    
+                    document.getElementById("placeholder-svg-Jdenticon-dynamic").innerHTML = 
+                        '<svg data-jdenticon-value="Icon04" width="100" height="100"> Error </svg>';
+                    document.getElementById("svg-Jdenticon-resize").setAttribute("width", "100");
+                    document.getElementById("svg-Jdenticon-resize").setAttribute("height", "100");
+                }, 1000);
+                
+            }
+    
+            if (typeof jdenticon !== "undefined") {
+                init(jdenticon);
+            }
+            else {
+                R("../../src/jdenticon", function (err, jdenticon) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        init(jdenticon);
+                    }
+                });
+            }
+    
+        </script>
+        <script src="common.js"></script>
+    </body>
+</html>
