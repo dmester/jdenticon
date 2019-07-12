@@ -47,7 +47,7 @@ function mergeRequire(mapFunction) {
                 concatenatedSource += source;
                 callback("");
             }, function () {
-                file.contents = new Buffer(concatenatedSource);
+                file.contents = Buffer.from(concatenatedSource);
                 cb(null, file);
             }));
             md.end({ file: file.path });
