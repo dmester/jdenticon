@@ -1,7 +1,7 @@
 ﻿"use strict";
 
 var tap = require("tap");
-var jdenticon = require("../../index");
+var jdenticon = require("../../src/node");
 var fs = require("fs");
 
 function equal(buf1, buf2) {

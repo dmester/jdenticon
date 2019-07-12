@@ -2,7 +2,7 @@
   "name": "jdenticon",
   "version": "2.1.1",
   "description": "Javascript identicon generator",
-  "main": "index.js",
+  "main": "src/node.js",
   "browser": "dist/jdenticon.min.js",
   "dependencies": {
     "canvas-renderer": "~2.1.1"
