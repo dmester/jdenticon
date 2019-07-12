@@ -9,7 +9,7 @@ const Transform = require("./transform");
 const Graphics = require("./graphics");
 const shapes = require("./shapes");
 const colorTheme = require("./colorTheme");
-const parseHex = require("./parseHex");
+const parseHex = require("../common/parseHex");
      
 /**
  * Draws an identicon to a specified renderer.

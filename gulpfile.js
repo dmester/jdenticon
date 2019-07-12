@@ -33,7 +33,7 @@ gulp.task("clean", function (cb) {
 });
 
 gulp.task("build", ["clean"], function () {
-    return gulp.src("./src/jdenticon.js")   
+    return gulp.src("./src/browser.js")   
         .pipe(merge(function (source) {
             // Remove license banner
             source = source.replace(/^\/\*(?:[\s\S]*?)\*\//, "");

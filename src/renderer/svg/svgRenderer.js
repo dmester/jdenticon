@@ -6,7 +6,7 @@
 "use strict";
 
 const SvgPath = require("./svgPath");
-const parseHex = require("./parseHex");
+const parseHex = require("../../common/parseHex");
 
 /**
  * Renderer producing SVG output.

@@ -5,7 +5,7 @@
  */
 "use strict";
 
-const color = require("./color");
+const color = require("../renderer/color");
 
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.

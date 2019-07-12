@@ -5,7 +5,7 @@
  */
 "use strict";
 
-const parseHex = require("./parseHex");
+const parseHex = require("../common/parseHex");
 
 function decToHex(v) {
     v |= 0; // Ensure integer value

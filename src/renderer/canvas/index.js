@@ -5,7 +5,7 @@
  */
 "use strict";
 
-const color = require("./color");
+const color = require("../color");
 
 /**
  * Renderer redirecting drawing commands to a canvas context.

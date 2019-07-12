@@ -7,15 +7,15 @@
  */
 "use strict";
 
-const iconGenerator = require("./iconGenerator");
-const SvgRenderer = require("./svgRenderer");
-const SvgElement = require("./svgElement");
-const SvgWriter = require("./svgWriter");
-const hashUtils = require("./hashUtils");
-const CanvasRenderer = require("./canvasRenderer");
-const configuration = require("./configuration");
-const observer = require("./observer");
-const dom = require("./dom");
+const iconGenerator = require("./renderer/iconGenerator");
+const SvgRenderer = require("./renderer/svg/svgRenderer");
+const SvgElement = require("./renderer/svg/svgElement");
+const SvgWriter = require("./renderer/svg/svgWriter");
+const hashUtils = require("./common/hashUtils");
+const CanvasRenderer = require("./renderer/canvas");
+const configuration = require("./common/configuration");
+const observer = require("./common/observer");
+const dom = require("./common/dom");
  
 // <debug>
 var global = typeof window !== "undefined" ? window : {},
