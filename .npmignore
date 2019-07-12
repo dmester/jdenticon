@@ -11,4 +11,6 @@ node_modules
 obj
 releases
 test
+types/test
+types/tsconfig.json
 utils

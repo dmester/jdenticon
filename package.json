@@ -4,10 +4,13 @@
   "description": "Javascript identicon generator",
   "main": "src/node.js",
   "browser": "dist/jdenticon.min.js",
+  "types": "types/index.d.ts",
   "dependencies": {
+    "@types/node": "*",
     "canvas-renderer": "~2.1.1"
   },
   "devDependencies": {
+    "@types/jquery": "^3.3.30",
     "del": "^1.2.1",
     "google-closure-compiler": "^20190618.0.0",
     "gulp": "^4.0.2",
@@ -20,10 +23,13 @@
     "module-deps": "^4.1.1",
     "strip-bom": "^3.0.0",
     "tap": "^10.7.0",
-    "through2": "^2.0.3"
+    "through2": "^2.0.3",
+    "typescript": "^3.5.3"
   },
   "scripts": {
-    "test": "tap test/node/*.js"
+    "test": "npm run test:unit && npm run test:types",
+    "test:unit": "tap test/node/*.js",
+    "test:types": "tsc -p ./types/test/tsconfig.json"
   },
   "repository": {
     "type": "git",
