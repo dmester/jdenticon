@@ -9,7 +9,7 @@ const gulp       = require("gulp"),
       del        = require("del"),
       fs         = require("fs"),
       rename     = require("gulp-rename"),
-      closure    = require('google-closure-compiler-js').gulp(),
+      closure    = require('google-closure-compiler').gulp(),
       zip        = require("gulp-zip"),
       replace    = require("gulp-replace"),
       replacejs  = require('gulp-replace-with-sourcemaps'),
@@ -32,7 +32,7 @@ gulp.task("clean", function (cb) {
     del(["./~jdenticon.nuspec", "./obj"], cb);
 });
 
-gulp.task("build", ["clean"], function () {
+gulp.task("build-js", function build() {
     return gulp.src("./src/browser.js")   
         .pipe(merge(function (source) {
             // Remove license banner
@@ -71,13 +71,15 @@ gulp.task("build", ["clean"], function () {
         
         // Minified file
         .pipe(closure({ 
-            compilation_level: "ADVANCED_OPTIMIZATIONS" ,
+            compilation_level: "ADVANCED" ,
             rewritePolyfills: false,
             createSourceMap: true,
             outputWrapper: getWrapper("./template.min.js", "%output%"),
             externs: [
                 { src: "var module; function define(deps, cb) { }" }
             ],
+        }, {
+            platform: ["javascript"]
         }))
 
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".min.js" }))
@@ -93,7 +95,9 @@ gulp.task("build", ["clean"], function () {
         .pipe(gulp.dest("obj"));
 });
 
-gulp.task("preparerelease", ["build"], function () {
+gulp.task("build", gulp.series("clean", "build-js"));
+
+gulp.task("preparerelease", function () {
     return gulp.src(["./LICENSE", "./README.md"])
         .pipe(replace(/\{version\}/g, pack.version))
         .pipe(replace(/\{year\}/g, new Date().getFullYear()))
@@ -102,7 +106,7 @@ gulp.task("preparerelease", ["build"], function () {
         .pipe(gulp.dest("obj"));
 });
 
-gulp.task("preparenuget", ["build"], function () {
+gulp.task("preparenuget", function () {
     return gulp.src(["./jdenticon.nuspec"])
         .pipe(replace(/\{version\}/g, pack.version))
         .pipe(replace(/\{year\}/g, new Date().getFullYear()))
@@ -111,7 +115,7 @@ gulp.task("preparenuget", ["build"], function () {
         .pipe(gulp.dest("./"));
 });
 
-gulp.task("nuget", ["preparenuget", "preparerelease"], function (cb) {
+gulp.task("nuget", function (cb) {
     exec("\"./utils/nuget/nuget.exe\" pack ~jdenticon.nuspec -OutputDirectory releases", function (error, stdout, stderr) {
         if (error) {
             cb(error);
@@ -121,10 +125,10 @@ gulp.task("nuget", ["preparenuget", "preparerelease"], function (cb) {
     });
 });
 
-gulp.task("createpackage", ["preparerelease"], function () {
+gulp.task("createpackage", function () {
     return gulp.src(["./obj/*"])
         .pipe(zip("jdenticon-" + pack.version + ".zip"))
         .pipe(gulp.dest("releases"));
 });
 
-gulp.task("release", ["createpackage", "nuget"]);
+gulp.task("release", gulp.series("build", "preparerelease", "createpackage", "preparenuget", "nuget"));
