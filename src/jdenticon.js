@@ -11,9 +11,9 @@ const iconGenerator = require("./iconGenerator");
 const SvgRenderer = require("./svgRenderer");
 const SvgElement = require("./svgElement");
 const SvgWriter = require("./svgWriter");
-const sha1 = require("./sha1");
+const hashUtils = require("./hashUtils");
 const CanvasRenderer = require("./canvasRenderer");
-const color = require("./color");
+const configuration = require("./configuration");
 const observer = require("./observer");
 const dom = require("./dom");
  
@@ -21,101 +21,6 @@ const dom = require("./dom");
 var global = typeof window !== "undefined" ? window : {},
     jQuery = global.jQuery;
 // </debug>
-
-/**
- * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
- * @param {number} explicitPadding - Padding specified to the called API method. This overrides whatever is specified in the style.
- * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor explicitly to the API method.
- */
-function getCurrentConfig(explicitPadding, defaultPadding) {
-    var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
-        lightnessConfig = configObject["lightness"] || { },
-        
-        // In versions < 2.1.0 there was no grayscale saturation -
-        // saturation was the color saturation.
-        saturation = configObject["saturation"] || { },
-        colorSaturation = "color" in saturation ? saturation["color"] : saturation,
-        grayscaleSaturation = saturation["grayscale"],
-
-        backColor = configObject["backColor"],
-        padding = configObject["padding"];
-    
-    /**
-     * Creates a lightness range.
-     */
-    function lightness(configName, defaultRange) {
-        var range = lightnessConfig[configName];
-        
-        // Check if the lightness range is an array-like object. This way we ensure the
-        // array contain two values at the same time.
-        if (!(range && range.length > 1)) {
-            range = defaultRange;
-        }
-
-        /**
-         * Gets a lightness relative the specified value in the specified lightness range.
-         */
-        return function (value) {
-            value = range[0] + value * (range[1] - range[0]);
-            return value < 0 ? 0 : value > 1 ? 1 : value;
-        };
-    }
-
-    /**
-     * Gets a hue allowed by the configured hue restriction,
-     * provided the originally computed hue.
-     */
-    function hueFunction(originalHue) {
-        var hueConfig = configObject["hues"], hue;
-        
-        // Check if 'hues' is an array-like object. This way we also ensure that
-        // the array is not empty, which would mean no hue restriction.
-        if (hueConfig && hueConfig.length > 0) {
-            // originalHue is in the range [0, 1]
-            // Multiply with 0.999 to change the range to [0, 1) and then truncate the index.
-            hue = hueConfig[0 | (0.999 * originalHue * hueConfig.length)];
-        }
-
-        return typeof hue == "number" ?
-            
-            // A hue was specified. We need to convert the hue from
-            // degrees on any turn - e.g. 746° is a perfectly valid hue -
-            // to turns in the range [0, 1).
-            ((((hue / 360) % 1) + 1) % 1) :
-
-            // No hue configured => use original hue
-            originalHue;
-    }
-        
-    return {
-        hue: hueFunction,
-        colorSaturation: typeof colorSaturation == "number" ? colorSaturation : 0.5,
-        grayscaleSaturation: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
-        colorLightness: lightness("color", [0.4, 0.8]),
-        grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
-        backColor: color.parse(backColor),
-        padding: 
-            typeof explicitPadding == "number" ? explicitPadding : 
-            typeof padding == "number" ? padding : 
-            defaultPadding
-    }
-}
-
-/**
- * Inputs a value that might be a valid hash string for Jdenticon and returns it 
- * if it is determined valid, otherwise a falsy value is returned.
- */
-function getValidHash(hashCandidate) {
-    return /^[0-9a-f]{11,}$/i.test(hashCandidate) && hashCandidate;
-}
-
-/**
- * Computes a hash for the specified value. Currnently SHA1 is used. This function
- * always returns a valid hash.
- */
-function computeHash(value) {
-    return sha1(value == null ? "" : "" + value);
-}
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
@@ -143,20 +48,20 @@ function update(el, hash, padding) {
     // accepted as a valid hash.
     hash = 
         // 1. Explicit valid hash
-        getValidHash(hash) ||
+        hashUtils.validHash(hash) ||
         
         // 2. Explicit value (`!= null` catches both null and undefined)
-        hash != null && computeHash(hash) ||
+        hash != null && hashUtils.computeHash(hash) ||
         
         // 3. `data-jdenticon-hash` attribute
-        getValidHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
+        hashUtils.validHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
         
         // 4. `data-jdenticon-value` attribute. 
         // We want to treat an empty attribute as an empty value. 
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(dom.VALUE_ATTRIBUTE) && computeHash(el.getAttribute(dom.VALUE_ATTRIBUTE));
+        el.hasAttribute(dom.VALUE_ATTRIBUTE) && hashUtils.computeHash(el.getAttribute(dom.VALUE_ATTRIBUTE));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
@@ -168,7 +73,7 @@ function update(el, hash, padding) {
         new CanvasRenderer(el.getContext("2d"));
     
     // Draw icon
-    iconGenerator(renderer, hash, 0, 0, renderer.size, getCurrentConfig(padding, 0.08));
+    iconGenerator(renderer, hash, 0, 0, renderer.size, configuration(jdenticon, global, padding, 0.08));
 }
 
 /**
@@ -184,8 +89,8 @@ function drawIcon(ctx, hashOrValue, size, padding) {
     
     var renderer = new CanvasRenderer(ctx, size);
     iconGenerator(renderer, 
-        getValidHash(hashOrValue) || computeHash(hashOrValue), 
-        0, 0, size, getCurrentConfig(padding, 0));
+        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
+        0, 0, size, configuration(jdenticon, global, padding, 0));
 }
 
 /**
@@ -199,8 +104,8 @@ function toSvg(hashOrValue, size, padding) {
     var writer = new SvgWriter(size);
     var renderer = new SvgRenderer(writer);
     iconGenerator(renderer, 
-        getValidHash(hashOrValue) || computeHash(hashOrValue),
-        0, 0, size, getCurrentConfig(padding, 0.08));
+        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue),
+        0, 0, size, configuration(jdenticon, global, padding, 0.08));
     return writer.toString();
 }
 
