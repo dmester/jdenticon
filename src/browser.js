@@ -7,6 +7,7 @@
  */
 "use strict";
 
+const pack = require("../package.json");
 const iconGenerator = require("./renderer/iconGenerator");
 const SvgRenderer = require("./renderer/svg/svgRenderer");
 const SvgElement = require("./renderer/svg/svgElement");
@@ -140,7 +141,7 @@ function jdenticonStartup() {
 jdenticon["drawIcon"] = drawIcon;
 jdenticon["toSvg"] = toSvg;
 jdenticon["update"] = update;
-jdenticon["version"] = "{version}";
+jdenticon["version"] = pack.version;
 
 // Basic jQuery plugin
 if (jQuery) {

@@ -7,6 +7,7 @@
 
 const through   = require('through2'),
       mdeps     = require('module-deps'),
+      path      = require('path'),
       stripBom  = require('strip-bom');
 
 /**
@@ -39,6 +40,21 @@ function mergeRequire(mapFunction) {
         var md = mdeps();
             md.pipe(through.obj(function (data, enc, callback) {
                 var source = stripBom(data.source);
+
+                var name = path.parse(data.file);
+
+                // Repack package.json to only contain `name` and `version`
+                if (/^package\.json$/i.test(name.base)) {
+                    var parsedPackageJson = JSON.parse(source);
+                    var strippedPackageJson = {};
+                    if ("name" in parsedPackageJson) {
+                        strippedPackageJson.name = parsedPackageJson.name;
+                    }
+                    if ("version" in parsedPackageJson) {
+                        strippedPackageJson.version = parsedPackageJson.version;
+                    }
+                    source = "var pack = " + JSON.stringify(strippedPackageJson) + ";\n\n";
+                }
                 
                 if (typeof mapFunction == "function") {
                     source = mapFunction(source);
