@@ -9,11 +9,23 @@ const color = require("./color");
 
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
- * @param {number|undefined} explicitPadding - Padding specified to the called API method. This overrides whatever is specified in the style.
- * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor explicitly to the API method.
+ * @param {Object} jdenticon - The public Jdenticon API object, on which the public `config` property is set.
+ * @param {Object} global - The global object, `window` in the browser and `module` on Node, in which the
+ *    `jdenticon_config` variable can be declared.
+ * @param {Object|number|undefined} paddingOrLocalConfig - Configuration passed to the called API method. A
+ *    local configuration overrides the global configuration in it entirety. This parameter can for backward
+ *    compatbility also contain a padding value. A padding value only overrides the global padding, not the
+ *    entire global configuration.
+ * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
+ *    explicitly to the API method.
  */
-function configuration(jdenticon, global, explicitPadding, defaultPadding) {
-    var configObject = jdenticon["config"] || global["jdenticon_config"] || { },
+function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) {
+    var configObject = 
+            typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
+            jdenticon["config"] ||
+            global["jdenticon_config"] ||
+            { },
+
         lightnessConfig = configObject["lightness"] || { },
         
         // In versions < 2.1.0 there was no grayscale saturation -
@@ -80,7 +92,7 @@ function configuration(jdenticon, global, explicitPadding, defaultPadding) {
         grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
         backColor: color.parse(backColor),
         padding: 
-            typeof explicitPadding == "number" ? explicitPadding : 
+            typeof paddingOrLocalConfig == "number" ? paddingOrLocalConfig : 
             typeof padding == "number" ? padding : 
             defaultPadding
     }

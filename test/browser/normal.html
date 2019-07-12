@@ -16,6 +16,31 @@
             <figcaption><strong>Canvas</strong> data-jdenticon-value</figcaption>
         </figure>
         
+        <h1>"Icon0" - Should be equal to above, but black and no background</h1>
+        <figure>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAMFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABaPxwLAAAAD3RSTlMAECAwT1Bgf4C/wM/Q7/B+lp4GAAABKUlEQVR4Ae3ZwUrDUBSEYXtsYhLNPe//tiIlNPCDm5lQCvMtD8pP6GbgfkREXKzuX/eyHqHW/rOW7wjz3g/77DpC7X3Yy3SEtZ9WzxGqz8pyhKnPJssRlj5bxOMLvuTa3wS2ftpMR6jRh1GmI83Hn43ZdqTaHh9b+vE/NS1TmY8Rrx4SROKQIFKHBJE6JIjkIUGkDgkieUgQyUMCbp+8iUOCje/Bijgk2OjeWVGHBBqs6EOCDVb0IcEGK/qQYIMVfUiwwYo+JNhgRceGqYLG5ZXbT8NgxF6xNlDRG1wCrLChDwlW2NCHBCtsyEMCFTbkIYEKG/KQQIUNeUigwsZ7DgnyDwnyDwnyDwnyDwnyDwnyDwny/3tEnjbytJGnjTxt5GkjTxvXioj4BeoMdgqOkiMwAAAAAElFTkSuQmCC" width="100" height="100">
+            <figcaption><strong>IMG</strong> static image</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas id="explicit-config-update" data-jdenticon-value="Icon0" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> update()</figcaption>
+        </figure>
+
+        <figure>
+            <canvas id="explicit-config-drawIcon" data-jdenticon-value="Icon0" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> drawIcon()</figcaption>
+        </figure>
+
+        <figure>
+            <canvas id="explicit-config-jquery" data-jdenticon-value="Icon0" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> jQuery(value)</figcaption>
+        </figure>
+
+        <figure>
+            <span id="explicit-config-toSvg"></span>
+            <figcaption><strong>SVG</strong> toSvg(value)</figcaption>
+        </figure>
     
         <h1>"Icon04" - Should be equal but different to the icon above</h1>
         <figure>
@@ -138,31 +163,58 @@
         <script>
     
             function init(jdenticon) {
+                // Explicit config
+                setTimeout(function () {
+                    var explicitConfig = {
+                        lightness: {
+                            color: [0.00, 0.00],
+                            grayscale: [0.00, 0.00]
+                        },
+                        saturation: {
+                            color: 0.00,
+                            grayscale: 0.00
+                        },
+                        padding: 0.08
+                    };
+                    jdenticon.update("#explicit-config-update", null, explicitConfig);
+                    var ctx = document.getElementById("explicit-config-drawIcon").getContext("2d");
+                    jdenticon.drawIcon(ctx, "Icon0", 100, explicitConfig);
+                    document.getElementById("explicit-config-toSvg").innerHTML = 
+                        jdenticon.toSvg("Icon0", 100, explicitConfig);
+                    $("#explicit-config-jquery").jdenticon("Icon0", explicitConfig);
+                });
+
+                // update()
                 jdenticon.update("#canvas-Jdenticon-update-value,#svg-Jdenticon-update-value", "Icon04");
                 jdenticon.update("#canvas-Jdenticon-update-hash,#svg-Jdenticon-update-hash", "f97deee25dde01afb80ec1c7e4fae746492ddacb");
     
+                // drawIcon()
                 var ctx = document.getElementById("canvas-Jdenticon-drawIcon-value").getContext("2d");
                 jdenticon.drawIcon(ctx, "Icon04", 100, 0.08);
     
                 var ctx = document.getElementById("canvas-Jdenticon-drawIcon-hash").getContext("2d");
                 jdenticon.drawIcon(ctx, "f97deee25dde01afb80ec1c7e4fae746492ddacb", 100, 0.08);
     
+                // toSvg()
                 document.getElementById("svg-Jdenticon-toSvg-value").innerHTML = 
                     jdenticon.toSvg("Icon04", 100);
     
                 document.getElementById("svg-Jdenticon-toSvg-hash").innerHTML = 
                     jdenticon.toSvg("f97deee25dde01afb80ec1c7e4fae746492ddacb", 100);
     
+                // jQuery
                 $("#canvas-Jdenticon-jquery-value,#svg-Jdenticon-jquery-value").jdenticon("Icon04");
                 $("#canvas-Jdenticon-jquery-hash,#svg-Jdenticon-jquery-hash").jdenticon("f97deee25dde01afb80ec1c7e4fae746492ddacb");
                 
+                // Dynamic icons
                 setTimeout(function () {
-                    // Dynamic icons
+                    // Canvas
                     document.getElementById("placeholder-canvas-Jdenticon-dynamic").innerHTML = 
                         '<canvas data-jdenticon-value="Icon04" width="100" height="100"> Error </canvas>';
                     document.getElementById("canvas-Jdenticon-resize").setAttribute("width", "100");
                     document.getElementById("canvas-Jdenticon-resize").setAttribute("height", "100");
                     
+                    // Svg
                     document.getElementById("placeholder-svg-Jdenticon-dynamic").innerHTML = 
                         '<svg data-jdenticon-value="Icon04" width="100" height="100"> Error </svg>';
                     document.getElementById("svg-Jdenticon-resize").setAttribute("width", "100");

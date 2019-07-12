@@ -26,14 +26,15 @@ var global = typeof window !== "undefined" ? window : {},
  * Updates the identicon in the specified canvas or svg elements.
  * @param {(string|Element)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
  * @param {string=} hash - Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
- * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
  */
-function update(el, hash, padding) {
+function update(el, hash, config) {
     if (typeof(el) === "string") {
         if (dom.supportsQuerySelectorAll) {
             var elements = document.querySelectorAll(el);
             for (var i = 0; i < elements.length; i++) {
-                update(elements[i], hash, padding);
+                update(elements[i], hash, config);
             }
         }
         return;
@@ -73,7 +74,7 @@ function update(el, hash, padding) {
         new CanvasRenderer(el.getContext("2d"));
     
     // Draw icon
-    iconGenerator(renderer, hash, 0, 0, renderer.size, configuration(jdenticon, global, padding, 0.08));
+    iconGenerator(renderer, hash, 0, 0, renderer.size, configuration(jdenticon, global, config, 0.08));
 }
 
 /**
@@ -81,8 +82,10 @@ function update(el, hash, padding) {
  * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
  */
-function drawIcon(ctx, hashOrValue, size, padding) {
+function drawIcon(ctx, hashOrValue, size, config) {
     if (!ctx) {
         throw new Error("No canvas specified.");
     }
@@ -90,22 +93,23 @@ function drawIcon(ctx, hashOrValue, size, padding) {
     var renderer = new CanvasRenderer(ctx, size);
     iconGenerator(renderer, 
         hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
-        0, 0, size, configuration(jdenticon, global, padding, 0));
+        0, 0, size, configuration(jdenticon, global, config, 0));
 }
 
 /**
  * Draws an identicon as an SVG string.
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
- * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
  * @returns {string} SVG string
  */
-function toSvg(hashOrValue, size, padding) {
+function toSvg(hashOrValue, size, config) {
     var writer = new SvgWriter(size);
     var renderer = new SvgRenderer(writer);
     iconGenerator(renderer, 
         hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue),
-        0, 0, size, configuration(jdenticon, global, padding, 0.08));
+        0, 0, size, configuration(jdenticon, global, config, 0.08));
     return writer.toString();
 }
 
@@ -140,9 +144,9 @@ jdenticon["version"] = "{version}";
 
 // Basic jQuery plugin
 if (jQuery) {
-    jQuery["fn"]["jdenticon"] = function (hashOrValue, padding) {
+    jQuery["fn"]["jdenticon"] = function (hashOrValue, config) {
         this["each"](function (index, el) {
-            update(el, hashOrValue, padding);
+            update(el, hashOrValue, config);
         });
         return this;
     };
