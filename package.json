@@ -5,6 +5,9 @@
   "main": "src/node.js",
   "browser": "dist/jdenticon.min.js",
   "types": "types/index.d.ts",
+  "bin": {
+    "jdenticon": "bin/jdenticon.js"
+  },
   "dependencies": {
     "@types/node": "*",
     "canvas-renderer": "~2.1.1"
