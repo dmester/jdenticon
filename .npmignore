@@ -3,15 +3,12 @@
 .npmignore
 .travis.yml
 .vs
-*.bat
 *.nuspec
-bin
 bower.json
 build
 gulpfile.js
 node_modules
 obj
 releases
-template*.js
 test
 utils

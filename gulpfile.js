@@ -54,7 +54,7 @@ gulp.task("build-js", function build() {
         .pipe(replace(/\/\/\s*\<debug\>[\s\S]*?\/\/\s*\<\/debug\>/g, ""))
         
         // Replace variables
-        .pipe(wrap(getWrapper("./template.js", "<%=contents%>")))
+        .pipe(wrap(getWrapper("./build/template.js", "<%=contents%>")))
         .pipe(replace(/\{version\}/g, pack.version))
         
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
@@ -74,7 +74,7 @@ gulp.task("build-js", function build() {
             compilation_level: "ADVANCED" ,
             rewritePolyfills: false,
             createSourceMap: true,
-            outputWrapper: getWrapper("./template.min.js", "%output%"),
+            outputWrapper: getWrapper("./build/template.min.js", "%output%"),
             externs: [
                 { src: "var module; function define(deps, cb) { }" }
             ],
@@ -107,7 +107,7 @@ gulp.task("preparerelease", function () {
 });
 
 gulp.task("preparenuget", function () {
-    return gulp.src(["./jdenticon.nuspec"])
+    return gulp.src(["./build/jdenticon.nuspec"])
         .pipe(replace(/\{version\}/g, pack.version))
         .pipe(replace(/\{year\}/g, new Date().getFullYear()))
         .pipe(replace(/\{date\}/g, new Date().toISOString()))
