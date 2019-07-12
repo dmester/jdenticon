@@ -1,97 +1,119 @@
 ﻿/**
  * Jdenticon
- * http://jdenticon.com
+ * https://github.com/dmester/jdenticon
+ * Copyright © Daniel Mester Pirttijärvi
  * 
- * Copyright (c) 2014-2018 Daniel Mester Pirttijärvi
- *
- * Permission is hereby granted, free of charge, to any person obtaining 
- * a copy of this software and associated documentation files (the 
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
- * distribute, sublicense, and/or sell copies of the Software, and to 
- * permit persons to whom the Software is furnished to do so, subject to 
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be 
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ * This file contains the public interface of Jdenticon for Node.js.
  */
 
 "use strict";
 
 if (typeof require !== "function" ||
     typeof module !== "object" ||
-    typeof module.exports !== "object") {
-    throw new Error(
-        "Jdenticon: index.js is only intended for Node.js environments. " +
+    typeof module.exports !== "object"
+) {
+    console.warn(
+        "Jdenticon: src/node.js is only intended for Node.js environments. " +
         "If you want to run Jdenticon in the browser, please add a reference " +
         "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
 
-const canvasRenderer = require("canvas-renderer"),
-      pack           = require("./package.json"),
-      jdenticon      = require("./src/jdenticon");
+const canvasRenderer = require("canvas-renderer");
+const pack = require("../package.json");
+const iconGenerator = require("./renderer/iconGenerator");
+const SvgRenderer = require("./renderer/svg/svgRenderer");
+const SvgWriter = require("./renderer/svg/svgWriter");
+const hashUtils = require("./common/hashUtils");
+const CanvasRenderer = require("./renderer/canvas");
+const configuration = require("./common/configuration");
 
-module.exports = {};
+/**
+ * Updates all canvas elements with the data-jdenticon-hash attribute.
+ * @throws {Error}
+ */
+function jdenticon() {
+    throw new Error("jdenticon() is not supported on Node.js.");
+}
 
 /**
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-module.exports.version = pack.version;
+jdenticon.version = pack.version;
 
 /**
- * Specifies the color options for the generated icons. See options at http://jdenticon.com/js-api.html#jdenticon-config
+ * Specifies the color options for the generated icons. See options at 
+ * {@link https://jdenticon.com/js-api/P_jdenticon_config.html}
  * @type {object} 
  */
-module.exports.config = {};
+jdenticon.config = {};
+
+/**
+ * Draws an identicon to a context.
+ * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {number} size - Icon size in pixels.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ */
+jdenticon.drawIcon = function drawIcon(ctx, hashOrValue, size, config) {
+    if (!ctx) {
+        throw new Error("No canvas specified.");
+    }
+    
+    var renderer = new CanvasRenderer(ctx, size);
+    iconGenerator(renderer, 
+        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
+        0, 0, size, configuration(jdenticon, jdenticon, config, 0));
+}
 
 /**
  * Draws an identicon as an SVG string.
- * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
- * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
  * @returns {string} SVG string
  */
-module.exports.toSvg = function toSvg(hashOrValue, size, padding) {
-    // Copy config to base jdenticon object
-    jdenticon.config = module.exports.config;
-    
-    return jdenticon.toSvg(hashOrValue, size, padding);
-};
+jdenticon.toSvg = function toSvg(hashOrValue, size, config) {
+    var writer = new SvgWriter(size);
+    var renderer = new SvgRenderer(writer);
+    iconGenerator(renderer, 
+        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue),
+        0, 0, size, configuration(jdenticon, jdenticon, config, 0.08));
+    return writer.toString();
+}
 
 /**
  * Draws an identicon as PNG.
  * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
- * @param {number=} padding - Optional padding in percents. Extra padding might be added to center the rendered identicon.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
  * @returns {Buffer} PNG data
  */
-module.exports.toPng = function toPng(hashOrValue, size, padding) {
+jdenticon.toPng = function toPng(hashOrValue, size, config) {
     var canvas = canvasRenderer.createCanvas(size, size);
     var ctx = canvas.getContext("2d");
     
-    // Copy config to base jdenticon object
-    jdenticon.config = module.exports.config;
-
-    if (typeof padding !== "number") {
-        padding = jdenticon.config.padding;
-    
-        // Unfortunately drawIcon has default padding 0 instead of 0.08 as all other methods.
-        if (typeof padding !== "number") {
-            padding = 0.08;
-        }
-    }
-    
-    jdenticon.drawIcon(ctx, hashOrValue, size, padding);
+    var renderer = new CanvasRenderer(ctx, size);
+    iconGenerator(renderer, 
+        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
+        0, 0, size, configuration(jdenticon, jdenticon, config, 0.08));
     
     return canvas.toPng({ "Software": "Jdenticon" });
 };
+
+/**
+ * Updates the identicon in the specified canvas or svg elements.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
+ * @param {string=} hash - Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ * @throws {Error}
+ */
+jdenticon.update = function update(hashOrValue, size, config) {
+    throw new Error("jdenticon.update() is not supported on Node.js.");
+};
+
+module.exports = jdenticon;

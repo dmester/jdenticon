@@ -3,7 +3,7 @@
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
  * 
- * This file contains the public interface of Jdenticon.
+ * This file contains the public interface of Jdenticon for browsers.
  */
 "use strict";
 
