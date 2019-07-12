@@ -30,6 +30,8 @@
     "typescript": "^3.5.3"
   },
   "scripts": {
+    "build": "gulp build",
+    "release": "gulp release",
     "test": "npm run test:unit && npm run test:types",
     "test:unit": "tap test/node/*.js",
     "test:types": "tsc -p ./types/test/tsconfig.json"
