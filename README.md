@@ -35,7 +35,7 @@ use it right off [jsDelivr](https://www.jsdelivr.com).
 
 ```HTML
 <!-- Using jsDelivr -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jdenticon@2.1.1"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jdenticon@2.2.0"></script>
 
 <!-- OR -->
 
