@@ -116,7 +116,13 @@ gulp.task("preparenuget", function () {
 });
 
 gulp.task("nuget", function (cb) {
-    exec("\"./utils/nuget/nuget.exe\" pack ~jdenticon.nuspec -OutputDirectory releases", function (error, stdout, stderr) {
+    var command = "\"./build/nuget/nuget.exe\" pack ~jdenticon.nuspec -OutputDirectory releases";
+
+    if (process.platform !== "win32") {
+        command = "mono " + command;
+    }
+
+    exec(command, function (error, stdout, stderr) {
         if (error) {
             cb(error);
         } else {
