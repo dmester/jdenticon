@@ -36,6 +36,12 @@
     "test:unit": "tap test/node/*.js",
     "test:types": "tsc -p ./types/test/tsconfig.json"
   },
+  "files": [
+    "bin/",
+    "dist/",
+    "src/",
+    "types/index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/dmester/jdenticon"
