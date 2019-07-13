@@ -32,24 +32,10 @@ gulp.task("clean", function (cb) {
     del(["./~jdenticon.nuspec", "./obj"], cb);
 });
 
-gulp.task("build-js", function build() {
-    return gulp.src("./src/browser.js")   
-        .pipe(merge(function (source) {
-            // Remove license banner
-            source = source.replace(/^\/\*(?:[\s\S]*?)\*\//, "");
-            
-            // Remove use strict
-            source = source.replace(/^\s+\"use strict\";\r?\n/g, "");
-            
-            // Remove require
-            source = source.replace(/\b(?:var|const)\s+\w+\s*=\s*require\([^)]+\);\r?\n/g, "");
-            
-            // Remove module exports
-            source = source.replace(/\bmodule\.exports\s*=[^;]+;/g, "");
-            
-            return source;
-        }))
-        
+gulp.task("build-js", function () {
+    return gulp.src("./src/browser.js")
+        .pipe(merge())
+
         // Debug section
         .pipe(replace(/\/\/\s*\<debug\>[\s\S]*?\/\/\s*\<\/debug\>/g, ""))
         
@@ -77,7 +63,7 @@ gulp.task("build-js", function build() {
             outputWrapper: getWrapper("./build/template.min.js", "%output%"),
             externs: [
                 { src: "var module; function define(deps, cb) { }" }
-            ],
+            ]
         }, {
             platform: ["javascript"]
         }))

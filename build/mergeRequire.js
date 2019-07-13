@@ -28,7 +28,7 @@ const through   = require('through2'),
  * @param {function=} mapFunction  
  *    Callback that will be called for each dependency file content.
  */
-function mergeRequire(mapFunction) {
+function mergeRequire() {
     return through.obj(function(file, enc, cb) {
         if (file.isNull()) {
             cb(null, file);
@@ -36,11 +36,15 @@ function mergeRequire(mapFunction) {
         }
         
         var concatenatedSource = "";
+        var externalImports = [];
         
-        var md = mdeps();
+        var md = mdeps({
+            filter: function (id) {
+                return /^\./.test(id);
+            }
+        });
             md.pipe(through.obj(function (data, enc, callback) {
                 var source = stripBom(data.source);
-
                 var name = path.parse(data.file);
 
                 // Repack package.json to only contain `name` and `version`
@@ -56,14 +60,31 @@ function mergeRequire(mapFunction) {
                     source = "var pack = " + JSON.stringify(strippedPackageJson) + ";\n\n";
                 }
                 
-                if (typeof mapFunction == "function") {
-                    source = mapFunction(source);
-                }
+                // Remove license banner
+                source = source.replace(/^\/\*(?:[\s\S]*?)\*\//, "");
+                
+                // Remove use strict
+                source = source.replace(/^\s+\"use strict\";\r?\n/g, "");
+                
+                // Remove require
+                source = source.replace(/\b(?:var|const)\s+\w+\s*=\s*require\([^)]+\);\r?\n/g, function (match) {
+                    var nameMatch = /require\(["'](.)/.exec(match);
+                    if (nameMatch && nameMatch[1] !== ".") {
+                        externalImports.push(match);
+                    }
+                    return "";
+                });
+                
+                // Remove module exports
+                source = source.replace(/\bmodule\.exports\s*=[^;]+;/g, "");
+
+                // Trim excessive whitespace
+                source = source.trim() + "\n\n";
             
                 concatenatedSource += source;
                 callback("");
             }, function () {
-                file.contents = Buffer.from(concatenatedSource);
+                file.contents = Buffer.from((externalImports.join("") + "\n" + concatenatedSource).trim());
                 cb(null, file);
             }));
             md.end({ file: file.path });
