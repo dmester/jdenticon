@@ -102,7 +102,7 @@ declare global {
 
     interface Jdenticon {
         /**
-         * Updates all canvas elements with the data-jdenticon-hash attribute.
+         * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
          * 
          * @remarks
          * This method is only available in the browser. Calling this method on Node.js will throw an error.
@@ -117,8 +117,8 @@ declare global {
          * 
          * @param elementOrSelector Specifies the container in which the icon is rendered as a DOM element of the type
          * `<svg>` or `<canvas>`, or a CSS selector to such an element.
-         * @param hash Optional hash to be rendered. If not specified, the hash specified by the `data-jdenticon-hash`
-         * is used.
+         * @param hash Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+         * `data-jdenticon-value` attribute will be evaluated.
          * @param config Optional configuration. If specified, this configuration object overrides any global
          * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.

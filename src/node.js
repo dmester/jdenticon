@@ -28,7 +28,7 @@ const CanvasRenderer = require("./renderer/canvas");
 const configuration = require("./common/configuration");
 
 /**
- * Updates all canvas elements with the data-jdenticon-hash attribute.
+ * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
  * @throws {Error}
  */
 function jdenticon() {
@@ -44,7 +44,7 @@ jdenticon.version = pack.version;
 /**
  * Specifies the color options for the generated icons. See options at 
  * {@link https://jdenticon.com/js-api/P_jdenticon_config.html}
- * @type {object} 
+ * @type {Object} 
  */
 jdenticon.config = {};
 
@@ -54,7 +54,8 @@ jdenticon.config = {};
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  */
 jdenticon.drawIcon = function drawIcon(ctx, hashOrValue, size, config) {
     if (!ctx) {
@@ -72,7 +73,8 @@ jdenticon.drawIcon = function drawIcon(ctx, hashOrValue, size, config) {
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  * @returns {string} SVG string
  */
 jdenticon.toSvg = function toSvg(hashOrValue, size, config) {
@@ -86,10 +88,11 @@ jdenticon.toSvg = function toSvg(hashOrValue, size, config) {
 
 /**
  * Draws an identicon as PNG.
- * @param {any} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  * @returns {Buffer} PNG data
  */
 jdenticon.toPng = function toPng(hashOrValue, size, config) {
@@ -106,13 +109,16 @@ jdenticon.toPng = function toPng(hashOrValue, size, config) {
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
- * @param {(string|Element)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
- * @param {string=} hash - Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
+ *    `<svg>` or `<canvas>`, or a CSS selector to such an element.
+ * @param {*=} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+ *    `data-jdenticon-value` attribute will be evaluated.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  * @throws {Error}
  */
-jdenticon.update = function update(hashOrValue, size, config) {
+jdenticon.update = function update(el, hashOrValue, size, config) {
     throw new Error("jdenticon.update() is not supported on Node.js.");
 };
 

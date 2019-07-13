@@ -25,17 +25,20 @@ var global = typeof window !== "undefined" ? window : {},
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
- * @param {(string|Element)} el - Specifies the container in which the icon is rendered. Can be a CSS selector or a DOM element of the type SVG or CANVAS.
- * @param {string=} hash - Optional hash to be rendered. If not specified, the hash specified by the data-jdenticon-hash is used.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
+ *    `<svg>` or `<canvas>`, or a CSS selector to such an element.
+ * @param {*=} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+ *    `data-jdenticon-value` attribute will be evaluated.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  */
-function update(el, hash, config) {
-    if (typeof(el) === "string") {
+function update(el, hashOrValue, config) {
+    if (typeof el === "string") {
         if (dom.supportsQuerySelectorAll) {
             var elements = document.querySelectorAll(el);
             for (var i = 0; i < elements.length; i++) {
-                update(elements[i], hash, config);
+                update(elements[i], hashOrValue, config);
             }
         }
         return;
@@ -48,12 +51,12 @@ function update(el, hash, config) {
     
     // Hash selection. The result from getValidHash or computeHash is 
     // accepted as a valid hash.
-    hash = 
+    var hash = 
         // 1. Explicit valid hash
-        hashUtils.validHash(hash) ||
+        hashUtils.validHash(hashOrValue) ||
         
         // 2. Explicit value (`!= null` catches both null and undefined)
-        hash != null && hashUtils.computeHash(hash) ||
+        hashOrValue != null && hashUtils.computeHash(hashOrValue) ||
         
         // 3. `data-jdenticon-hash` attribute
         hashUtils.validHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
@@ -84,7 +87,8 @@ function update(el, hash, config) {
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  */
 function drawIcon(ctx, hashOrValue, size, config) {
     if (!ctx) {
@@ -102,7 +106,8 @@ function drawIcon(ctx, hashOrValue, size, config) {
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding can also be specified as configuration.
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
  * @returns {string} SVG string
  */
 function toSvg(hashOrValue, size, config) {
@@ -115,7 +120,7 @@ function toSvg(hashOrValue, size, config) {
 }
 
 /**
- * Updates all canvas elements with the data-jdenticon-hash attribute.
+ * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
  */
 function jdenticon() {
     if (dom.supportsQuerySelectorAll) {
@@ -145,6 +150,16 @@ jdenticon["version"] = pack.version;
 
 // Basic jQuery plugin
 if (jQuery) {
+    /**
+     * Renders an indenticon for all matching supported elements.
+     * 
+     * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon. If not 
+     * specified the `data-jdenticon-hash` and `data-jdenticon-value` attributes of each element will be
+     * evaluated.
+     * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any global
+     * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+     * specified in place of a configuration object.
+     */
     jQuery["fn"]["jdenticon"] = function (hashOrValue, config) {
         this["each"](function (index, el) {
             update(el, hashOrValue, config);
