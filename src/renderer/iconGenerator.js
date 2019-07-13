@@ -15,8 +15,6 @@ const parseHex = require("../common/parseHex");
  * Draws an identicon to a specified renderer.
  */
 function iconGenerator(renderer, hash, x, y, size, config) {
-    var undefined;
-    
     // Set background color
     if (config.backColor) {
         renderer.setBackground(config.backColor);
