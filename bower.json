@@ -11,16 +11,14 @@
     "avatar",
     "library"
   ],
-  "license": "zlib",
-  "homepage": "http://jdenticon.com/",
+  "license": "MIT",
+  "homepage": "https://jdenticon.com/",
   "ignore": [
-    "/jdenticon.js",
     ".npmignore",
     ".gitignore",
     ".vs",
     "*.bat",
     "*.nuspec",
-    "bin",
     "build",
     "gulpfile.js",
     "node_modules",
