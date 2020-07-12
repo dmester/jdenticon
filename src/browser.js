@@ -12,6 +12,7 @@ const iconGenerator = require("./renderer/iconGenerator");
 const SvgRenderer = require("./renderer/svg/svgRenderer");
 const SvgElement = require("./renderer/svg/svgElement");
 const SvgWriter = require("./renderer/svg/svgWriter");
+const renderDomElement = require("./renderer/renderDomElement");
 const hashUtils = require("./common/hashUtils");
 const CanvasRenderer = require("./renderer/canvas");
 const configuration = require("./common/configuration");
@@ -24,7 +25,7 @@ var global = typeof window !== "undefined" ? window : {},
 // </debug>
 
 /**
- * Updates the identicon in the specified canvas or svg elements.
+ * Updates the identicon in the specified `<canvas>` or `<svg>` elements.
  * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
  *    `<svg>` or `<canvas>`, or a CSS selector to such an element.
  * @param {*=} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
@@ -34,51 +35,52 @@ var global = typeof window !== "undefined" ? window : {},
  *    specified in place of a configuration object.
  */
 function update(el, hashOrValue, config) {
-    if (typeof el === "string") {
-        if (dom.supportsQuerySelectorAll) {
-            var elements = document.querySelectorAll(el);
-            for (var i = 0; i < elements.length; i++) {
-                update(elements[i], hashOrValue, config);
-            }
+    renderDomElement(el, hashOrValue, config, function (el) {
+        var iconType = dom.getIdenticonType(el);
+        if (iconType) {
+            return iconType == dom.ICON_TYPE_SVG ? 
+                new SvgRenderer(new SvgElement(el)) : 
+                new CanvasRenderer(el.getContext("2d"));
         }
-        return;
-    }
+    });
+}
 
-    var iconType = dom.getIdenticonType(el);
-    if (!iconType) {
-        return;
-    }
-    
-    // Hash selection. The result from getValidHash or computeHash is 
-    // accepted as a valid hash.
-    var hash = 
-        // 1. Explicit valid hash
-        hashUtils.validHash(hashOrValue) ||
-        
-        // 2. Explicit value (`!= null` catches both null and undefined)
-        hashOrValue != null && hashUtils.computeHash(hashOrValue) ||
-        
-        // 3. `data-jdenticon-hash` attribute
-        hashUtils.validHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
-        
-        // 4. `data-jdenticon-value` attribute. 
-        // We want to treat an empty attribute as an empty value. 
-        // Some browsers return empty string even if the attribute 
-        // is not specified, so use hasAttribute to determine if 
-        // the attribute is specified.
-        el.hasAttribute(dom.VALUE_ATTRIBUTE) && hashUtils.computeHash(el.getAttribute(dom.VALUE_ATTRIBUTE));
-    
-    if (!hash) {
-        // No hash specified. Don't render an icon.
-        return;
-    }
-    
-    var renderer = iconType == dom.ICON_TYPE_SVG ? 
-        new SvgRenderer(new SvgElement(el)) : 
-        new CanvasRenderer(el.getContext("2d"));
-    
-    // Draw icon
-    iconGenerator(renderer, hash, 0, 0, renderer.size, configuration(jdenticon, global, config, 0.08));
+/**
+ * Updates the identicon in the specified `<canvas>` elements.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
+ *    `<canvas>`, or a CSS selector to such an element.
+ * @param {*=} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+ *    `data-jdenticon-value` attribute will be evaluated.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
+ */
+function updateCanvas(el, hashOrValue, config) {
+    renderDomElement(el, hashOrValue, config, function (el) {
+        var iconType = dom.getIdenticonType(el);
+        if (iconType == dom.ICON_TYPE_CANVAS) {
+            return new CanvasRenderer(el.getContext("2d"));
+        }
+    });
+}
+
+/**
+ * Updates the identicon in the specified `<svg>` elements.
+ * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
+ *    `<svg>`, or a CSS selector to such an element.
+ * @param {*=} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+ *    `data-jdenticon-value` attribute will be evaluated.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
+ */
+function updateSvg(el, hashOrValue, config) {
+    renderDomElement(el, hashOrValue, config, function (el) {
+        var iconType = dom.getIdenticonType(el);
+        if (iconType == dom.ICON_TYPE_SVG) {
+            return new SvgRenderer(new SvgElement(el));
+        }
+    });
 }
 
 /**
@@ -146,6 +148,8 @@ function jdenticonStartup() {
 jdenticon["drawIcon"] = drawIcon;
 jdenticon["toSvg"] = toSvg;
 jdenticon["update"] = update;
+jdenticon["updateCanvas"] = updateCanvas;
+jdenticon["updateSvg"] = updateSvg;
 jdenticon["version"] = pack.version;
 
 // Basic jQuery plugin
@@ -174,3 +178,4 @@ if (typeof setTimeout === "function") {
 }
 
 module.exports = jdenticon;
+
