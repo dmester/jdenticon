@@ -17,13 +17,6 @@ import { configuration } from "./common/configuration";
 import { observer } from "./common/observer";
 import { ICON_SELECTOR, ICON_TYPE_CANVAS, ICON_TYPE_SVG, getIdenticonType, supportsQuerySelectorAll } from "./common/dom";
 
-const pack = require("../package.json");
-
-// <debug>
-var global = typeof window !== "undefined" ? window : {},
-    jQuery = global.jQuery;
-// </debug>
-
 /**
  * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
  */
@@ -148,7 +141,7 @@ jdenticon["toSvg"] = toSvg;
 jdenticon["update"] = update;
 jdenticon["updateCanvas"] = updateCanvas;
 jdenticon["updateSvg"] = updateSvg;
-jdenticon["version"] = pack.version;
+jdenticon["version"] = "#version#";
 
 // Basic jQuery plugin
 if (jQuery) {
@@ -176,4 +169,3 @@ if (typeof setTimeout === "function") {
 }
 
 module.exports = jdenticon;
-

@@ -5,6 +5,7 @@
   "main": "src/node.js",
   "browser": "dist/jdenticon.min.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "bin": {
     "jdenticon": "bin/jdenticon.js"
   },
@@ -13,20 +14,22 @@
     "canvas-renderer": "~2.1.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^14.0.0",
     "@types/jquery": "^3.3.30",
+    "buble": "^0.20.0",
     "del": "^1.2.1",
     "google-closure-compiler": "^20190618.0.0",
     "gulp": "^4.0.2",
+    "gulp-buble": "^0.9.0",
     "gulp-rename": "^1.4.0",
-    "gulp-replace": "^1.0.0",
     "gulp-replace-with-sourcemaps": "^0.7.1",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-wrap": "^0.15.0",
     "gulp-zip": "^5.0.0",
-    "module-deps": "^4.1.1",
-    "strip-bom": "^3.0.0",
+    "multipipe": "^4.0.0",
+    "rollup": "^2.21.0",
+    "rollup-plugin-strip-banner": "^2.0.0",
     "tap": "^10.7.0",
-    "through2": "^2.0.3",
     "typescript": "^3.5.3"
   },
   "scripts": {

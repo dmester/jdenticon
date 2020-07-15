@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Jdenticon</id>
-        <version>{version}</version>
+        <version>#version#</version>
         <title>Jdenticon JS</title>
         <authors>Daniel Mester Pirttijärvi</authors>
         <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
@@ -14,8 +14,8 @@
         <tags>Javascript identicon avatar library</tags>
     </metadata>
     <files>
-        <file src="obj\jdenticon-{version}.min.js" target="Content\Scripts\jdenticon-{version}.min.js" />
-        <file src="obj\jdenticon-{version}.js" target="Content\Scripts\jdenticon-{version}.js" />
-        <file src="obj\readme.txt" target="Content\Scripts\jdenticon.readme.txt" />
+        <file src="obj\output\jdenticon-#version#.min.js" target="Content\Scripts\jdenticon-#version#.min.js" />
+        <file src="obj\output\jdenticon-#version#.js" target="Content\Scripts\jdenticon-#version#.js" />
+        <file src="obj\output\readme.txt" target="Content\Scripts\jdenticon.readme.txt" />
     </files>
 </package>

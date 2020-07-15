@@ -5,27 +5,46 @@
  */
 "use strict";
 
-const gulp       = require("gulp"),
-      del        = require("del"),
-      fs         = require("fs"),
-      rename     = require("gulp-rename"),
-      closure    = require('google-closure-compiler').gulp(),
-      zip        = require("gulp-zip"),
-      replace    = require("gulp-replace"),
-      replacejs  = require('gulp-replace-with-sourcemaps'),
-      wrap       = require("gulp-wrap"),
-      exec       = require("child_process").exec,
-      merge      = require("./build/mergeRequire"),
-      pack       = require("./package.json"),
-      sourcemaps = require('gulp-sourcemaps');
+const pipe = require("multipipe");
+const del = require("del");
+const fs = require("fs");
+const { exec } = require("child_process");
+const pack = require("./package.json");
 
+// Gulp dependencies
+const gulp = require("gulp");
+const rename = require("gulp-rename");
+const closure = require("google-closure-compiler").gulp();
+const zip = require("gulp-zip");
+const replace = require("gulp-replace-with-sourcemaps");
+const wrap = require("gulp-wrap");
+const buble = require("gulp-buble");
+const sourcemaps = require("gulp-sourcemaps");
+
+// Rollup dependencies
+const rollup = require("./build/rollup-stream");
+const commonjs = require( "@rollup/plugin-commonjs");
+const stripBanner = require("rollup-plugin-strip-banner");
+
+
+function getVariables() {
+    return [
+        [/#version#/g, pack.version],
+        [/#year#/g, new Date().getFullYear()],
+        [/#date#/g, new Date().toISOString()],
+    ]
+}
+
+function replaceVariables() {
+    return pipe(...getVariables().map(variable => replace(...variable)));
+}
+    
 function getWrapper(source, placeholder) {
-    return fs.readFileSync(source)
-        .toString()
-        .replace(/<%=contents%>/, placeholder)
-        .replace(/\{version\}/g, pack.version)
-        .replace(/\{year\}/g, new Date().getFullYear())
-        .replace(/\{date\}/g, new Date().toISOString());
+    return getVariables().reduce(
+        (result, variable) => result.replace(...variable),
+        fs.readFileSync(source)
+            .toString()
+            .replace(/<%=contents%>/, placeholder));
 }
 
 gulp.task("clean", function (cb) {
@@ -34,30 +53,44 @@ gulp.task("clean", function (cb) {
 
 gulp.task("build-js", function () {
     return gulp.src("./src/browser.js")
-        .pipe(merge())
+        .pipe(rollup({
+            output: { format: "cjs" },
+            plugins: [ stripBanner() ],
+        }))
 
-        // Debug section
-        .pipe(replace(/\/\/\s*\<debug\>[\s\S]*?\/\/\s*\<\/debug\>/g, ""))
-        
-        // Replace variables
+        // The UMD template expects a factory function body, so replace export with a return for the factory function.
+        .pipe(replace(/module.exports = /, "return "))
+        .pipe(replaceVariables())
         .pipe(wrap(getWrapper("./build/template.js", "<%=contents%>")))
-        .pipe(replace(/\{version\}/g, pack.version))
+        .pipe(buble())
         
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-" + pack.version; path.extname = ".js" }))
-        .pipe(gulp.dest("obj"))
+        .pipe(gulp.dest("obj/output"));
+});
 
+gulp.task("build-js-min", function () {
+    return gulp.src("./src/browser.js")
+        .pipe(rollup({
+            output: { format: "cjs" },
+        }))
+
+        // The UMD template expects a factory function body, so replace export with a return for the factory function.
+        .pipe(replace(/module.exports = /, "return "))
+        .pipe(replaceVariables())
+        .pipe(wrap(getWrapper("./build/template.js", "<%=contents%>")))
+        
         // Prepare for minification
         .pipe(sourcemaps.init())
         
         // Closure does not know that ELEMENT_NODE is a constant. Replace it before passing it on to Closure.
-        .pipe(replacejs(/Node\.ELEMENT_NODE/g, "1"))
+        .pipe(replace(/Node\.ELEMENT_NODE/g, "1"))
         
         // Minified file
-        .pipe(closure({ 
-            compilation_level: "ADVANCED" ,
+        .pipe(closure({
+            compilation_level: "ADVANCED",
             rewritePolyfills: false,
             createSourceMap: true,
             outputWrapper: getWrapper("./build/template.min.js", "%output%"),
@@ -69,34 +102,48 @@ gulp.task("build-js", function () {
         }))
 
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".min.js" }))
-        .pipe(sourcemaps.write('.', { 
-            mapSources: (path) => "jdenticon.js"
-        }))
+        .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-" + pack.version; path.extname = ".min.js" }))
-        .pipe(sourcemaps.write('.', { 
-            mapSources: (path) => `jdenticon-${pack.version}.js`
-        }))
-        .pipe(gulp.dest("obj"));
+        .pipe(sourcemaps.write("."))
+        .pipe(gulp.dest("obj/output"));
 });
 
-gulp.task("build", gulp.series("clean", "build-js"));
+gulp.task("build-node", function () {
+    return gulp.src("./src/node.js")
+        .pipe(sourcemaps.init())
+        .pipe(rollup({
+            external: [ "canvas-renderer" ],
+            plugins: [ stripBanner(), commonjs() ],
+            output: { format: "cjs" },
+        }))
+
+        .pipe(replaceVariables())
+
+        .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".js" }))
+
+        .pipe(sourcemaps.write("./"))
+        .pipe(gulp.dest("./dist"));
+
+});
+
+gulp.task("build", gulp.series("clean", gulp.parallel(
+    "build-js",
+    "build-js-min",
+    "build-node",
+)));
 
 gulp.task("preparerelease", function () {
     return gulp.src(["./LICENSE", "./README.md"])
-        .pipe(replace(/\{version\}/g, pack.version))
-        .pipe(replace(/\{year\}/g, new Date().getFullYear()))
-        .pipe(replace(/\{date\}/g, new Date().toISOString()))
+        .pipe(replaceVariables())
         .pipe(rename(function (path) { path.extname = ".txt" }))
-        .pipe(gulp.dest("obj"));
+        .pipe(gulp.dest("obj/output"));
 });
 
 gulp.task("preparenuget", function () {
     return gulp.src(["./build/jdenticon.nuspec"])
-        .pipe(replace(/\{version\}/g, pack.version))
-        .pipe(replace(/\{year\}/g, new Date().getFullYear()))
-        .pipe(replace(/\{date\}/g, new Date().toISOString()))
+        .pipe(replaceVariables())
         .pipe(rename(function (path) { path.basename = "~" + path.basename }))
         .pipe(gulp.dest("./"));
 });
@@ -118,7 +165,7 @@ gulp.task("nuget", function (cb) {
 });
 
 gulp.task("createpackage", function () {
-    return gulp.src(["./obj/*"])
+    return gulp.src(["./obj/output/*"])
         .pipe(zip("jdenticon-" + pack.version + ".zip"))
         .pipe(gulp.dest("releases"));
 });

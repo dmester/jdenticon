@@ -38,7 +38,7 @@ function jdenticon() {
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-jdenticon.version = pack.version;
+jdenticon.version = "#version#";
 
 /**
  * Specifies the color options for the generated icons. See options at 

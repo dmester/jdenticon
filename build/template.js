@@ -1,10 +1,10 @@
 /**
- * Jdenticon {version}
+ * Jdenticon #version#
  * http://jdenticon.com
  *  
- * Built: {date}
+ * Built: #date#
  *
- * Copyright (c) 2014-{year} Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-#year# Daniel Mester Pirttijärvi
  *
  * Permission is hereby granted, free of charge, to any person obtaining 
  * a copy of this software and associated documentation files (the 
@@ -45,8 +45,5 @@
         global["jdenticon"] = jdenticon;
     }
 })(typeof self !== "undefined" ? self : this, function (global, jQuery) {
-    "use strict";
 <%=contents%>
-
-    return jdenticon;
 });

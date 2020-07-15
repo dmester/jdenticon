@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const jdenticon = require("../src/node");
+const jdenticon = require("../dist/jdenticon-node");
 
 
 // Handle command
