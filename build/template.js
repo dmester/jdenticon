@@ -26,8 +26,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*jslint bitwise: true */
-
 (function (global, factory) {
     var jQuery = global && global["jQuery"],
         jdenticon = factory(global, jQuery);

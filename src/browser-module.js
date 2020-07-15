@@ -33,7 +33,7 @@ export const version = "#version#";
  *    specified in place of a configuration object.
  */
 export function update(el, hashOrValue, config) {
-    renderDomElement(el, hashOrValue, configuration(jdenticon, global, config, 0.08), function (el) {
+    renderDomElement(el, hashOrValue, configuration({ }, global, config, 0.08), function (el) {
         const iconType = getIdenticonType(el);
         if (iconType) {
             return iconType == ICON_TYPE_SVG ? 
@@ -54,7 +54,7 @@ export function update(el, hashOrValue, config) {
  *    specified in place of a configuration object.
  */
 export function updateCanvas(el, hashOrValue, config) {
-    renderDomElement(el, hashOrValue, configuration(jdenticon, global, config, 0.08), function (el) {
+    renderDomElement(el, hashOrValue, configuration({ }, global, config, 0.08), function (el) {
         const iconType = getIdenticonType(el);
         if (iconType == ICON_TYPE_CANVAS) {
             return new CanvasRenderer(el.getContext("2d"));
@@ -73,7 +73,7 @@ export function updateCanvas(el, hashOrValue, config) {
  *    specified in place of a configuration object.
  */
 export function updateSvg(el, hashOrValue, config) {
-    renderDomElement(el, hashOrValue, configuration(jdenticon, global, config, 0.08), function (el) {
+    renderDomElement(el, hashOrValue, configuration({ }, global, config, 0.08), function (el) {
         const iconType = getIdenticonType(el);
         if (iconType == ICON_TYPE_SVG) {
             return new SvgRenderer(new SvgElement(el));
@@ -97,7 +97,7 @@ export function drawIcon(ctx, hashOrValue, size, config) {
     
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
-        0, 0, size, configuration(jdenticon, global, config, 0));
+        0, 0, size, configuration({ }, global, config, 0));
 }
 
 /**
@@ -113,6 +113,6 @@ export function toSvg(hashOrValue, size, config) {
     const writer = new SvgWriter(size);
     iconGenerator(new SvgRenderer(writer), 
         isValidHash(hashOrValue) || computeHash(hashOrValue),
-        0, 0, size, configuration(jdenticon, global, config, 0.08));
+        0, 0, size, configuration({ }, global, config, 0.08));
     return writer.toString();
 }

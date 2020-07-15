@@ -85,4 +85,4 @@ export function iconGenerator(renderer, hash, x, y, size, config) {
     renderShape(2, CENTER_SHAPES, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
     
     renderer.finish();
-};
+}

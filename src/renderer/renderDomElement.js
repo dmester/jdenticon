@@ -6,7 +6,6 @@
 
 import { iconGenerator } from "./iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { configuration } from "../common/configuration";
 import { HASH_ATTRIBUTE, VALUE_ATTRIBUTE, supportsQuerySelectorAll } from "../common/dom";
 
 /**

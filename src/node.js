@@ -105,16 +105,9 @@ jdenticon.toPng = function toPng(hashOrValue, size, config) {
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
- * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
- *    `<svg>` or `<canvas>`, or a CSS selector to such an element.
- * @param {*=} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
- *    `data-jdenticon-value` attribute will be evaluated.
- * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
- *    specified in place of a configuration object.
  * @throws {Error}
  */
-jdenticon.update = function update(el, hashOrValue, size, config) {
+jdenticon.update = function update() {
     throw new Error("jdenticon.update() is not supported on Node.js.");
 };
 

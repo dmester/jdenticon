@@ -8,13 +8,16 @@
  * Creates a new element and adds it to the specified parent.
  * @param {Element} parentNode
  * @param {string} name
- * @param {...*} keyValuePairs
+ * @param {...(string|number)} keyValuePairs
  */
-function SvgElement_append(parentNode, name, keyValuePairs) {
+function SvgElement_append(parentNode, name, ...keyValuePairs) {
     const el = document.createElementNS("http://www.w3.org/2000/svg", name);
     
-    for (let i = 2; i + 1 < arguments.length; i += 2) {
-        el.setAttribute(arguments[i], arguments[i + 1]);
+    for (let i = 0; i + 1 < keyValuePairs.length; i += 2) {
+        el.setAttribute(
+            /** @type {string} */ (keyValuePairs[i]),
+            /** @type {string|number} */ (keyValuePairs[i + 1]),
+            );
     }
 
     parentNode.appendChild(el);

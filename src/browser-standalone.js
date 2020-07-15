@@ -144,6 +144,7 @@ jdenticon["updateSvg"] = updateSvg;
 jdenticon["version"] = "#version#";
 
 // Basic jQuery plugin
+/* global jQuery */
 if (jQuery) {
     /**
      * Renders an indenticon for all matching supported elements.

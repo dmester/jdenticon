@@ -18,6 +18,7 @@
     "@types/jquery": "^3.3.30",
     "buble": "^0.20.0",
     "del": "^1.2.1",
+    "eslint": "^7.4.0",
     "google-closure-compiler": "^20190618.0.0",
     "gulp": "^4.0.2",
     "gulp-buble": "^0.9.0",
@@ -35,6 +36,7 @@
   "scripts": {
     "build": "gulp build",
     "release": "gulp release",
+    "lint": "eslint ./src/**",
     "test": "npm run test:unit && npm run test:types",
     "test:unit": "gulp build-tests && tap obj/test/node/*.js",
     "test:types": "tsc -p ./types/test/tsconfig.json"
