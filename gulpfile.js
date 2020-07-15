@@ -48,11 +48,11 @@ function getWrapper(source, placeholder) {
 }
 
 gulp.task("clean", function (cb) {
-    del(["./~jdenticon.nuspec", "./obj"], cb);
+    del(["./~jdenticon.nuspec", "./obj/output"], cb);
 });
 
 gulp.task("build-js", function () {
-    return gulp.src("./src/browser.js")
+    return gulp.src("./src/browser-standalone.js")
         .pipe(rollup({
             output: { format: "cjs" },
             plugins: [ stripBanner() ],
@@ -72,7 +72,7 @@ gulp.task("build-js", function () {
 });
 
 gulp.task("build-js-min", function () {
-    return gulp.src("./src/browser.js")
+    return gulp.src("./src/browser-standalone.js")
         .pipe(rollup({
             output: { format: "cjs" },
         }))
@@ -110,6 +110,44 @@ gulp.task("build-js-min", function () {
         .pipe(gulp.dest("obj/output"));
 });
 
+gulp.task("build-cjs", function () {
+    return gulp.src("./src/browser-module.js")
+        .pipe(rollup({
+            output: { format: "cjs" },
+            plugins: [ stripBanner() ],
+        }))
+
+        // Replace variables
+        .pipe(replaceVariables())
+        .pipe(wrap(getWrapper("./build/template-module.js", "<%=contents%>")))
+        
+        .pipe(buble())
+
+        .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".js" }))
+        .pipe(gulp.dest("dist"))
+        
+        .pipe(rename(function (path) { path.basename = "jdenticon-module-" + pack.version; path.extname = ".js" }))
+        .pipe(gulp.dest("obj/output"))
+});
+
+gulp.task("build-esm", function () {
+    return gulp.src("./src/browser-module.js")
+        .pipe(rollup({
+            output: { format: "esm" },
+            plugins: [ stripBanner() ],
+        }))
+
+        // Replace variables
+        .pipe(replaceVariables())
+        .pipe(wrap(getWrapper("./build/template-module.js", "<%=contents%>")))
+        
+        .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".mjs" }))
+        .pipe(gulp.dest("dist"))
+        
+        .pipe(rename(function (path) { path.basename = "jdenticon-module-" + pack.version; path.extname = ".mjs" }))
+        .pipe(gulp.dest("obj/output"))
+});
+
 gulp.task("build-node", function () {
     return gulp.src("./src/node.js")
         .pipe(sourcemaps.init())
@@ -129,8 +167,8 @@ gulp.task("build-node", function () {
 });
 
 gulp.task("build", gulp.series("clean", gulp.parallel(
-    "build-js",
-    "build-js-min",
+    "build-js", "build-js-min",
+    "build-esm", "build-cjs",
     "build-node",
 )));
 
@@ -157,14 +195,14 @@ gulp.task("copy-tests-assets", function () {
 
 gulp.task("build-tests", gulp.series("clean-tests", "build-tests-js", "copy-tests-assets"));
 
-gulp.task("preparerelease", function () {
+gulp.task("prepare-release", function () {
     return gulp.src(["./LICENSE", "./README.md"])
         .pipe(replaceVariables())
         .pipe(rename(function (path) { path.extname = ".txt" }))
         .pipe(gulp.dest("obj/output"));
 });
 
-gulp.task("preparenuget", function () {
+gulp.task("prepare-nuget", function () {
     return gulp.src(["./build/jdenticon.nuspec"])
         .pipe(replaceVariables())
         .pipe(rename(function (path) { path.basename = "~" + path.basename }))
@@ -187,10 +225,10 @@ gulp.task("nuget", function (cb) {
     });
 });
 
-gulp.task("createpackage", function () {
+gulp.task("create-package", function () {
     return gulp.src(["./obj/output/*"])
         .pipe(zip("jdenticon-" + pack.version + ".zip"))
         .pipe(gulp.dest("releases"));
 });
 
-gulp.task("release", gulp.series("build", "preparerelease", "createpackage", "preparenuget", "nuget"));
+gulp.task("release", gulp.series("build", "prepare-release", "create-package", "prepare-nuget", "nuget"));
