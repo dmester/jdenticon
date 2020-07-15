@@ -6,12 +6,12 @@
  * This file contains the public interface of Jdenticon for Node.js.
  */
 
-if (typeof require !== "function" ||
-    typeof module !== "object" ||
-    typeof module.exports !== "object"
+if (typeof process === "undefined" &&
+    typeof window !== "undefined" &&
+    typeof document !== "undefined"
 ) {
     console.warn(
-        "Jdenticon: src/node.js is only intended for Node.js environments. " +
+        "Jdenticon: dist/jdenticon-node.js is only intended for Node.js environments. " +
         "If you want to run Jdenticon in the browser, please add a reference " +
         "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
