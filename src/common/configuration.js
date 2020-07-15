@@ -3,9 +3,8 @@
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
  */
-"use strict";
 
-const color = require("../renderer/color");
+import { parseColor } from "../renderer/color";
 
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
@@ -19,8 +18,8 @@ const color = require("../renderer/color");
  * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
  *    explicitly to the API method.
  */
-function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) {
-    var configObject = 
+export function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) {
+    const configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
             jdenticon["config"] ||
             global["jdenticon_config"] ||
@@ -41,7 +40,7 @@ function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) 
      * Creates a lightness range.
      */
     function lightness(configName, defaultRange) {
-        var range = lightnessConfig[configName];
+        let range = lightnessConfig[configName];
         
         // Check if the lightness range is an array-like object. This way we ensure the
         // array contain two values at the same time.
@@ -63,7 +62,8 @@ function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) 
      * provided the originally computed hue.
      */
     function hueFunction(originalHue) {
-        var hueConfig = configObject["hues"], hue;
+        const hueConfig = configObject["hues"];
+        let hue;
         
         // Check if 'hues' is an array-like object. This way we also ensure that
         // the array is not empty, which would mean no hue restriction.
@@ -90,12 +90,10 @@ function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) 
         grayscaleSaturation: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
         colorLightness: lightness("color", [0.4, 0.8]),
         grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
-        backColor: color.parse(backColor),
+        backColor: parseColor(backColor),
         padding: 
             typeof paddingOrLocalConfig == "number" ? paddingOrLocalConfig : 
             typeof padding == "number" ? padding : 
             defaultPadding
     }
 }
-
-module.exports = configuration;

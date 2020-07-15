@@ -3,44 +3,42 @@
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
  */
-"use strict";
 
-const Transform = require("./transform");
-const Graphics = require("./graphics");
-const shapes = require("./shapes");
-const colorTheme = require("./colorTheme");
-const parseHex = require("../common/parseHex");
+import { Transform } from "./transform";
+import { Graphics } from "./graphics";
+import { CENTER_SHAPES, OUTER_SHAPES } from "./shapes";
+import { colorTheme } from "./colorTheme";
+import { parseHex } from "../common/parseHex";
      
 /**
  * Draws an identicon to a specified renderer.
  */
-function iconGenerator(renderer, hash, x, y, size, config) {
+export function iconGenerator(renderer, hash, x, y, size, config) {
     // Set background color
     if (config.backColor) {
         renderer.setBackground(config.backColor);
     }
     
     // Calculate padding and round to nearest integer
-    var padding = (0.5 + size * config.padding) | 0;
+    const padding = (0.5 + size * config.padding) | 0;
     size -= padding * 2;
     
-    var graphics = new Graphics(renderer);
+    const graphics = new Graphics(renderer);
     
     // Calculate cell size and ensure it is an integer
-    var cell = 0 | (size / 4);
+    const cell = 0 | (size / 4);
     
     // Since the cell size is integer based, the actual icon will be slightly smaller than specified => center icon
     x += 0 | (padding + size / 2 - cell * 2);
     y += 0 | (padding + size / 2 - cell * 2);
 
     function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
-        var r = rotationIndex ? parseHex(hash, rotationIndex, 1) : 0,
-            shape = shapes[parseHex(hash, index, 1) % shapes.length],
-            i;
+        const shape = shapes[parseHex(hash, index, 1) % shapes.length];
+        let r = rotationIndex ? parseHex(hash, rotationIndex, 1) : 0;
         
         renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
         
-        for (i = 0; i < positions.length; i++) {
+        for (let i = 0; i < positions.length; i++) {
             graphics._transform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
             shape(graphics, cell, i);
         }
@@ -49,18 +47,19 @@ function iconGenerator(renderer, hash, x, y, size, config) {
     }
 
     // AVAILABLE COLORS
-    var hue = parseHex(hash, -7) / 0xfffffff,
+    const hue = parseHex(hash, -7) / 0xfffffff,
     
-        // Available colors for this icon
-        availableColors = colorTheme(hue, config),
+          // Available colors for this icon
+          availableColors = colorTheme(hue, config),
 
-        // The index of the selected colors
-        selectedColorIndexes = [],
-        index;
+          // The index of the selected colors
+          selectedColorIndexes = [];
+
+    let index;
 
     function isDuplicate(values) {
         if (values.indexOf(index) >= 0) {
-            for (var i = 0; i < values.length; i++) {
+            for (let i = 0; i < values.length; i++) {
                 if (selectedColorIndexes.indexOf(values[i]) >= 0) {
                     return true;
                 }
@@ -68,7 +67,7 @@ function iconGenerator(renderer, hash, x, y, size, config) {
         }
     }
 
-    for (var i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
         index = parseHex(hash, 8 + i, 1) % availableColors.length;
         if (isDuplicate([0, 4]) || // Disallow dark gray and dark color combo
             isDuplicate([2, 3])) { // Disallow light gray and light color combo
@@ -79,13 +78,11 @@ function iconGenerator(renderer, hash, x, y, size, config) {
 
     // ACTUAL RENDERING
     // Sides
-    renderShape(0, shapes.outer, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
+    renderShape(0, OUTER_SHAPES, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
     // Corners
-    renderShape(1, shapes.outer, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
+    renderShape(1, OUTER_SHAPES, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
     // Center
-    renderShape(2, shapes.center, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
+    renderShape(2, CENTER_SHAPES, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
     
     renderer.finish();
 };
-
-module.exports = iconGenerator;

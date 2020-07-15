@@ -3,26 +3,29 @@
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
  */
-"use strict";
 
-const parseHex = require("./parseHex");
+import { parseHex } from "./parseHex";
 
 /**
  * Computes a SHA1 hash for any value and returns it as a hexadecimal string.
  * @param {string} message 
  */
-function sha1(message) {
+export function sha1(message) {
+    const BLOCK_SIZE_BYTES = 64;
+    const BLOCK_SIZE_WORDS = BLOCK_SIZE_BYTES >>> 2;
+    const MESSAGE_LENGTH_SIZE_BYTES = 8;
+
     /**
      * Converts an array of 32-bit unsigned numbers to a hexadecimal string in big endian format.
      * @param {Array<number>} words
      */
     function wordsToHexString(words) {
-        var hashOctets = [];
-        for (var i = 0; i < words.length; i++) {
-            var val = words[i];
+        const hashOctets = [];
+        for (let i = 0; i < words.length; i++) {
+            const val = words[i];
            
-            for (var shift = 28; shift >= 0; shift -= 4) {
-                var octet = (val >>> shift) & 0xf;
+            for (let shift = 28; shift >= 0; shift -= 4) {
+                const octet = (val >>> shift) & 0xf;
                 hashOctets.push(octet.toString(16));
             }
         }
@@ -35,16 +38,11 @@ function sha1(message) {
      * @param {string} message  Any value that will be padded to 64 byte blocks.
      */
     function getBlocks(message) {
-        var percentEncoded = encodeURI(message),
+        const percentEncoded = encodeURI(message),
             binaryMessage = [],
-            binaryMessageLength = 0,
-            i, b,
+            blocks = [];
 
-            blocks = [],
-
-            BLOCK_SIZE_BYTES = 64,
-            BLOCK_SIZE_WORDS = BLOCK_SIZE_BYTES >>> 2,
-            MESSAGE_LENGTH_SIZE_BYTES = 8;
+        let binaryMessageLength = 0, b, i;
 
         // UTF8 encode message
         for (i = 0; i < percentEncoded.length; i++) {
@@ -62,10 +60,10 @@ function sha1(message) {
         binaryMessage[binaryMessageLength++] = 0x80;
         
         function getWordBlock(startIndex, byteCount) {
-            var words = [];
-            var wordIndex = -1;
+            const words = [];
+            let wordIndex = -1;
             
-            for (var i = 0; i < byteCount; i++) {
+            for (let i = 0; i < byteCount; i++) {
                 wordIndex = (i / 4) | 0;
                 words[wordIndex] = (words[wordIndex] || 0) +
                     (binaryMessage[startIndex + i] << ((3 - (i & 3)) * 8));
@@ -85,9 +83,9 @@ function sha1(message) {
 
         // Final block(s)
         // Rest of message
-        var lastBlockDataLength = binaryMessageLength - i;
+        const lastBlockDataLength = binaryMessageLength - i;
         
-        var block = getWordBlock(i, lastBlockDataLength);
+        let block = getWordBlock(i, lastBlockDataLength);
         
         // If there is no room for the message size in this block, 
         // return the block and put the size in the following block.
@@ -97,7 +95,7 @@ function sha1(message) {
             block = getWordBlock(0, 0);
         }
 
-        var messageSizeBits = binaryMessageLength * 8 - 8;
+        const messageSizeBits = binaryMessageLength * 8 - 8;
         block[BLOCK_SIZE_WORDS - 1] = messageSizeBits;
         blocks.push(block);
 
@@ -118,22 +116,23 @@ function sha1(message) {
      * @param {Array<Array<number>>} blocks 
      */
     function computeHash(blocks) {
-        var a = 0x67452301,
+        let a = 0x67452301,
             b = 0xefcdab89,
             c = 0x98badcfe,
             d = 0x10325476,
-            e = 0xc3d2e1f0,
-            hash = [a, b, c, d, e];
+            e = 0xc3d2e1f0;
 
-        for (var i = 0; i < blocks.length; i++) {
-            var w = blocks[i];
+        const hash = [a, b, c, d, e];
 
-            for (var t = 16; t < 80; t++) {
-                w[t] = rotl(w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16], 1);
+        for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i];
+
+            for (let t = 16; t < 80; t++) {
+                block[t] = rotl(block[t - 3] ^ block[t - 8] ^ block[t - 14] ^ block[t - 16], 1);
             }
 
-            for (var t = 0; t < 80; t++) {
-                var f =
+            for (let t = 0; t < 80; t++) {
+                const f =
                     // Ch
                     t < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
                     
@@ -146,7 +145,7 @@ function sha1(message) {
                     // Parity
                     (b ^ c ^ d) + 0xca62c1d6;
 
-                var T = rotl(a, 5) + f + e + w[t];
+                const T = rotl(a, 5) + f + e + block[t];
 
                 e = d;
                 d = c;
@@ -167,5 +166,3 @@ function sha1(message) {
 
     return wordsToHexString(computeHash(getBlocks(message)));
 }
-
-module.exports = sha1;

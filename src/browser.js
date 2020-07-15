@@ -5,24 +5,33 @@
  * 
  * This file contains the public interface of Jdenticon for browsers.
  */
-"use strict";
+
+import { iconGenerator } from "./renderer/iconGenerator";
+import { SvgRenderer } from "./renderer/svg/svgRenderer";
+import { SvgElement } from "./renderer/svg/svgElement";
+import { SvgWriter } from "./renderer/svg/svgWriter";
+import { renderDomElement } from "./renderer/renderDomElement";
+import { computeHash, isValidHash } from "./common/hashUtils";
+import { CanvasRenderer } from "./renderer/canvas/index";
+import { configuration } from "./common/configuration";
+import { observer } from "./common/observer";
+import { ICON_SELECTOR, ICON_TYPE_CANVAS, ICON_TYPE_SVG, getIdenticonType, supportsQuerySelectorAll } from "./common/dom";
 
 const pack = require("../package.json");
-const iconGenerator = require("./renderer/iconGenerator");
-const SvgRenderer = require("./renderer/svg/svgRenderer");
-const SvgElement = require("./renderer/svg/svgElement");
-const SvgWriter = require("./renderer/svg/svgWriter");
-const renderDomElement = require("./renderer/renderDomElement");
-const hashUtils = require("./common/hashUtils");
-const CanvasRenderer = require("./renderer/canvas");
-const configuration = require("./common/configuration");
-const observer = require("./common/observer");
-const dom = require("./common/dom");
- 
+
 // <debug>
 var global = typeof window !== "undefined" ? window : {},
     jQuery = global.jQuery;
 // </debug>
+
+/**
+ * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
+ */
+function jdenticon() {
+    if (supportsQuerySelectorAll) {
+        update(ICON_SELECTOR);
+    }
+}
 
 /**
  * Updates the identicon in the specified `<canvas>` or `<svg>` elements.
@@ -35,10 +44,10 @@ var global = typeof window !== "undefined" ? window : {},
  *    specified in place of a configuration object.
  */
 function update(el, hashOrValue, config) {
-    renderDomElement(el, hashOrValue, config, function (el) {
-        var iconType = dom.getIdenticonType(el);
+    renderDomElement(el, hashOrValue, configuration(jdenticon, global, config, 0.08), function (el) {
+        const iconType = getIdenticonType(el);
         if (iconType) {
-            return iconType == dom.ICON_TYPE_SVG ? 
+            return iconType == ICON_TYPE_SVG ? 
                 new SvgRenderer(new SvgElement(el)) : 
                 new CanvasRenderer(el.getContext("2d"));
         }
@@ -56,9 +65,9 @@ function update(el, hashOrValue, config) {
  *    specified in place of a configuration object.
  */
 function updateCanvas(el, hashOrValue, config) {
-    renderDomElement(el, hashOrValue, config, function (el) {
-        var iconType = dom.getIdenticonType(el);
-        if (iconType == dom.ICON_TYPE_CANVAS) {
+    renderDomElement(el, hashOrValue, configuration(jdenticon, global, config, 0.08), function (el) {
+        const iconType = getIdenticonType(el);
+        if (iconType == ICON_TYPE_CANVAS) {
             return new CanvasRenderer(el.getContext("2d"));
         }
     });
@@ -75,9 +84,9 @@ function updateCanvas(el, hashOrValue, config) {
  *    specified in place of a configuration object.
  */
 function updateSvg(el, hashOrValue, config) {
-    renderDomElement(el, hashOrValue, config, function (el) {
-        var iconType = dom.getIdenticonType(el);
-        if (iconType == dom.ICON_TYPE_SVG) {
+    renderDomElement(el, hashOrValue, configuration(jdenticon, global, config, 0.08), function (el) {
+        const iconType = getIdenticonType(el);
+        if (iconType == ICON_TYPE_SVG) {
             return new SvgRenderer(new SvgElement(el));
         }
     });
@@ -97,9 +106,8 @@ function drawIcon(ctx, hashOrValue, size, config) {
         throw new Error("No canvas specified.");
     }
     
-    var renderer = new CanvasRenderer(ctx, size);
-    iconGenerator(renderer, 
-        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
+    iconGenerator(new CanvasRenderer(ctx, size), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue), 
         0, 0, size, configuration(jdenticon, global, config, 0));
 }
 
@@ -113,28 +121,18 @@ function drawIcon(ctx, hashOrValue, size, config) {
  * @returns {string} SVG string
  */
 function toSvg(hashOrValue, size, config) {
-    var writer = new SvgWriter(size);
-    var renderer = new SvgRenderer(writer);
-    iconGenerator(renderer, 
-        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue),
+    const writer = new SvgWriter(size);
+    iconGenerator(new SvgRenderer(writer), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue),
         0, 0, size, configuration(jdenticon, global, config, 0.08));
     return writer.toString();
-}
-
-/**
- * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
- */
-function jdenticon() {
-    if (dom.supportsQuerySelectorAll) {
-        update(dom.ICON_SELECTOR);
-    }
 }
 
 /**
  * This function is called once upon page load.
  */
 function jdenticonStartup() {
-    var replaceMode = (jdenticon["config"] || global["jdenticon_config"] || { })["replaceMode"];
+    const replaceMode = (jdenticon["config"] || global["jdenticon_config"] || { })["replaceMode"];
     if (replaceMode != "never") {
         jdenticon();
         

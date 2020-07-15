@@ -3,16 +3,17 @@
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
  */
-"use strict";
 
 /**
  * Represents a point.
- * @private
- * @constructor
  */
-function Point(x, y) {
-    this.x = x;
-    this.y = y;
-};
-
-module.exports = Point;
+export class Point {
+    /**
+     * @param {number} x 
+     * @param {number} y 
+     */
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+}

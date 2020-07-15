@@ -1,7 +1,7 @@
 ﻿"use strict";
 
-var tap = require("tap");
-var sha1 = require("../../src/common/sha1");
+const tap = require("tap");
+const { sha1 } = require("../../src/common/sha1");
 
 tap.equal("92cfceb39d57d914ed8b14d0e37643de0797ae56", sha1(42));
 tap.equal("21d90aad4d34f48f4aad9b5fa3c37c118af16df9", sha1("Value to be hashed"));

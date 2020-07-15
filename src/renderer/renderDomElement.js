@@ -3,12 +3,11 @@
  * https://github.com/dmester/jdenticon
  * Copyright © Daniel Mester Pirttijärvi
  */
-"use strict";
 
-const iconGenerator = require("./iconGenerator");
-const hashUtils = require("../common/hashUtils");
-const configuration = require("../common/configuration");
-const dom = require("../common/dom");
+import { iconGenerator } from "./iconGenerator";
+import { isValidHash, computeHash } from "../common/hashUtils";
+import { configuration } from "../common/configuration";
+import { HASH_ATTRIBUTE, VALUE_ATTRIBUTE, supportsQuerySelectorAll } from "../common/dom";
 
 /**
  * Updates the identicon in the specified canvas or svg elements.
@@ -16,16 +15,14 @@ const dom = require("../common/dom");
  *    `<svg>` or `<canvas>`, or a CSS selector to such an element.
  * @param {*} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
  *    `data-jdenticon-value` attribute will be evaluated.
- * @param {Object|number|undefined} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
- *    specified in place of a configuration object.
+ * @param {Object} config
  * @param {function(Element)} rendererFactory - Factory function for creating an icon renderer.
  */
-function renderDomElement(el, hashOrValue, config, rendererFactory) {
+export function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (typeof el === "string") {
-        if (dom.supportsQuerySelectorAll) {
-            var elements = document.querySelectorAll(el);
-            for (var i = 0; i < elements.length; i++) {
+        if (supportsQuerySelectorAll) {
+            const elements = document.querySelectorAll(el);
+            for (let i = 0; i < elements.length; i++) {
                 renderDomElement(elements[i], hashOrValue, config, rendererFactory);
             }
         }
@@ -34,33 +31,31 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     
     // Hash selection. The result from getValidHash or computeHash is 
     // accepted as a valid hash.
-    var hash = 
+    const hash = 
         // 1. Explicit valid hash
-        hashUtils.validHash(hashOrValue) ||
+        isValidHash(hashOrValue) ||
         
         // 2. Explicit value (`!= null` catches both null and undefined)
-        hashOrValue != null && hashUtils.computeHash(hashOrValue) ||
+        hashOrValue != null && computeHash(hashOrValue) ||
         
         // 3. `data-jdenticon-hash` attribute
-        hashUtils.validHash(el.getAttribute(dom.HASH_ATTRIBUTE)) ||
+        isValidHash(el.getAttribute(HASH_ATTRIBUTE)) ||
         
         // 4. `data-jdenticon-value` attribute. 
         // We want to treat an empty attribute as an empty value. 
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(dom.VALUE_ATTRIBUTE) && hashUtils.computeHash(el.getAttribute(dom.VALUE_ATTRIBUTE));
+        el.hasAttribute(VALUE_ATTRIBUTE) && computeHash(el.getAttribute(VALUE_ATTRIBUTE));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
         return;
     }
     
-    var renderer = rendererFactory(el);
+    const renderer = rendererFactory(el);
     if (renderer) {
         // Draw icon
-        iconGenerator(renderer, hash, 0, 0, renderer.size, configuration(jdenticon, global, config, 0.08));
+        iconGenerator(renderer, hash, 0, 0, renderer.size, config);
     }
 }
-
-module.exports = renderDomElement;

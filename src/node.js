@@ -6,8 +6,6 @@
  * This file contains the public interface of Jdenticon for Node.js.
  */
 
-"use strict";
-
 if (typeof require !== "function" ||
     typeof module !== "object" ||
     typeof module.exports !== "object"
@@ -18,14 +16,15 @@ if (typeof require !== "function" ||
         "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
 
-const canvasRenderer = require("canvas-renderer");
-const pack = require("../package.json");
-const iconGenerator = require("./renderer/iconGenerator");
-const SvgRenderer = require("./renderer/svg/svgRenderer");
-const SvgWriter = require("./renderer/svg/svgWriter");
-const hashUtils = require("./common/hashUtils");
-const CanvasRenderer = require("./renderer/canvas");
-const configuration = require("./common/configuration");
+// This file is still using CommonJS to allow modifying the `config` property when Jenticon is imported using CommonJS.
+// If this file was converted to an ES module, the `config` property would be write protected.
+const { createCanvas } = require("canvas-renderer");
+const { iconGenerator } = require("./renderer/iconGenerator");
+const { SvgRenderer } = require("./renderer/svg/svgRenderer");
+const { SvgWriter } = require("./renderer/svg/svgWriter");
+const { computeHash, isValidHash } = require("./common/hashUtils");
+const { CanvasRenderer } = require("./renderer/canvas/index");
+const { configuration } = require("./common/configuration");
 
 /**
  * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
@@ -62,9 +61,8 @@ jdenticon.drawIcon = function drawIcon(ctx, hashOrValue, size, config) {
         throw new Error("No canvas specified.");
     }
     
-    var renderer = new CanvasRenderer(ctx, size);
-    iconGenerator(renderer, 
-        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
+    iconGenerator(new CanvasRenderer(ctx, size), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue), 
         0, 0, size, configuration(jdenticon, jdenticon, config, 0));
 }
 
@@ -78,10 +76,9 @@ jdenticon.drawIcon = function drawIcon(ctx, hashOrValue, size, config) {
  * @returns {string} SVG string
  */
 jdenticon.toSvg = function toSvg(hashOrValue, size, config) {
-    var writer = new SvgWriter(size);
-    var renderer = new SvgRenderer(writer);
-    iconGenerator(renderer, 
-        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue),
+    const writer = new SvgWriter(size);
+    iconGenerator(new SvgRenderer(writer), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue),
         0, 0, size, configuration(jdenticon, jdenticon, config, 0.08));
     return writer.toString();
 }
@@ -96,12 +93,11 @@ jdenticon.toSvg = function toSvg(hashOrValue, size, config) {
  * @returns {Buffer} PNG data
  */
 jdenticon.toPng = function toPng(hashOrValue, size, config) {
-    var canvas = canvasRenderer.createCanvas(size, size);
-    var ctx = canvas.getContext("2d");
+    const canvas = createCanvas(size, size);
+    const ctx = canvas.getContext("2d");
     
-    var renderer = new CanvasRenderer(ctx, size);
-    iconGenerator(renderer, 
-        hashUtils.validHash(hashOrValue) || hashUtils.computeHash(hashOrValue), 
+    iconGenerator(new CanvasRenderer(ctx, size), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue), 
         0, 0, size, configuration(jdenticon, jdenticon, config, 0.08));
     
     return canvas.toPng({ "Software": "Jdenticon" });
