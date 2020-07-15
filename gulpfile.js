@@ -134,6 +134,29 @@ gulp.task("build", gulp.series("clean", gulp.parallel(
     "build-node",
 )));
 
+gulp.task("clean-tests", function (cb) {
+    del(["./obj/test/node/*.js", "./obj/test/node/*.map"], cb);
+});
+
+gulp.task("build-tests-js", function () {
+    return gulp.src("./test/node/*.js", { base: "./" })
+        .pipe(sourcemaps.init())
+        .pipe(rollup({
+            external: [ "canvas-renderer", "fs", "tap" ],
+            plugins: [ commonjs() ],
+            output: { format: "cjs" },
+        }))
+        .pipe(sourcemaps.write("./"))
+        .pipe(gulp.dest("./obj"))
+});
+
+gulp.task("copy-tests-assets", function () {
+    return gulp.src("./test/node/expected/*")
+        .pipe(gulp.dest("./obj/test/node/expected/"))
+});
+
+gulp.task("build-tests", gulp.series("clean-tests", "build-tests-js", "copy-tests-assets"));
+
 gulp.task("preparerelease", function () {
     return gulp.src(["./LICENSE", "./README.md"])
         .pipe(replaceVariables())
