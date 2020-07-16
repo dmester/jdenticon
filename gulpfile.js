@@ -175,6 +175,18 @@ gulp.task("build-node", function () {
 
 });
 
+gulp.task("update-license-year", function () {
+    return gulp.src("./LICENSE")
+        .pipe(replace(/\(c\) 2014-\d+/, "(c) 2014-" + new Date().getFullYear()))
+        .pipe(gulp.dest("./"))
+});
+
+gulp.task("update-readme-version", function () {
+    return gulp.src("./README.md")
+        .pipe(replace(/@\d{1,2}\.\d{1,3}\.\d{1,3}/, "@" + pack.version))
+        .pipe(gulp.dest("./"))
+});
+
 gulp.task("build", gulp.series("clean", gulp.parallel(
     "build-js", "build-js-min",
     "build-esm", "build-cjs",
@@ -240,4 +252,10 @@ gulp.task("create-package", function () {
         .pipe(gulp.dest("releases"));
 });
 
-gulp.task("release", gulp.series("build", "prepare-release", "create-package", "prepare-nuget", "nuget"));
+gulp.task("release", gulp.series(
+    "update-license-year", "update-readme-version",
+    "build",
+    "prepare-release",
+    "create-package",
+    "prepare-nuget", "nuget",
+));
