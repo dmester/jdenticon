@@ -26,25 +26,31 @@ const rollup = require("./build/rollup-stream");
 const commonjs = require( "@rollup/plugin-commonjs");
 const stripBanner = require("rollup-plugin-strip-banner");
 
+// Constants
+const LICENSE = fs.readFileSync("./LICENSE").toString();
+const VARIABLES = [
+    [/#version#/g, pack.version],
+    [/#year#/g, new Date().getFullYear()],
+    [/#date#/g, new Date().toISOString()],
 
-function getVariables() {
-    return [
-        [/#version#/g, pack.version],
-        [/#year#/g, new Date().getFullYear()],
-        [/#date#/g, new Date().toISOString()],
-    ]
-}
+    // Keep line prefix, e.g. " * " for license banners in JavaScript.
+    [/(.*)#license#/gm, "$1" + LICENSE.trim().replace(/\n/g, "\n$1")],
+];
 
 function replaceVariables() {
-    return pipe(...getVariables().map(variable => replace(...variable)));
+    return pipe(...VARIABLES.map(variable => replace(...variable)));
 }
     
 function getWrapper(source, placeholder) {
-    return getVariables().reduce(
+    return VARIABLES.reduce(
         (result, variable) => result.replace(...variable),
         fs.readFileSync(source)
             .toString()
-            .replace(/<%=contents%>/, placeholder));
+            .replace(/\/\*content\*\//, placeholder));
+}
+
+function wrapTemplate(templatePath) {
+    return wrap(getWrapper(templatePath, "<%=contents%>"));
 }
 
 gulp.task("clean", function (cb) {
@@ -61,7 +67,7 @@ gulp.task("build-js", function () {
         // The UMD template expects a factory function body, so replace export with a return for the factory function.
         .pipe(replace(/module.exports = /, "return "))
         .pipe(replaceVariables())
-        .pipe(wrap(getWrapper("./build/template.js", "<%=contents%>")))
+        .pipe(wrapTemplate("./build/template-umd.js"))
         .pipe(buble())
         
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
@@ -80,7 +86,7 @@ gulp.task("build-js-min", function () {
         // The UMD template expects a factory function body, so replace export with a return for the factory function.
         .pipe(replace(/module.exports = /, "return "))
         .pipe(replaceVariables())
-        .pipe(wrap(getWrapper("./build/template.js", "<%=contents%>")))
+        .pipe(wrapTemplate("./build/template-umd.js"))
         
         // Prepare for minification
         .pipe(sourcemaps.init())
@@ -119,7 +125,7 @@ gulp.task("build-cjs", function () {
 
         // Replace variables
         .pipe(replaceVariables())
-        .pipe(wrap(getWrapper("./build/template-module.js", "<%=contents%>")))
+        .pipe(wrapTemplate("./build/template-module.js"))
         
         .pipe(buble())
 
@@ -139,7 +145,7 @@ gulp.task("build-esm", function () {
 
         // Replace variables
         .pipe(replaceVariables())
-        .pipe(wrap(getWrapper("./build/template-module.js", "<%=contents%>")))
+        .pipe(wrapTemplate("./build/template-module.js"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".mjs" }))
         .pipe(gulp.dest("dist"))
@@ -158,6 +164,7 @@ gulp.task("build-node", function () {
         }))
 
         .pipe(replaceVariables())
+        .pipe(wrapTemplate("./build/template-module.js"))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".js" }))
 
