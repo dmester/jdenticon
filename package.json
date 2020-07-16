@@ -44,7 +44,6 @@
   "files": [
     "bin/",
     "dist/",
-    "src/",
     "types/index.d.ts"
   ],
   "repository": {
