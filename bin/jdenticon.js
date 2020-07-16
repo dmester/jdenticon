@@ -71,9 +71,16 @@ function parseArgs(args) {
                 var alias = aliases[aliasIndex];
     
                 if (arg === alias) {
-                    var value = hasValue ? args[argIndex + 1] : true;
-                    if (argIndex + 1 >= args.length) {
-                        console.warn("WARN Missing value of argument " + alias);
+                    var value;
+
+                    if (hasValue) {
+                        if (argIndex + 1 < args.length) {
+                            value = args[argIndex + 1];
+                        } else {
+                            console.warn("WARN Missing value of argument " + alias);
+                        }
+                    } else {
+                        value = true;
                     }
                     
                     args.splice(argIndex, hasValue ? 2 : 1);
