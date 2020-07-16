@@ -89,6 +89,7 @@ gulp.task("build-js-min", function () {
         .pipe(wrapTemplate("./build/template-umd.js"))
         
         // Prepare for minification
+        .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
         .pipe(sourcemaps.init())
         
         // Closure does not know that ELEMENT_NODE is a constant. Replace it before passing it on to Closure.
@@ -99,7 +100,8 @@ gulp.task("build-js-min", function () {
             compilation_level: "ADVANCED",
             rewritePolyfills: false,
             createSourceMap: true,
-            outputWrapper: getWrapper("./build/template.min.js", "%output%"),
+            sourceMapIncludeContent: true,
+            outputWrapper: getWrapper("./build/template-min.js", "%output%"),
             externs: [
                 { src: "var module; function define(deps, cb) { }" }
             ]
