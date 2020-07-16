@@ -37,7 +37,7 @@
     "build": "gulp build",
     "release": "gulp release",
     "lint": "eslint ./src/**",
-    "test": "npm run test:unit && npm run test:types",
+    "test": "npm run lint && npm run test:unit && npm run test:types",
     "test:unit": "gulp build-tests && tap obj/test/node/*.js",
     "test:types": "tsc -p ./types/test/tsconfig.json"
   },
