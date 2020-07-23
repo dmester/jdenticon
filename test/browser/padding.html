@@ -69,7 +69,10 @@
             }
 
             document.getElementById("padding-percent").innerHTML = padding;
-            document.body.classList.add("padding-" + padding);
+            
+            // classList not supported in IE9
+            var className = document.body.className;
+            document.body.className = (className ? className + " " : "") + "padding-" + padding;
 
             var jdenticon_config = {
                 padding: padding / 100,
