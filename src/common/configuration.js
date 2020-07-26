@@ -6,11 +6,33 @@
 
 import { parseColor } from "../renderer/color";
 
+var _globalObject;
+var _rootConfiguration;
+
+export function setGlobal(globalObject) {
+    _globalObject = globalObject;
+}
+
+export function initRootObject(rootObject) {
+    Object.defineProperty(rootObject, "config", {
+        configurable: true,
+        get: () => _rootConfiguration,
+        set: newConfiguration => {
+            _rootConfiguration = newConfiguration;
+            console.warn("jdenticon.config is deprecated. Use jdenticon.configure() instead.");
+        },
+    });
+}
+
+export function configure(newConfiguration) {
+    if (arguments.length) {
+        _rootConfiguration = newConfiguration;
+    }
+    return _rootConfiguration;
+}
+
 /**
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
- * @param {Object} jdenticon - The public Jdenticon API object, on which the public `config` property is set.
- * @param {Object} global - The global object, `window` in the browser and `module` on Node, in which the
- *    `jdenticon_config` variable can be declared.
  * @param {Object|number|undefined} paddingOrLocalConfig - Configuration passed to the called API method. A
  *    local configuration overrides the global configuration in it entirety. This parameter can for backward
  *    compatbility also contain a padding value. A padding value only overrides the global padding, not the
@@ -18,11 +40,11 @@ import { parseColor } from "../renderer/color";
  * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
  *    explicitly to the API method.
  */
-export function configuration(jdenticon, global, paddingOrLocalConfig, defaultPadding) {
+export function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     const configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
-            jdenticon["config"] ||
-            global["jdenticon_config"] ||
+            _rootConfiguration ||
+            _globalObject && _globalObject["jdenticon_config"] ||
             { },
 
         lightnessConfig = configObject["lightness"] || { },

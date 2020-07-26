@@ -2,9 +2,15 @@
   "name": "jdenticon",
   "version": "2.2.0",
   "description": "Javascript identicon generator",
-  "main": "src/node.js",
-  "browser": "dist/jdenticon.min.js",
-  "types": "types/index.d.ts",
+  "main": "dist/jdenticon-node.js",
+  "exports": {
+    "require": "./dist/jdenticon-node.js",
+    "default": "./dist/jdenticon-node.mjs"
+  },
+  "browser": "dist/jdenticon-module",
+  "jsdelivr": "dist/jdenticon.min.js",
+  "unpkg": "dist/jdenticon.min.js",
+  "types": "types/module.d.ts",
   "type": "module",
   "bin": {
     "jdenticon": "bin/jdenticon.js"
@@ -44,7 +50,8 @@
   "files": [
     "bin/",
     "dist/",
-    "types/index.d.ts"
+    "standalone/",
+    "types/*.d.ts"
   ],
   "repository": {
     "type": "git",

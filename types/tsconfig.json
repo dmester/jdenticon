@@ -16,6 +16,7 @@
         "forceConsistentCasingInFileNames": true
     },
     "files": [
-        "./index.d.ts"
+        "./umd.d.ts",
+        "./module.d.ts"
     ]
 }

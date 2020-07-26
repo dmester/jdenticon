@@ -57,8 +57,8 @@ gulp.task("clean", function (cb) {
     del(["./~jdenticon.nuspec", "./obj/output"], cb);
 });
 
-gulp.task("build-js", function () {
-    return gulp.src("./src/browser-standalone.js")
+gulp.task("build-umd", function () {
+    return gulp.src("./src/browser-umd.js")
         .pipe(rollup({
             output: { format: "cjs" },
             plugins: [ stripBanner() ],
@@ -71,14 +71,15 @@ gulp.task("build-js", function () {
         .pipe(buble())
         
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
+        .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-" + pack.version; path.extname = ".js" }))
         .pipe(gulp.dest("obj/output"));
 });
 
-gulp.task("build-js-min", function () {
-    return gulp.src("./src/browser-standalone.js")
+gulp.task("build-umd-min", function () {
+    return gulp.src("./src/browser-umd.js")
         .pipe(rollup({
             output: { format: "cjs" },
         }))
@@ -119,7 +120,7 @@ gulp.task("build-js-min", function () {
 });
 
 gulp.task("build-cjs", function () {
-    return gulp.src("./src/browser-module.js")
+    return gulp.src("./src/browser-cjs.js")
         .pipe(rollup({
             output: { format: "cjs" },
             plugins: [ stripBanner() ],
@@ -139,7 +140,7 @@ gulp.task("build-cjs", function () {
 });
 
 gulp.task("build-esm", function () {
-    return gulp.src("./src/browser-module.js")
+    return gulp.src("./src/browser-esm.js")
         .pipe(rollup({
             output: { format: "esm" },
             plugins: [ stripBanner() ],
@@ -156,8 +157,8 @@ gulp.task("build-esm", function () {
         .pipe(gulp.dest("obj/output"))
 });
 
-gulp.task("build-node", function () {
-    return gulp.src("./src/node.js")
+gulp.task("build-node-cjs", function () {
+    return gulp.src("./src/node-cjs.js")
         .pipe(sourcemaps.init())
         .pipe(rollup({
             external: [ "canvas-renderer" ],
@@ -172,7 +173,24 @@ gulp.task("build-node", function () {
 
         .pipe(sourcemaps.write("./"))
         .pipe(gulp.dest("./dist"));
+});
 
+gulp.task("build-node-esm", function () {
+    return gulp.src("./src/node-esm.js")
+        .pipe(sourcemaps.init())
+        .pipe(rollup({
+            external: [ "canvas-renderer" ],
+            plugins: [ stripBanner(), commonjs() ],
+            output: { format: "esm" },
+        }))
+
+        .pipe(replaceVariables())
+        .pipe(wrapTemplate("./build/template-module.js"))
+
+        .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".mjs" }))
+
+        .pipe(sourcemaps.write("./"))
+        .pipe(gulp.dest("./dist"));
 });
 
 gulp.task("update-license-year", function () {
@@ -188,9 +206,9 @@ gulp.task("update-readme-version", function () {
 });
 
 gulp.task("build", gulp.series("clean", gulp.parallel(
-    "build-js", "build-js-min",
+    "build-umd", "build-umd-min",
     "build-esm", "build-cjs",
-    "build-node",
+    "build-node-cjs", "build-node-esm",
 )));
 
 gulp.task("clean-tests", function (cb) {

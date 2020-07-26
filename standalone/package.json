@@ -1,0 +1,4 @@
+{
+  "main": "../dist/jdenticon.min.js",
+  "types": "../types/umd.d.ts"
+}
