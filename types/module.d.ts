@@ -110,7 +110,7 @@ export interface JdenticonConfig {
  * @param hashOrValue Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
  *    `data-jdenticon-value` attribute will be evaluated.
  * @param config Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  */
 export function update(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
@@ -126,7 +126,7 @@ export function update(elementOrSelector: HTMLElement | string, hashOrValue?: an
  * @param hashOrValue Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
  *    `data-jdenticon-value` attribute will be evaluated.
  * @param config Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  */
 export function updateCanvas(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
@@ -142,7 +142,7 @@ export function updateCanvas(elementOrSelector: HTMLElement | string, hashOrValu
  * @param hashOrValue Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
  *    `data-jdenticon-value` attribute will be evaluated.
  * @param config Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  */
 export function updateSvg(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
@@ -153,7 +153,7 @@ export function updateSvg(elementOrSelector: HTMLElement | string, hashOrValue?:
  * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param size Icon size in pixels.
  * @param config Optional configuration. If specified, this configuration object overrides any global
- * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  * specified in place of a configuration object.
  */
 export function drawIcon(
@@ -167,7 +167,7 @@ export function drawIcon(
  * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param size Icon size in pixels.
  * @param config Optional configuration. If specified, this configuration object overrides any global
- * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  * specified in place of a configuration object.
  * @returns SVG string
  */
@@ -182,7 +182,7 @@ export function toSvg(hashOrValue: any, size: number, config?: JdenticonConfig |
  * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param size Icon size in pixels.
  * @param config Optional configuration. If specified, this configuration object overrides any global
- * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  * specified in place of a configuration object.
  * @returns PNG data
  */

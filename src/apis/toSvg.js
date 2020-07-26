@@ -9,7 +9,7 @@ import { SvgWriter } from "../renderer/svg/svgWriter";
  * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
  * @param {number} size - Icon size in pixels.
  * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+ *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  * @returns {string} SVG string
  */

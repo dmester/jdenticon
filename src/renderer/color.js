@@ -33,7 +33,7 @@ export function rgb(r, g, b) {
 }
 
 /**
- * @param {string} color  Color value to parse. Curently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+ * @param {string} color  Color value to parse. Currently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
  */
 export function parseColor(color) {
     if (/^#[0-9a-f]{3,8}$/i.test(color)) {
@@ -87,7 +87,7 @@ export function hsl(h, s, l) {
 
 // This function will correct the lightness for the "dark" hues
 export function correctedHsl(h, s, l) {
-    // The corrector specifies the perceived middle lightnesses for each hue
+    // The corrector specifies the perceived middle lightness for each hue
     const correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
           corrector = correctors[(h * 6 + 0.5) | 0];
     

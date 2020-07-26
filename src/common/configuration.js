@@ -35,7 +35,7 @@ export function configure(newConfiguration) {
  * Gets the normalized current Jdenticon color configuration. Missing fields have default values.
  * @param {Object|number|undefined} paddingOrLocalConfig - Configuration passed to the called API method. A
  *    local configuration overrides the global configuration in it entirety. This parameter can for backward
- *    compatbility also contain a padding value. A padding value only overrides the global padding, not the
+ *    compatibility also contain a padding value. A padding value only overrides the global padding, not the
  *    entire global configuration.
  * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
  *    explicitly to the API method.

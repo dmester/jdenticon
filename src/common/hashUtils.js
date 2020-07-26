@@ -15,7 +15,7 @@ export function isValidHash(hashCandidate) {
 }
 
 /**
- * Computes a hash for the specified value. Currnently SHA1 is used. This function
+ * Computes a hash for the specified value. Currently SHA1 is used. This function
  * always returns a valid hash.
  */
 export function computeHash(value) {

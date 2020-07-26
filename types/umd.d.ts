@@ -120,7 +120,7 @@ declare global {
          * @param hash Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
          * `data-jdenticon-value` attribute will be evaluated.
          * @param config Optional configuration. If specified, this configuration object overrides any global
-         * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+         * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.
          */
         update(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
@@ -131,7 +131,7 @@ declare global {
          * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
          * @param size Icon size in pixels.
          * @param config Optional configuration. If specified, this configuration object overrides any global
-         * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+         * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.
          */
         drawIcon(
@@ -145,7 +145,7 @@ declare global {
          * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
          * @param size Icon size in pixels.
          * @param config Optional configuration. If specified, this configuration object overrides any global
-         * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+         * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.
          * @returns SVG string
          */
@@ -160,7 +160,7 @@ declare global {
          * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.
          * @param size Icon size in pixels.
          * @param config Optional configuration. If specified, this configuration object overrides any global
-         * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+         * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.
          * @returns PNG data
          */
@@ -233,7 +233,7 @@ declare global {
          * specified the `data-jdenticon-hash` and `data-jdenticon-value` attributes of each element will be
          * evaluated.
          * @param config Optional configuration. If specified, this configuration object overrides any global
-         * configuration in its entirety. For backward compability a padding value in the range [0.0, 0.5) can be
+         * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.
          */
         jdenticon(hashOrValue?: any, config?: JdenticonConfig | number): void;
