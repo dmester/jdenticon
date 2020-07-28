@@ -7,9 +7,8 @@
  * #license#
  */
 
-(function (global, factory) {
-    var jQuery = global && global["jQuery"],
-        jdenticon = factory(global, jQuery);
+(function (umdGlobal, factory) {
+    var jdenticon = factory(umdGlobal);
 
     // Node.js
     if (typeof module !== "undefined" && "exports" in module) {
@@ -21,8 +20,8 @@
     }
     // No module loader
     else {
-        global["jdenticon"] = jdenticon;
+        umdGlobal["jdenticon"] = jdenticon;
     }
-})(typeof self !== "undefined" ? self : this, function (global, jQuery) {
+})(typeof self !== "undefined" ? self : this, function (umdGlobal) {
 /*content*/
 });

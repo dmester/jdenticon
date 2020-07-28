@@ -6,7 +6,7 @@
 
 // This file is compiled to dist/jdenticon-module.js
 
-import { initRootObject, setGlobal } from "./common/configuration";
+import { defineConfigProperty } from "./common/configuration";
 import { configure } from "./apis/configure";
 import { drawIcon } from "./apis/drawIcon";
 import { toSvg } from "./apis/toSvg";
@@ -14,8 +14,7 @@ import { update, updateAll, updateCanvas, updateSvg } from "./apis/update";
 
 const jdenticon = updateAll;
 
-setGlobal(window);
-initRootObject(jdenticon);
+defineConfigProperty(jdenticon);
 
 // Export public API
 jdenticon["configure"] = configure;

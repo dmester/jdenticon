@@ -16,7 +16,7 @@ if (typeof process === "undefined" &&
         "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
 
-import { setGlobal, initRootObject } from "./common/configuration";
+import { defineConfigProperty } from "./common/configuration";
 import { configure } from "./apis/configure";
 import { drawIcon } from "./apis/drawIcon";
 import { toPng } from "./apis/toPng";
@@ -29,8 +29,7 @@ function jdenticon() {
     throw new Error("jdenticon() is not supported on Node.js.");
 }
 
-setGlobal(global);
-initRootObject(jdenticon);
+defineConfigProperty(jdenticon);
 
 jdenticon.configure = configure;
 jdenticon.drawIcon = drawIcon;

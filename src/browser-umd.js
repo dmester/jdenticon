@@ -6,19 +6,18 @@
 
 // This file is compiled to dist/jdenticon.js and dist/jdenticon.min.js
 
-import { setGlobal, initRootObject } from "./common/configuration";
+import { defineConfigProperty } from "./common/configuration";
 import { observer } from "./common/observer";
 import { configure } from "./apis/configure";
 import { drawIcon } from "./apis/drawIcon";
 import { toSvg } from "./apis/toSvg";
 import { update, updateAll, updateCanvas, updateSvg } from "./apis/update";
 import { jdenticonJqueryPlugin } from "./apis/jquery";
+import { GLOBAL } from "./common/global";
 
 const jdenticon = updateAll;
 
-// `global` is made available by the UMD wrapper
-setGlobal(global);
-initRootObject(jdenticon);
+defineConfigProperty(jdenticon);
 
 // Export public API
 jdenticon["configure"] = configure;
@@ -41,8 +40,7 @@ jdenticon["version"] = "#version#";
 jdenticon["bundle"] = "browser-umd";
 
 // Basic jQuery plugin
-// `jQuery` is made available by the UMD wrapper
-/* global jQuery */
+const jQuery = GLOBAL["jQuery"];
 if (jQuery) {
     jQuery["fn"]["jdenticon"] = jdenticonJqueryPlugin;
 }
@@ -53,7 +51,7 @@ if (jQuery) {
 function jdenticonStartup() {
     const replaceMode = (
         jdenticon["config"] ||
-        global && global["jdenticon_config"] ||
+        GLOBAL["jdenticon_config"] ||
         { }
     )["replaceMode"];
     

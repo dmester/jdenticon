@@ -6,10 +6,6 @@
 
 // This file is compiled to dist/jdenticon-module.mjs
 
-import { setGlobal } from "./common/configuration";
-
-setGlobal(window);
-
 export { configure } from "./apis/configure";
 export { drawIcon } from "./apis/drawIcon";
 export { toSvg } from "./apis/toSvg";

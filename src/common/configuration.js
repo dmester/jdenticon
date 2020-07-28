@@ -5,30 +5,34 @@
  */
 
 import { parseColor } from "../renderer/color";
+import { GLOBAL } from "./global";
 
-var _globalObject;
-var _rootConfiguration;
+var rootConfiguration;
 
-export function setGlobal(globalObject) {
-    _globalObject = globalObject;
-}
-
-export function initRootObject(rootObject) {
+/**
+ * Defines the deprecated `config` property on the root Jdenticon object.
+ * @param {!Object} rootObject 
+ */
+export function defineConfigProperty(rootObject) {
     Object.defineProperty(rootObject, "config", {
         configurable: true,
-        get: () => _rootConfiguration,
+        get: () => rootConfiguration,
         set: newConfiguration => {
-            _rootConfiguration = newConfiguration;
+            rootConfiguration = newConfiguration;
             console.warn("jdenticon.config is deprecated. Use jdenticon.configure() instead.");
         },
     });
 }
 
+/**
+ * Sets a new icon style configuration. The new configuration is not merged with the previous one. * 
+ * @param {Object} newConfiguration - New configuration object.
+ */
 export function configure(newConfiguration) {
     if (arguments.length) {
-        _rootConfiguration = newConfiguration;
+        rootConfiguration = newConfiguration;
     }
-    return _rootConfiguration;
+    return rootConfiguration;
 }
 
 /**
@@ -43,8 +47,8 @@ export function configure(newConfiguration) {
 export function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     const configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
-            _rootConfiguration ||
-            _globalObject && _globalObject["jdenticon_config"] ||
+            rootConfiguration ||
+            GLOBAL["jdenticon_config"] ||
             { },
 
         lightnessConfig = configObject["lightness"] || { },

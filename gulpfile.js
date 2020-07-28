@@ -25,6 +25,7 @@ const sourcemaps = require("gulp-sourcemaps");
 const rollup = require("./build/rollup-stream");
 const commonjs = require( "@rollup/plugin-commonjs");
 const stripBanner = require("rollup-plugin-strip-banner");
+const alias = require("@rollup/plugin-alias");
 
 // Constants
 const LICENSE = fs.readFileSync("./LICENSE").toString();
@@ -40,7 +41,7 @@ const VARIABLES = [
 function replaceVariables() {
     return pipe(...VARIABLES.map(variable => replace(...variable)));
 }
-    
+
 function getWrapper(source, placeholder) {
     return VARIABLES.reduce(
         (result, variable) => result.replace(...variable),
@@ -53,21 +54,32 @@ function wrapTemplate(templatePath) {
     return wrap(getWrapper(templatePath, "<%=contents%>"));
 }
 
-gulp.task("clean", function (cb) {
-    del(["./~jdenticon.nuspec", "./obj/output"], cb);
-});
-
-gulp.task("build-umd", function () {
+function umdSrc() {
     return gulp.src("./src/browser-umd.js")
         .pipe(rollup({
             output: { format: "cjs" },
-            plugins: [ stripBanner() ],
+            plugins: [
+                stripBanner(), 
+                alias({
+                    entries: [
+                        { find: /^(.*[\/\\])global$/, replacement: "$1global.umd" },
+                    ]
+                }),
+            ],
         }))
 
         // The UMD template expects a factory function body, so replace export with a return for the factory function.
         .pipe(replace(/module.exports = /, "return "))
         .pipe(replaceVariables())
-        .pipe(wrapTemplate("./build/template-umd.js"))
+        .pipe(wrapTemplate("./build/template-umd.js"));
+}
+
+gulp.task("clean", function (cb) {
+    del(["./~jdenticon.nuspec", "./obj/output"], cb);
+});
+
+gulp.task("build-umd", function () {
+    return umdSrc()
         .pipe(buble())
         
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
@@ -79,16 +91,10 @@ gulp.task("build-umd", function () {
 });
 
 gulp.task("build-umd-min", function () {
-    return gulp.src("./src/browser-umd.js")
-        .pipe(rollup({
-            output: { format: "cjs" },
-        }))
-
-        // The UMD template expects a factory function body, so replace export with a return for the factory function.
-        .pipe(replace(/module.exports = /, "return "))
-        .pipe(replaceVariables())
-        .pipe(wrapTemplate("./build/template-umd.js"))
+    return umdSrc()
         
+        // Buble not needed since Closure Compiler will do the same
+
         // Prepare for minification
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".js" }))
         .pipe(sourcemaps.init())
