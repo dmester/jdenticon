@@ -167,13 +167,18 @@ declare global {
         toPng(hashOrValue: any, size: number, config?: JdenticonConfig | number): Buffer;
 
         /**
+         * Gets the current global style configuration.
+         */
+        configure(): JdenticonConfig;
+
+        /**
          * Specifies the color options for the generated icons. This is the only supported method of setting identicon
          * styles when used in a Node environment.
          * 
          * In browsers {@link jdenticon_config} is the prefered way of setting an identicon style to avoid a race
          * condition where the style is set before the Jdetnicon lib has loaded, leading to an unhandled error.
          */
-        config?: JdenticonConfig;
+        configure(newConfig: JdenticonConfig): JdenticonConfig;
 
         /**
          * Specifies the version of the Jdenticon package in use.

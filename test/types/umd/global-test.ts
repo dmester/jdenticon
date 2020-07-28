@@ -1,4 +1,3 @@
-import jdenticon = require("../index");
 
 const config: JdenticonConfig = {
     lightness: {
@@ -25,7 +24,7 @@ const oldConfig: JdenticonConfig = {
 
 window.jdenticon_config = config;
 
-jdenticon.config = config;
+jdenticon.configure(config);
 
 jdenticon.toPng("value to hash", 100);
 jdenticon.toSvg("value to hash", 100);

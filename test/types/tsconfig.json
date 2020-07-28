@@ -12,14 +12,8 @@
         "typeRoots": [
             "../../node_modules/@types"
         ],
-        "types": [
-            "../"
-        ],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
-    "include": [
-      "./*.ts"
-    ],
     "compileOnSave": false
 }
