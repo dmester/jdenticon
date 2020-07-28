@@ -17,20 +17,24 @@ h1:first-child {
     margin-top: 0;
 }
 
+.test-metadata {
+    font: 14px Arial;
+    margin: 0 0 1em;
+    min-height: 4em;
+    background: #C1D1EA;
+    padding: 10px;
+    line-height: 1.4;
+}
+
+.jdenticon-info {
+    font-weight: bold;
+}
+
 canvas,
 svg,
 img {
   border: 6px solid #444;
   margin-bottom: 5px;
-}
-
-
-.version-info {
-    font: 14px Arial;
-    margin: 1em 0;
-}
-.version-info--error {
-    color: #f00;
 }
 
 figure {
@@ -43,37 +47,6 @@ figure {
 
 figure strong {
     display: block;
-}
-
-.using-dist-info,
-.using-src-info,
-.using-fileprotocol-info {
-    display: none;
-    font: 16px Arial;
-    padding: 10px;
-    background: #C0E5B2;
-}
-
-.using-dist-info {
-    background: #C1D1EA;
-}
-
-.using-fileprotocol-info {
-    background: #BC140B;
-    color: #fff;
-}
-
-.using-dist .using-dist-info,
-.using-src .using-src-info,
-.using-fileprotocol .using-fileprotocol-info {
-    display: block;
-}
-
-.amd {
-    display: none;
-}
-.using-dist .amd {
-    display: inline;
 }
 
 

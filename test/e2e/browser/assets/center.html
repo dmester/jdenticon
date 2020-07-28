@@ -52,29 +52,11 @@
             backColor: "#00f1",
         };
         </script>
-        <script src="../../dist/jdenticon.min.js"></script>
+        <script src="/dist/jdenticon.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/require1k@1.0.1/require1k.min.js"></script>
         <script>
-    
-            function init(jdenticon) {
-                jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
-                jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
-            }
-    
-            if (typeof jdenticon !== "undefined") {
-                init(jdenticon);
-            }
-            else {
-                R("../../src/jdenticon", function (err, jdenticon) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    else {
-                        init(jdenticon);
-                    }
-                });
-            }
-    
+            jdenticon.update("#canvas-Icon2-update-vert,#svg-Icon2-update-vert", "Icon2");
+            jdenticon.update("#canvas-Icon2-update-hori,#svg-Icon2-update-hori", "Icon2");
         </script>
         <script src="common.js"></script>
     </body>

@@ -1,5 +1,7 @@
+artifacts
 obj
 releases
 bower_components
 node_modules
 .vs
+.nyc_output

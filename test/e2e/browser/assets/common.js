@@ -1,7 +1,7 @@
 
 addEventListener("message", function (ev) {
     var data = JSON.parse(ev.data);
-    
+
     if ("scrollHeight" in data) {
         var iframe = document.getElementsByName(data.name);
         if (iframe && iframe.length) {

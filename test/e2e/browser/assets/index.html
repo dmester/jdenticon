@@ -1,0 +1,65 @@
+<html>
+<head>
+    <title>Jdenticon browser test</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <script src="common.js"></script>
+    
+    <div class="test-metadata">
+        <div class="jdenticon-info">Unknown Jdenticon version.</div>
+        <div class="browser-info">Unknown browser</div>
+    </div>
+    
+    <!-- Tests are run in iframes to allow isolated testing of loaders and configuration -->
+    <iframe name="amd" class="amd" src="amd.html"></iframe>
+    <iframe name="normal" src="normal.html"></iframe>
+    <iframe name="padding-0" src="padding.html?padding=0"></iframe>
+    <iframe name="padding-30" src="padding.html?padding=30"></iframe>
+    <iframe name="center" src="center.html"></iframe>
+    
+    <script src="/dist/jdenticon.min.js"></script>
+    <script>
+
+        var BROWSER_REGEX = ["Firefox/", "SamsungBrowser/", "Opera/", "OPR/", "MSIE ", "Trident/", "Edge?/", "Chrome/", "Safari/"];
+
+        function htmlEncode(text) {
+            var div = document.createElement("div");
+            div.innerText = text;
+            return div.innerHTML;
+        }
+
+        function detectBrowser() {
+            var html = navigator.userAgent;
+            var hasMatch = false;
+
+            for (var i = 0; !hasMatch && i < BROWSER_REGEX.length; i++) {
+                var tempHtml = html.replace(new RegExp("(\\b" + BROWSER_REGEX[i] + "\\S+)|<|>|&", "g"), function (match) {
+                    if (match === "<") return "&lt;";
+                    if (match === ">") return "&gt;";
+                    if (match === "&") return "&amp;";
+                    hasMatch = true;
+                    return "<strong>" + htmlEncode(match) + "</strong>";
+                })
+
+                if (hasMatch) {
+                    html = tempHtml;
+                }
+            }
+
+            if (!hasMatch) {
+                html = htmlEncode(html);
+            }
+
+            var browserInfo = document.querySelector(".browser-info");
+            browserInfo.innerHTML = html;
+        }
+
+        var versionInfo = document.querySelector(".jdenticon-info");
+        versionInfo.innerText = "Jdenticon " + jdenticon.version;
+        
+        detectBrowser();
+        
+    </script>
+</body>
+</html>
