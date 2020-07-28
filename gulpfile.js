@@ -8,6 +8,7 @@
 const pipe = require("multipipe");
 const del = require("del");
 const fs = require("fs");
+const path = require("path");
 const { exec } = require("child_process");
 const pack = require("./package.json");
 
@@ -211,11 +212,27 @@ gulp.task("update-readme-version", function () {
         .pipe(gulp.dest("./"))
 });
 
+gulp.task("install-jdenticon-test", function () {
+    const globs = pack.files
+        .map(file => {
+            const isDirectory = 
+                !/\*/.test(file) && 
+                fs.existsSync(file) &&
+                fs.lstatSync(file).isDirectory();
+            return isDirectory ? path.join(file, "**") : file;
+        });
+    
+    // Simulate an installed Jdenticon package. Cannot use actual npm command, since it won't install Jdenticon in a
+    // subfolder to the Jdenticon source package itself.
+    return gulp.src(["./package.json", ...globs], { base: "./" })
+        .pipe(gulp.dest("./test/e2e/node_modules/jdenticon"));
+});
+
 gulp.task("build", gulp.series("clean", gulp.parallel(
     "build-umd", "build-umd-min",
     "build-esm", "build-cjs",
     "build-node-cjs", "build-node-esm",
-)));
+), "install-jdenticon-test"));
 
 gulp.task("clean-tests", function (cb) {
     del(["./obj/test/node/*.js", "./obj/test/node/*.map"], cb);

@@ -21,6 +21,7 @@
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
     "@types/jquery": "^3.3.30",
     "buble": "^0.20.0",
     "del": "^1.2.1",
@@ -36,16 +37,23 @@
     "multipipe": "^4.0.0",
     "rollup": "^2.21.0",
     "rollup-plugin-strip-banner": "^2.0.0",
-    "tap": "^10.7.0",
-    "typescript": "^3.5.3"
+    "rollup-plugin-terser": "^6.1.0",
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "tap": "^14.10.8",
+    "typescript": "^3.5.3",
+    "webpack": "^4.44.0",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
-    "build": "gulp build",
+    "build": "npm run lint && gulp build",
     "release": "gulp release",
-    "lint": "eslint ./src/**",
-    "test": "npm run lint && npm run test:unit && npm run test:types",
+    "lint": "eslint ./src/**/*.js",
     "test:unit": "gulp build-tests && tap obj/test/node/*.js",
-    "test:types": "tsc -p ./test/types/module/tsconfig.json & tsc -p ./test/types/umd/tsconfig.json"
+    "test:types": "tsc -p ./test/types/module/tsconfig.json & tsc -p ./test/types/umd/tsconfig.json",
+    "test:node-cjs": "tap ./test/e2e/node/test.js",
+    "test:node-esm": "tap ./test/e2e/node/test.mjs --no-esm",
+    "test:webpack": "cd ./test/e2e/webpack && webpack-cli && tap ./app.bundle.js",
+    "test:rollup": "cd ./test/e2e/rollup && rollup --config && tap ./app.bundle.js"
   },
   "files": [
     "bin/",
