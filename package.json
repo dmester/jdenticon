@@ -11,7 +11,6 @@
   "jsdelivr": "dist/jdenticon.min.js",
   "unpkg": "dist/jdenticon.min.js",
   "types": "types/module.d.ts",
-  "type": "module",
   "bin": {
     "jdenticon": "bin/jdenticon.js"
   },
