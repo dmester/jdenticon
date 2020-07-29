@@ -9,11 +9,14 @@ import { Graphics } from "./graphics";
 import { CENTER_SHAPES, OUTER_SHAPES } from "./shapes";
 import { colorTheme } from "./colorTheme";
 import { parseHex } from "../common/parseHex";
+import { getConfiguration } from "../common/configuration";
      
 /**
  * Draws an identicon to a specified renderer.
  */
 export function iconGenerator(renderer, hash, config) {
+    config = getConfiguration(config, 0.08);
+
     // Set background color
     if (config.backColor) {
         renderer.setBackground(config.backColor);

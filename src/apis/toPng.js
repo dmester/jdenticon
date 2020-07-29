@@ -1,7 +1,6 @@
 import canvasRenderer from "canvas-renderer";
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { getConfiguration } from "../common/configuration";
 import { CanvasRenderer } from "../renderer/canvas/index";
 
 /**
@@ -19,7 +18,7 @@ export function toPng(hashOrValue, size, config) {
     
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
-        getConfiguration(config, 0.08));
+        config);
     
     return canvas.toPng({ "Software": "Jdenticon" });
 }

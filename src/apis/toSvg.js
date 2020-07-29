@@ -1,6 +1,5 @@
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { getConfiguration } from "../common/configuration";
 import { SvgRenderer } from "../renderer/svg/svgRenderer";
 import { SvgWriter } from "../renderer/svg/svgWriter";
 
@@ -17,6 +16,6 @@ export function toSvg(hashOrValue, size, config) {
     const writer = new SvgWriter(size);
     iconGenerator(new SvgRenderer(writer), 
         isValidHash(hashOrValue) || computeHash(hashOrValue),
-        getConfiguration(config, 0.08));
+        config);
     return writer.toString();
 }

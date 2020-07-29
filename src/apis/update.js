@@ -4,7 +4,6 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-import { getConfiguration } from "../common/configuration";
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
 import { HASH_ATTRIBUTE, ICON_SELECTOR, VALUE_ATTRIBUTE, supportsQuerySelectorAll } from "../common/dom";
@@ -125,6 +124,6 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     const renderer = rendererFactory(el, getIdenticonType(el));
     if (renderer) {
         // Draw icon
-        iconGenerator(renderer, hash, getConfiguration(config, 0.08));
+        iconGenerator(renderer, hash, config);
     }
 }

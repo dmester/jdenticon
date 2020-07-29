@@ -1,6 +1,5 @@
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { getConfiguration } from "../common/configuration";
 import { CanvasRenderer } from "../renderer/canvas/index";
 
 /**
@@ -19,5 +18,5 @@ export function drawIcon(ctx, hashOrValue, size, config) {
     
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
-        getConfiguration(config, 0));
+        config);
 }
