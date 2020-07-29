@@ -2,6 +2,12 @@ const tap = require("tap");
 const canvasRenderer = require("canvas-renderer");
 const iconTest = require("./icons");
 
+// The user might have modified the native object prototypes.
+// It should not break Jdenticon.
+Object.prototype.somethingOdd = function() {};
+Object.prototype.nothing = null;
+Object.prototype.anEmptyObject = {};
+
 function testNode(jdenticon) {
     tap.test("jdenticon.version", t => {
         t.match(jdenticon.version, /^\d+(\.\d+)*$/);

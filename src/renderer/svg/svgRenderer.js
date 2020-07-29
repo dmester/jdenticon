@@ -69,8 +69,13 @@ export class SvgRenderer {
      * Called when the icon has been completely drawn.
      */
     finish() { 
-        for (let color in this._pathsByColor) {
-            this._target.append(color, this._pathsByColor[color].dataString);
+        const pathsByColor = this._pathsByColor;
+        for (let color in pathsByColor) {
+            // hasOwnProperty cannot be shadowed in pathsByColor
+            // eslint-disable-next-line no-prototype-builtins
+            if (pathsByColor.hasOwnProperty(color)) {
+                this._target.append(color, pathsByColor[color].dataString);
+            }
         }
     }
 }
