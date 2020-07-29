@@ -8,10 +8,19 @@ export const ICON_TYPE_SVG = 1;
 
 export const ICON_TYPE_CANVAS = 2;
 
+/**
+ * @noinline
+ */
 export const HASH_ATTRIBUTE = "data-jdenticon-hash";
 
+/**
+ * @noinline
+ */
 export const VALUE_ATTRIBUTE = "data-jdenticon-value";
 
+/**
+ * @noinline
+ */
 export const ICON_SELECTOR = "[" + HASH_ATTRIBUTE +"],[" + VALUE_ATTRIBUTE +"]";
 
 export const supportsQuerySelectorAll = typeof document !== "undefined" && "querySelectorAll" in document;
