@@ -6,7 +6,7 @@
 
 import { Transform } from "./transform";
 import { Graphics } from "./graphics";
-import { CENTER_SHAPES, OUTER_SHAPES } from "./shapes";
+import { centerShape, outerShape } from "./shapes";
 import { colorTheme } from "./colorTheme";
 import { parseHex } from "../common/parseHex";
 import { getConfiguration } from "../common/configuration";
@@ -37,14 +37,14 @@ export function iconGenerator(renderer, hash, config) {
     const y = 0 | (padding + size / 2 - cell * 2);
 
     function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
-        const shape = shapes[parseHex(hash, index, 1) % shapes.length];
+        const shapeIndex = parseHex(hash, index, 1);
         let r = rotationIndex ? parseHex(hash, rotationIndex, 1) : 0;
         
         renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
         
         for (let i = 0; i < positions.length; i++) {
             graphics._transform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
-            shape(graphics, cell, i);
+            shapes(shapeIndex, graphics, cell, i);
         }
         
         renderer.endShape();
@@ -82,11 +82,11 @@ export function iconGenerator(renderer, hash, config) {
 
     // ACTUAL RENDERING
     // Sides
-    renderShape(0, OUTER_SHAPES, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
+    renderShape(0, outerShape, 2, 3, [[1, 0], [2, 0], [2, 3], [1, 3], [0, 1], [3, 1], [3, 2], [0, 2]]);
     // Corners
-    renderShape(1, OUTER_SHAPES, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
+    renderShape(1, outerShape, 4, 5, [[0, 0], [3, 0], [3, 3], [0, 3]]);
     // Center
-    renderShape(2, CENTER_SHAPES, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
+    renderShape(2, centerShape, 1, null, [[1, 1], [2, 1], [2, 2], [1, 2]]);
     
     renderer.finish();
 }
