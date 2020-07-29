@@ -51,7 +51,7 @@
     "build": "npm run lint && gulp build",
     "release": "gulp release",
     "lint": "eslint ./src/**/*.js",
-    "test:unit": "gulp build-tests && tap obj/test/node/*.js",
+    "test:unit": "gulp build-unit-tests && tap obj/test/unit/*.js",
     "test:types": "tsc -p ./test/types/module/tsconfig.json & tsc -p ./test/types/umd/tsconfig.json",
     "test:browser-win": "tap ./test/e2e/browser/test.js --test-arg=win --test-arg=chrome,firefox,edge,ie11,ie10,ie9 --timeout=240",
     "test:browser-macos": "tap ./test/e2e/browser/test.js --test-arg=macos --test-arg=chrome,firefox,safari --timeout=180",

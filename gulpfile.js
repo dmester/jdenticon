@@ -233,13 +233,13 @@ gulp.task("build", gulp.series("clean", gulp.parallel(
     "build-esm", "build-cjs",
     "build-node-cjs", "build-node-esm",
 ), "install-jdenticon-test"));
-
+ 
 gulp.task("clean-tests", function (cb) {
-    del(["./obj/test/node/*.js", "./obj/test/node/*.map"], cb);
+    del(["./obj/test/unit/**"], cb);
 });
 
-gulp.task("build-tests-js", function () {
-    return gulp.src("./test/node/*.js", { base: "./" })
+gulp.task("build-unit-tests-js", function () {
+    return gulp.src("./test/unit/*.js", { base: "./" })
         .pipe(sourcemaps.init())
         .pipe(rollup({
             external: [ "canvas-renderer", "fs", "tap" ],
@@ -250,12 +250,7 @@ gulp.task("build-tests-js", function () {
         .pipe(gulp.dest("./obj"))
 });
 
-gulp.task("copy-tests-assets", function () {
-    return gulp.src("./test/node/expected/*")
-        .pipe(gulp.dest("./obj/test/node/expected/"))
-});
-
-gulp.task("build-tests", gulp.series("clean-tests", "build-tests-js", "copy-tests-assets"));
+gulp.task("build-unit-tests", gulp.series("clean-tests", "build-unit-tests-js"));
 
 gulp.task("prepare-release", function () {
     return gulp.src(["./LICENSE", "./README.md"])

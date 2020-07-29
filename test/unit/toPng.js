@@ -1,10 +1,10 @@
 ﻿"use strict";
 
-const tap = require("tap");
-const jdenticon = require("../../src/node");
+import tap from "tap";
+import { toPng } from "../../src/node-esm.js";
 
-const pngHash = jdenticon.toPng("Icon1", 100);
-const pngValue = jdenticon.toPng("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100);
+const pngHash = toPng("Icon1", 100);
+const pngValue = toPng("9faff4f3d6d7d75577ce810ec6d6a06be49c3a5a", 100);
 
 tap.ok(pngHash);
 tap.ok(pngHash instanceof Buffer);
