@@ -125,6 +125,6 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     const renderer = rendererFactory(el, getIdenticonType(el));
     if (renderer) {
         // Draw icon
-        iconGenerator(renderer, hash, 0, 0, renderer.size, getConfiguration(config, 0.08));
+        iconGenerator(renderer, hash, getConfiguration(config, 0.08));
     }
 }

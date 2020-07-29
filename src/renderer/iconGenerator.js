@@ -13,13 +13,14 @@ import { parseHex } from "../common/parseHex";
 /**
  * Draws an identicon to a specified renderer.
  */
-export function iconGenerator(renderer, hash, x, y, size, config) {
+export function iconGenerator(renderer, hash, config) {
     // Set background color
     if (config.backColor) {
         renderer.setBackground(config.backColor);
     }
     
     // Calculate padding and round to nearest integer
+    let size = renderer.size;
     const padding = (0.5 + size * config.padding) | 0;
     size -= padding * 2;
     
@@ -29,8 +30,8 @@ export function iconGenerator(renderer, hash, x, y, size, config) {
     const cell = 0 | (size / 4);
     
     // Since the cell size is integer based, the actual icon will be slightly smaller than specified => center icon
-    x += 0 | (padding + size / 2 - cell * 2);
-    y += 0 | (padding + size / 2 - cell * 2);
+    const x = 0 | (padding + size / 2 - cell * 2);
+    const y = 0 | (padding + size / 2 - cell * 2);
 
     function renderShape(colorIndex, shapes, index, rotationIndex, positions) {
         const shape = shapes[parseHex(hash, index, 1) % shapes.length];

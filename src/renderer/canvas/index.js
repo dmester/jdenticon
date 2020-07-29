@@ -19,20 +19,18 @@ export class CanvasRenderer {
         
         ctx.save();
         
-        this._ctx = ctx;
-        
-        if (size) {
-            this.size = size;
-        }
-        else {
-            this.size = Math.min(width, height);
+        if (!size) {
+            size = Math.min(width, height);
             
             ctx.translate(
-                ((width - this.size) / 2) | 0,
-                ((height - this.size) / 2) | 0);
+                ((width - size) / 2) | 0,
+                ((height - size) / 2) | 0);
         }
+
+        this._ctx = ctx;
+        this.size = size;
         
-        ctx.clearRect(0, 0, this.size, this.size);
+        ctx.clearRect(0, 0, size, size);
     }
 
     /**

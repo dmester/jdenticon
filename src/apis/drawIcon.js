@@ -19,5 +19,5 @@ export function drawIcon(ctx, hashOrValue, size, config) {
     
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
-        0, 0, size, getConfiguration(config, 0));
+        getConfiguration(config, 0));
 }

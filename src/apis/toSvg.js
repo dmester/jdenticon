@@ -17,6 +17,6 @@ export function toSvg(hashOrValue, size, config) {
     const writer = new SvgWriter(size);
     iconGenerator(new SvgRenderer(writer), 
         isValidHash(hashOrValue) || computeHash(hashOrValue),
-        0, 0, size, getConfiguration(config, 0.08));
+        getConfiguration(config, 0.08));
     return writer.toString();
 }

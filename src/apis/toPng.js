@@ -19,7 +19,7 @@ export function toPng(hashOrValue, size, config) {
     
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
-        0, 0, size, getConfiguration(config, 0.08));
+        getConfiguration(config, 0.08));
     
     return canvas.toPng({ "Software": "Jdenticon" });
 }
