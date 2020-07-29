@@ -7,21 +7,36 @@
 import { parseColor } from "../renderer/color";
 import { GLOBAL } from "./global";
 
-var rootConfiguration;
+/**
+ * @noinline
+ */
+const ROOT_CONFIG_PROPERTY = "config";
+
+var rootConfigurationHolder = {};
 
 /**
- * Defines the deprecated `config` property on the root Jdenticon object.
+ * Defines the deprecated `config` property on the root Jdenticon object. When the property is set a warning is 
+ * printed in the console. To minimize bundle size, this is only used in Node bundles.
  * @param {!Object} rootObject 
  */
-export function defineConfigProperty(rootObject) {
+export function defineConfigPropertyWithWarn(rootObject) {
     Object.defineProperty(rootObject, "config", {
         configurable: true,
-        get: () => rootConfiguration,
+        get: () => rootConfigurationHolder[ROOT_CONFIG_PROPERTY],
         set: newConfiguration => {
-            rootConfiguration = newConfiguration;
+            rootConfigurationHolder[ROOT_CONFIG_PROPERTY] = newConfiguration;
             console.warn("jdenticon.config is deprecated. Use jdenticon.configure() instead.");
         },
     });
+}
+
+/**
+ * Defines the deprecated `config` property on the root Jdenticon object without printing a warning in the console
+ * when it is being used.
+ * @param {!Object} rootObject 
+ */
+export function defineConfigProperty(rootObject) {
+    rootConfigurationHolder = rootObject;
 }
 
 /**
@@ -30,9 +45,9 @@ export function defineConfigProperty(rootObject) {
  */
 export function configure(newConfiguration) {
     if (arguments.length) {
-        rootConfiguration = newConfiguration;
+        rootConfigurationHolder[ROOT_CONFIG_PROPERTY] = newConfiguration;
     }
-    return rootConfiguration;
+    return rootConfigurationHolder[ROOT_CONFIG_PROPERTY];
 }
 
 /**
@@ -47,7 +62,7 @@ export function configure(newConfiguration) {
 export function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     const configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
-            rootConfiguration ||
+            rootConfigurationHolder[ROOT_CONFIG_PROPERTY] ||
             GLOBAL["jdenticon_config"] ||
             { },
 
