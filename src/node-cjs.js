@@ -11,9 +11,9 @@ if (typeof process === "undefined" &&
     typeof document !== "undefined"
 ) {
     console.warn(
-        "Jdenticon: dist/jdenticon-node.js is only intended for Node.js environments. " +
-        "If you want to run Jdenticon in the browser, please add a reference " +
-        "to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
+        "Jdenticon: 'dist/jdenticon-node.js' is only intended for Node.js environments and will increase your " +
+        "bundle size when included in browser bundles. If you want to run Jdenticon in the browser, please add a " +
+        "reference to 'dist/jdenticon.js' or 'dist/jdenticon.min.js' instead.");
 }
 
 import { defineConfigPropertyWithWarn } from "./common/configuration";
