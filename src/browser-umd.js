@@ -11,7 +11,7 @@ import { observer } from "./common/observer";
 import { configure } from "./apis/configure";
 import { drawIcon } from "./apis/drawIcon";
 import { toSvg } from "./apis/toSvg";
-import { update, updateAll, updateCanvas, updateSvg } from "./apis/update";
+import { update, updateAll } from "./apis/update";
 import { jdenticonJqueryPlugin } from "./apis/jquery";
 import { GLOBAL } from "./common/global";
 
@@ -24,8 +24,8 @@ jdenticon["configure"] = configure;
 jdenticon["drawIcon"] = drawIcon;
 jdenticon["toSvg"] = toSvg;
 jdenticon["update"] = update;
-jdenticon["updateCanvas"] = updateCanvas;
-jdenticon["updateSvg"] = updateSvg;
+jdenticon["updateCanvas"] = update;
+jdenticon["updateSvg"] = update;
 
 /**
  * Specifies the version of the Jdenticon package in use.
