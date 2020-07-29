@@ -1,5 +1,6 @@
 const tap = require("tap");
 const canvasRenderer = require("canvas-renderer");
+const iconTest = require("./icons");
 
 function testNode(jdenticon) {
     tap.test("jdenticon.version", t => {
@@ -19,6 +20,7 @@ function testNode(jdenticon) {
     
     tap.test("jdenticon.toPng", t => {
         t.isa(jdenticon.toPng("Icon1", 100), Buffer);
+        iconTest(jdenticon);
         t.end();
     });
     

@@ -1,6 +1,6 @@
 const tap = require("tap");
 const jdenticon = require("jdenticon");
-const baseNode = require("../base-node-test");
+const baseNode = require("./base");
 
 tap.test("jdenticon.bundle", t => {
     t.equal(jdenticon.bundle, "node-cjs");
