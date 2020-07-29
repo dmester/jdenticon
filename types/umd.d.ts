@@ -176,7 +176,7 @@ declare global {
          * styles when used in a Node environment.
          * 
          * In browsers {@link jdenticon_config} is the prefered way of setting an identicon style to avoid a race
-         * condition where the style is set before the Jdetnicon lib has loaded, leading to an unhandled error.
+         * condition where the style is set before the Jdenticon lib has loaded, leading to an unhandled error.
          */
         configure(newConfig: JdenticonConfig): JdenticonConfig;
 
