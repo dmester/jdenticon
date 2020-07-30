@@ -3,7 +3,7 @@ JavaScript library for generating highly recognizable identicons using HTML5 can
 
 ![Sample identicons](https://jdenticon.com/hosted/github-samples.png)
 
-[![Build Status](https://travis-ci.org/dmester/jdenticon.svg?branch=master)](https://travis-ci.org/dmester/jdenticon)
+[![Tests](https://github.com/dmester/jdenticon/workflows/Tests/badge.svg)](https://github.com/dmester/jdenticon/actions);
 [![Downloads](https://img.shields.io/npm/dt/jdenticon.svg)](https://www.npmjs.com/package/jdenticon)
 [![npm bundle size](https://img.shields.io/bundlephobia/min/jdenticon.svg)](https://bundlephobia.com/result?p=jdenticon)
 [![License MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/dmester/jdenticon/blob/master/LICENSE)
