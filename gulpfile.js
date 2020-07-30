@@ -5,7 +5,6 @@
  */
 "use strict";
 
-const pipe = require("multipipe");
 const del = require("del");
 const fs = require("fs");
 const path = require("path");
@@ -17,8 +16,7 @@ const gulp = require("gulp");
 const rename = require("gulp-rename");
 const closure = require("google-closure-compiler").gulp();
 const zip = require("gulp-zip");
-const replace = require("gulp-replace-with-sourcemaps");
-const wrap = require("gulp-wrap");
+const replace = require("./build/replacement").gulp;
 const buble = require("gulp-buble");
 const sourcemaps = require("gulp-sourcemaps");
 
@@ -39,10 +37,6 @@ const VARIABLES = [
     [/(.*)#license#/gm, "$1" + LICENSE.trim().replace(/\n/g, "\n$1")],
 ];
 
-function replaceVariables() {
-    return pipe(...VARIABLES.map(variable => replace(...variable)));
-}
-
 function getWrapper(source, placeholder) {
     return VARIABLES.reduce(
         (result, variable) => result.replace(...variable),
@@ -52,7 +46,19 @@ function getWrapper(source, placeholder) {
 }
 
 function wrapTemplate(templatePath) {
-    return wrap(getWrapper(templatePath, "<%=contents%>"));
+    const template = fs.readFileSync(templatePath)
+        .toString()
+        .split(/\/\*content\*\//);
+
+    const replacements = [];
+    if (template[0]) {
+        replacements.push([/^/, template[0]]);
+    }
+    if (template[1]) {
+        replacements.push([/$/, template[1]]);
+    }
+
+    return replace(replacements);
 }
 
 function umdSrc() {
@@ -70,9 +76,10 @@ function umdSrc() {
         }))
 
         // The UMD template expects a factory function body, so replace export with a return for the factory function.
-        .pipe(replace(/module.exports = /, "return "))
-        .pipe(replaceVariables())
-        .pipe(wrapTemplate("./build/template-umd.js"));
+        .pipe(replace("module.exports = ", "return "))
+
+        .pipe(wrapTemplate("./build/template-umd.js"))
+        .pipe(replace(VARIABLES));
 }
 
 gulp.task("clean", function (cb) {
@@ -101,7 +108,7 @@ gulp.task("build-umd-min", function () {
         .pipe(sourcemaps.init())
         
         // Closure does not know that ELEMENT_NODE is a constant. Replace it before passing it on to Closure.
-        .pipe(replace(/Node\.ELEMENT_NODE/g, "1"))
+        .pipe(replace("Node.ELEMENT_NODE", "1"))
         
         // Minified file
         .pipe(closure({
@@ -128,18 +135,21 @@ gulp.task("build-umd-min", function () {
 
 gulp.task("build-cjs", function () {
     return gulp.src("./src/browser-cjs.js")
+        .pipe(sourcemaps.init())
         .pipe(rollup({
             output: { format: "cjs" },
             plugins: [ stripBanner() ],
         }))
 
+        .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".js" }))
+
         // Replace variables
-        .pipe(replaceVariables())
         .pipe(wrapTemplate("./build/template-module.js"))
+        .pipe(replace(VARIABLES))
         
         .pipe(buble())
 
-        .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".js" }))
+        .pipe(sourcemaps.write("./", { includeContent: true }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module-" + pack.version; path.extname = ".js" }))
@@ -148,16 +158,19 @@ gulp.task("build-cjs", function () {
 
 gulp.task("build-esm", function () {
     return gulp.src("./src/browser-esm.js")
+        .pipe(sourcemaps.init())
         .pipe(rollup({
             output: { format: "esm" },
             plugins: [ stripBanner() ],
         }))
 
-        // Replace variables
-        .pipe(replaceVariables())
-        .pipe(wrapTemplate("./build/template-module.js"))
-        
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".mjs" }))
+
+        // Replace variables
+        .pipe(wrapTemplate("./build/template-module.js"))
+        .pipe(replace(VARIABLES))
+
+        .pipe(sourcemaps.write("./", { includeContent: true }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module-" + pack.version; path.extname = ".mjs" }))
@@ -172,9 +185,9 @@ gulp.task("build-node-cjs", function () {
             plugins: [ stripBanner(), commonjs() ],
             output: { format: "cjs" },
         }))
-
-        .pipe(replaceVariables())
+        
         .pipe(wrapTemplate("./build/template-module.js"))
+        .pipe(replace(VARIABLES))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".js" }))
 
@@ -191,8 +204,8 @@ gulp.task("build-node-esm", function () {
             output: { format: "esm" },
         }))
 
-        .pipe(replaceVariables())
         .pipe(wrapTemplate("./build/template-module.js"))
+        .pipe(replace(VARIABLES))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".mjs" }))
 
@@ -254,14 +267,14 @@ gulp.task("build-unit-tests", gulp.series("clean-tests", "build-unit-tests-js"))
 
 gulp.task("prepare-release", function () {
     return gulp.src(["./LICENSE", "./README.md"])
-        .pipe(replaceVariables())
+        .pipe(replace(VARIABLES))
         .pipe(rename(function (path) { path.extname = ".txt" }))
         .pipe(gulp.dest("obj/output"));
 });
 
 gulp.task("prepare-nuget", function () {
     return gulp.src(["./build/jdenticon.nuspec"])
-        .pipe(replaceVariables())
+        .pipe(replace(VARIABLES))
         .pipe(rename(function (path) { path.basename = "~" + path.basename }))
         .pipe(gulp.dest("./"));
 });
