@@ -9,14 +9,14 @@
  */
 export class SvgWriter {
     /**
-     * @param {number} size - Icon width and height in pixels.
+     * @param {number} iconSize - Icon width and height in pixels.
      */
-    constructor(size) {
-        this.size = size;
+    constructor(iconSize) {
+        this.iconSize = iconSize;
         this._s =
             '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
-            size + '" height="' + size + '" viewBox="0 0 ' + 
-            size + ' ' + size + '" preserveAspectRatio="xMidYMid meet">';
+            iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
+            iconSize + ' ' + iconSize + '" preserveAspectRatio="xMidYMid meet">';
     }
 
     /**
@@ -36,7 +36,7 @@ export class SvgWriter {
      * @param {string} color Fill color on format #rrggbb.
      * @param {string} dataString The SVG path data string.
      */
-    append(color, dataString) {
+    appendPath(color, dataString) {
         this._s += '<path fill="' + color + '" d="' + dataString + '"/>';
     }
 

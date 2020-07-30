@@ -31,12 +31,13 @@ export class Transform {
      * @param {number=} w The width of the transformed rectangle. If greater than 0, this will ensure the returned point is of the upper left corner of the transformed rectangle.
      * @param {number=} h The height of the transformed rectangle. If greater than 0, this will ensure the returned point is of the upper left corner of the transformed rectangle.
      */
-    transformPoint(x, y, w, h) {
+    transformIconPoint(x, y, w, h) {
         const right = this._x + this._size,
-              bottom = this._y + this._size;
-        return this._rotation === 1 ? new Point(right - y - (h || 0), this._y + x) :
-               this._rotation === 2 ? new Point(right - x - (w || 0), bottom - y - (h || 0)) :
-               this._rotation === 3 ? new Point(this._x + y, bottom - x - (w || 0)) :
+              bottom = this._y + this._size,
+              rotation = this._rotation;
+        return rotation === 1 ? new Point(right - y - (h || 0), this._y + x) :
+               rotation === 2 ? new Point(right - x - (w || 0), bottom - y - (h || 0)) :
+               rotation === 3 ? new Point(this._x + y, bottom - x - (w || 0)) :
                new Point(this._x + x, this._y + y);
     }
 }

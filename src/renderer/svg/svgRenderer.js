@@ -21,7 +21,7 @@ export class SvgRenderer {
         this._path;
         this._pathsByColor = { };
         this._target = target;
-        this.size = target.size;
+        this.iconSize = target.iconSize;
     }
 
     /**
@@ -74,7 +74,7 @@ export class SvgRenderer {
             // hasOwnProperty cannot be shadowed in pathsByColor
             // eslint-disable-next-line no-prototype-builtins
             if (pathsByColor.hasOwnProperty(color)) {
-                this._target.append(color, pathsByColor[color].dataString);
+                this._target.appendPath(color, pathsByColor[color].dataString);
             }
         }
     }

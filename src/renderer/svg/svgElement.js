@@ -37,7 +37,7 @@ export class SvgElement {
         // elements (https://bugzilla.mozilla.org/show_bug.cgi?id=874811)
         // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
         // the icon to the correct dimensions)
-        this.size = Math.min(
+        const iconSize = this.iconSize = Math.min(
             (Number(element.getAttribute("width")) || 100),
             (Number(element.getAttribute("height")) || 100)
             );
@@ -49,7 +49,7 @@ export class SvgElement {
         }
         
         // Set viewBox attribute to ensure the svg scales nicely.
-        element.setAttribute("viewBox", "0 0 " + this.size + " " + this.size);
+        element.setAttribute("viewBox", "0 0 " + iconSize + " " + iconSize);
         element.setAttribute("preserveAspectRatio", "xMidYMid meet");
     }
 
@@ -73,7 +73,7 @@ export class SvgElement {
      * @param {string} color Fill color on format #xxxxxx.
      * @param {string} dataString The SVG path data string.
      */
-    append(color, dataString) {
+    appendPath(color, dataString) {
         SvgElement_append(this._el, "path",
             "fill", color,
             "d", dataString);

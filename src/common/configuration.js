@@ -132,7 +132,7 @@ export function getConfiguration(paddingOrLocalConfig, defaultPadding) {
         colorLightness: lightness("color", [0.4, 0.8]),
         grayscaleLightness: lightness("grayscale", [0.3, 0.9]),
         backColor: parseColor(backColor),
-        padding: 
+        iconPadding: 
             typeof paddingOrLocalConfig == "number" ? paddingOrLocalConfig : 
             typeof padding == "number" ? padding : 
             defaultPadding

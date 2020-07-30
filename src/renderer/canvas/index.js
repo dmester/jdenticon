@@ -11,26 +11,26 @@ import { toCss3Color } from "../color";
  */
 export class CanvasRenderer {
     /**
-     * @param {number=} size
+     * @param {number=} iconSize
      */
-    constructor(ctx, size) {
+    constructor(ctx, iconSize) {
         const width = ctx.canvas.width,
               height = ctx.canvas.height;
         
         ctx.save();
         
-        if (!size) {
-            size = Math.min(width, height);
+        if (!iconSize) {
+            iconSize = Math.min(width, height);
             
             ctx.translate(
-                ((width - size) / 2) | 0,
-                ((height - size) / 2) | 0);
+                ((width - iconSize) / 2) | 0,
+                ((height - iconSize) / 2) | 0);
         }
 
         this._ctx = ctx;
-        this.size = size;
+        this.iconSize = iconSize;
         
-        ctx.clearRect(0, 0, size, size);
+        ctx.clearRect(0, 0, iconSize, iconSize);
     }
 
     /**
@@ -39,10 +39,10 @@ export class CanvasRenderer {
      */
     setBackground(fillColor) {
         const ctx = this._ctx,
-              size = this.size;
+              iconSize = this.iconSize;
 
         ctx.fillStyle = toCss3Color(fillColor);
-        ctx.fillRect(0, 0, size, size);
+        ctx.fillRect(0, 0, iconSize, iconSize);
     }
 
     /**

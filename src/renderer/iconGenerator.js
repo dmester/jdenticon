@@ -23,8 +23,8 @@ export function iconGenerator(renderer, hash, config) {
     }
     
     // Calculate padding and round to nearest integer
-    let size = renderer.size;
-    const padding = (0.5 + size * config.padding) | 0;
+    let size = renderer.iconSize;
+    const padding = (0.5 + size * config.iconPadding) | 0;
     size -= padding * 2;
     
     const graphics = new Graphics(renderer);

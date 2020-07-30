@@ -26,7 +26,7 @@ export class Graphics {
               transformedPoints = [];
         
         for (let i = invert ? points.length - 2 : 0; i < points.length && i >= 0; i += di) {
-            transformedPoints.push(transform.transformPoint(points[i], points[i + 1]));
+            transformedPoints.push(transform.transformIconPoint(points[i], points[i + 1]));
         }
         
         this._renderer.addPolygon(transformedPoints);
@@ -41,7 +41,7 @@ export class Graphics {
      * @param {boolean=} invert Specifies if the ellipse will be inverted.
      */
     addCircle(x, y, size, invert) {
-        const p = this._transform.transformPoint(x, y, size, size);
+        const p = this._transform.transformIconPoint(x, y, size, size);
         this._renderer.addCircle(p, size, invert);
     }
 
