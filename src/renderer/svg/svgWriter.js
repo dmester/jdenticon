@@ -16,7 +16,7 @@ export class SvgWriter {
         this._s =
             '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
             iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
-            iconSize + ' ' + iconSize + '" preserveAspectRatio="xMidYMid meet">';
+            iconSize + ' ' + iconSize + '">';
     }
 
     /**
