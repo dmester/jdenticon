@@ -37,16 +37,20 @@ export function rgb(r, g, b) {
  */
 export function parseColor(color) {
     if (/^#[0-9a-f]{3,8}$/i.test(color)) {
+        let result;
+
         if (color.length < 6) {
             const r = color[1],
                   g = color[2],
                   b = color[3],
                   a = color[4] || "";
-            return "#" + r + r + g + g + b + b + a + a;
+            result = "#" + r + r + g + g + b + b + a + a;
         }
         if (color.length == 7 || color.length > 8) {
-            return color;
+            result = color;
         }
+        
+        return result;
     }
 }
 
@@ -55,13 +59,18 @@ export function parseColor(color) {
  */
 export function toCss3Color(hexColor) {
     const a = parseHex(hexColor, 7, 2);
+    let result;
+
     if (isNaN(a)) {
-        return hexColor;
+        result = hexColor;
+    } else {
+        const r = parseHex(hexColor, 1, 2),
+            g = parseHex(hexColor, 3, 2),
+            b = parseHex(hexColor, 5, 2);
+        result = "rgba(" + r + "," + g + "," + b + "," + (a / 255).toFixed(2) + ")";
     }
-    const r = parseHex(hexColor, 1, 2),
-          g = parseHex(hexColor, 3, 2),
-          b = parseHex(hexColor, 5, 2);
-    return "rgba(" + r + "," + g + "," + b + "," + (a / 255).toFixed(2) + ")";
+
+    return result;
 }
 
 /**
@@ -71,18 +80,22 @@ export function toCss3Color(hexColor) {
  */
 export function hsl(h, s, l) {
     // Based on http://www.w3.org/TR/2011/REC-css3-color-20110607/#hsl-color
+    let result;
+
     if (s == 0) {
         const partialHex = decToHex(l * 255);
-        return "#" + partialHex + partialHex + partialHex;
+        result = partialHex + partialHex + partialHex;
     }
     else {
         const m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s,
               m1 = l * 2 - m2;
-        return "#" +
+        result =
             hueToRgb(m1, m2, h * 6 + 2) +
             hueToRgb(m1, m2, h * 6) +
             hueToRgb(m1, m2, h * 6 - 2);
     }
+
+    return "#" + result;
 }
 
 // This function will correct the lightness for the "dark" hues

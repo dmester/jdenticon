@@ -29,9 +29,9 @@ export class SvgPath {
      * @param points An array of Point objects.
      */
     addPolygon(points) {
-        let dataString = "M" + svgValue(points[0].x) + " " + svgValue(points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            dataString += "L" + svgValue(points[i].x) + " " + svgValue(points[i].y);
+        let dataString = "";
+        for (let i = 0; i < points.length; i++) {
+            dataString += (i ? "L" : "M") + svgValue(points[i].x) + " " + svgValue(points[i].y);
         }
         this.dataString += dataString + "Z";
     }
@@ -45,12 +45,13 @@ export class SvgPath {
     addCircle(point, diameter, counterClockwise) {
         const sweepFlag = counterClockwise ? 0 : 1,
               svgRadius = svgValue(diameter / 2),
-              svgDiameter = svgValue(diameter);
+              svgDiameter = svgValue(diameter),
+              svgArc = "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " ";
             
         this.dataString += 
             "M" + svgValue(point.x) + " " + svgValue(point.y + diameter / 2) +
-            "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " " + svgDiameter + ",0" + 
-            "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " " + (-svgDiameter) + ",0";
+            svgArc + svgDiameter + ",0" + 
+            svgArc + (-svgDiameter) + ",0";
     }
 }
 

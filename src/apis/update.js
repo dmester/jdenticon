@@ -6,7 +6,7 @@
 
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { HASH_ATTRIBUTE, ICON_SELECTOR, VALUE_ATTRIBUTE, supportsQuerySelectorAll } from "../common/dom";
+import { HASH_ATTRIBUTE, ICON_SELECTOR, VALUE_ATTRIBUTE, documentQuerySelectorAll } from "../common/dom";
 import { SvgRenderer } from "../renderer/svg/svgRenderer";
 import { SvgElement } from "../renderer/svg/svgElement";
 import { CanvasRenderer } from "../renderer/canvas/index";
@@ -16,7 +16,7 @@ import { ICON_TYPE_CANVAS, ICON_TYPE_SVG, getIdenticonType } from "../common/dom
  * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute.
  */
 export function updateAll() {
-    if (supportsQuerySelectorAll) {
+    if (documentQuerySelectorAll) {
         update(ICON_SELECTOR);
     }
 }
@@ -88,8 +88,8 @@ export function updateSvg(el, hashOrValue, config) {
  */
 function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (typeof el === "string") {
-        if (supportsQuerySelectorAll) {
-            const elements = document.querySelectorAll(el);
+        if (documentQuerySelectorAll) {
+            const elements = documentQuerySelectorAll(el);
             for (let i = 0; i < elements.length; i++) {
                 renderDomElement(elements[i], hashOrValue, config, rendererFactory);
             }
