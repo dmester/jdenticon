@@ -159,8 +159,8 @@ async function testBrowser(browserName) {
                     imageAPath: path.join(expectedDir, `${environmentId}-${browserName}.png`),
                     imageBPath: path.join(screenshotDir, `${environmentId}-${browserName}.png`),
             
-                    thresholdType: BlinkDiff.THRESHOLD_PERCENT,
-                    threshold: 0.01, // 1% threshold
+                    thresholdType: BlinkDiff.THRESHOLD_PIXEL,
+                    threshold: 1000,
             
                     imageOutputPath: path.join(diffDir, `${environmentId}-${browserName}.png`),
 
