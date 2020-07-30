@@ -19,6 +19,7 @@ const zip = require("gulp-zip");
 const replace = require("./build/replacement").gulp;
 const buble = require("gulp-buble");
 const sourcemaps = require("gulp-sourcemaps");
+const mangleProps = require("./build/mangle-props");
 
 // Rollup dependencies
 const rollup = require("./build/rollup-stream");
@@ -149,6 +150,8 @@ gulp.task("build-cjs", function () {
         
         .pipe(buble())
 
+        .pipe(mangleProps())
+
         .pipe(sourcemaps.write("./", { includeContent: true }))
         .pipe(gulp.dest("dist"))
         
@@ -169,6 +172,8 @@ gulp.task("build-esm", function () {
         // Replace variables
         .pipe(wrapTemplate("./build/template-module.js"))
         .pipe(replace(VARIABLES))
+
+        .pipe(mangleProps())
 
         .pipe(sourcemaps.write("./", { includeContent: true }))
         .pipe(gulp.dest("dist"))

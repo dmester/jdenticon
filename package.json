@@ -23,6 +23,7 @@
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@types/jquery": "^3.3.30",
+    "acorn": "^7.3.1",
     "blink-diff": "^1.0.13",
     "buble": "^0.20.0",
     "del": "^1.2.1",
