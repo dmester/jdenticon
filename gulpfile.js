@@ -143,13 +143,12 @@ gulp.task("build-cjs", function () {
         }))
 
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".js" }))
+        .pipe(buble())
 
         // Replace variables
         .pipe(wrapTemplate("./build/template-module.js"))
         .pipe(replace(VARIABLES))
         
-        .pipe(buble())
-
         .pipe(mangleProps())
 
         .pipe(sourcemaps.write("./", { includeContent: true }))
