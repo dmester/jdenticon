@@ -9,7 +9,7 @@ import { isValidHash, computeHash } from "../common/hashUtils";
 import { HASH_ATTRIBUTE, ICON_SELECTOR, VALUE_ATTRIBUTE, documentQuerySelectorAll } from "../common/dom";
 import { SvgRenderer } from "../renderer/svg/svgRenderer";
 import { SvgElement } from "../renderer/svg/svgElement";
-import { CanvasRenderer } from "../renderer/canvas/index";
+import { CanvasRenderer } from "../renderer/canvas/canvasRenderer";
 import { ICON_TYPE_CANVAS, ICON_TYPE_SVG, getIdenticonType } from "../common/dom";
 
 /**

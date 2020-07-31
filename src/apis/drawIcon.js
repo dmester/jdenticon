@@ -1,6 +1,6 @@
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { CanvasRenderer } from "../renderer/canvas/index";
+import { CanvasRenderer } from "../renderer/canvas/canvasRenderer";
 
 /**
  * Draws an identicon to a context.
