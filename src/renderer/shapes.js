@@ -8,8 +8,9 @@
  * @param {number} index
  * @param {Graphics} g
  * @param {number} cell
+ * @param {number} positionIndex
  */
-export function centerShape(index, g, cell) {
+export function centerShape(index, g, cell, positionIndex) {
     index = index % 14;
 
     let k, m, w, h, inner, outer;
@@ -118,7 +119,7 @@ export function centerShape(index, g, cell) {
 
     // 13
     (
-        !index && (
+        !positionIndex && (
             m = cell * 0.4, w = cell * 1.2,
             g.addCircle(m, m, w)
         )
