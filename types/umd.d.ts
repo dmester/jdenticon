@@ -123,8 +123,8 @@ declare global {
          * configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
          * specified in place of a configuration object.
          */
-        update(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
-        
+        update(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
+
         /**
          * Draws an identicon to a context.
          * @param ctx Canvas context on which the icon will be drawn at location (0, 0).

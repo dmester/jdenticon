@@ -113,7 +113,7 @@ export interface JdenticonConfig {
  *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  */
-export function update(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
+export function update(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
 
 /**
  * Updates the identicon in the specified `<canvas>` elements.
@@ -129,7 +129,7 @@ export function update(elementOrSelector: HTMLElement | string, hashOrValue?: an
  *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  */
-export function updateCanvas(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
+export function updateCanvas(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
 
 /**
  * Updates the identicon in the specified `<svg>` elements.
@@ -145,7 +145,7 @@ export function updateCanvas(elementOrSelector: HTMLElement | string, hashOrValu
  *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
  *    specified in place of a configuration object.
  */
-export function updateSvg(elementOrSelector: HTMLElement | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
+export function updateSvg(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
 
 /**
  * Draws an identicon to a context.
