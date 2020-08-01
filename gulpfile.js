@@ -196,7 +196,10 @@ gulp.task("build-node-cjs", function () {
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".js" }))
 
         .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest("./dist"));
+        .pipe(gulp.dest("./dist"))
+        
+        .pipe(rename(function (path) { path.basename = "jdenticon-node-" + pack.version; path.extname = ".js" }))
+        .pipe(gulp.dest("./obj/output"));
 });
 
 gulp.task("build-node-esm", function () {
@@ -214,7 +217,10 @@ gulp.task("build-node-esm", function () {
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".mjs" }))
 
         .pipe(sourcemaps.write("./"))
-        .pipe(gulp.dest("./dist"));
+        .pipe(gulp.dest("./dist"))
+        
+        .pipe(rename(function (path) { path.basename = "jdenticon-node-" + pack.version; path.extname = ".mjs" }))
+        .pipe(gulp.dest("./obj/output"));
 });
 
 gulp.task("update-license-year", function () {
