@@ -5,7 +5,7 @@ module.exports = {
     entry: path.join(__dirname, "app.js"),
     externals: {
       "tap": "commonjs tap", 
-      "canvas-renderer":"commonjs canvas-renderer"
+      "canvas-renderer": "commonjs canvas-renderer"
     },
     output: {
       path: __dirname,
