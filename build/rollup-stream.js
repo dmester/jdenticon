@@ -7,7 +7,7 @@
 const { rollup } = require("rollup");
 const Vinyl = require("vinyl");
 const applySourceMap = require("vinyl-sourcemaps-apply");
-const { Transform } = require('stream');
+const { Transform } = require("stream");
 
 function rollupStream(options) {
     return new Transform({

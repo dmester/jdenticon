@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-const { Transform } = require('stream');
+const { Transform } = require("stream");
 const { parse, Node } = require("acorn");
 const { Replacement } = require("./replacement");
 const DOMPROPS = require("./domprops");
@@ -116,7 +116,7 @@ function manglePropsStream() {
             
             const ast = parse(input, {
                 ecmaVersion: 10,
-                sourceType: 'module',
+                sourceType: "module",
             });
         
             const identifierNodes = [];

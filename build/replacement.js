@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-const { Transform } = require('stream');
+const { Transform } = require("stream");
 const { SourceMapConsumer, SourceMapGenerator } = require("source-map");
 
 /**
