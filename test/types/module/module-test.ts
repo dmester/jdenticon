@@ -1,4 +1,4 @@
-import { configure, drawIcon, update, toPng, toSvg, JdenticonConfig } from "../../../";
+import { configure, drawIcon, update, updateSvg, updateCanvas, toPng, toSvg, JdenticonConfig } from "../../../";
 
 const newConfig: JdenticonConfig = {
     lightness: {
@@ -43,6 +43,9 @@ update(el, "value", newConfig);
 update("#selector", "value");
 update("#selector", "value", 0.08);
 update("#selector", "value", newConfig);
+
+updateSvg("#selector", "value", newConfig);
+updateCanvas("#selector", "value", newConfig);
 
 var ctx = el.getContext("2d");
 if (ctx) {

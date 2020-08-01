@@ -126,6 +126,38 @@ declare global {
         update(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
 
         /**
+         * Updates the identicon in the specified `<canvas>` elements.
+         * 
+         * @remarks
+         * This method is only available in the browser. Calling this method on Node.js will throw an error.
+         * 
+         * @param elementOrSelector Specifies the container in which the icon is rendered as a DOM element of the type
+         *    `<canvas>`, or a CSS selector to such an element.
+         * @param hashOrValue Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+         *    `data-jdenticon-value` attribute will be evaluated.
+         * @param config Optional configuration. If specified, this configuration object overrides any
+         *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
+         *    specified in place of a configuration object.
+         */
+        updateCanvas(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
+
+        /**
+         * Updates the identicon in the specified `<svg>` elements.
+         * 
+         * @remarks
+         * This method is only available in the browser. Calling this method on Node.js will throw an error.
+         * 
+         * @param elementOrSelector Specifies the container in which the icon is rendered as a DOM element of the type
+         *    `<svg>`, or a CSS selector to such an element.
+         * @param hashOrValue Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
+         *    `data-jdenticon-value` attribute will be evaluated.
+         * @param config Optional configuration. If specified, this configuration object overrides any
+         *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
+         *    specified in place of a configuration object.
+         */
+        updateSvg(elementOrSelector: Element | string, hashOrValue?: any, config?: JdenticonConfig | number): void;
+
+        /**
          * Draws an identicon to a context.
          * @param ctx Canvas context on which the icon will be drawn at location (0, 0).
          * @param hashOrValue A hexadecimal hash string or any value that will be hashed by Jdenticon.

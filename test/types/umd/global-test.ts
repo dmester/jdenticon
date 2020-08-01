@@ -43,6 +43,9 @@ jdenticon.update("#selector", "value");
 jdenticon.update("#selector", "value", 0.08);
 jdenticon.update("#selector", "value", config);
 
+jdenticon.updateSvg("#selector", "value", config);
+jdenticon.updateCanvas("#selector", "value", config);
+
 jdenticon();
 
 var ctx = el.getContext("2d");
