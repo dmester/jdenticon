@@ -55,6 +55,8 @@ https://jdenticon.com
 There are ports or bindings for Jdenticon available for the following platforms:
 
 * [PHP](https://github.com/dmester/jdenticon-php/)
+* [React](https://www.npmjs.com/package/react-jdenticon)
+* [Angular](https://www.npmjs.com/package/ngx-jdenticon)
 * [.NET](https://github.com/dmester/jdenticon-net/)
 * [Polymer](https://github.com/GeoloeG/identicon-element)
 * [Swift](https://github.com/aleph7/jdenticon-swift)
