@@ -1,10 +1,8 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
-        "types": [
-            "../../../standalone"
-        ],
-        "lib": ["es6", "dom"],
+        "types": [ "Node" ],
+        "lib": [ "es6" ],
     },
     "include": [
       "./*.ts"

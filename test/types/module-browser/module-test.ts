@@ -1,4 +1,4 @@
-import { configure, drawIcon, update, updateSvg, updateCanvas, toPng, toSvg } from "../../../standalone";
+import { configure, drawIcon, update, updateSvg, updateCanvas, toPng, toSvg, JdenticonConfig } from "../../../";
 
 const newConfig: JdenticonConfig = {
     lightness: {
@@ -56,4 +56,4 @@ if (ctx) {
 
 // Ensure Jdenticon dodn't leak Node typings.
 // setTimeout returns a NodeJS.Timeout when the Node typings are loaded.
-const timeoutRef3: number = setTimeout(() => { }, 100);
+const timeoutRef: number = setTimeout(() => { }, 100);

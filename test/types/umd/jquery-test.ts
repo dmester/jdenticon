@@ -18,3 +18,7 @@ const jqueryConfig: JdenticonConfig = {
 $("canvas").jdenticon("value");
 $("canvas").jdenticon("value", 0.08);
 $("canvas").jdenticon("value", jqueryConfig);
+
+// Ensure Jdenticon dodn't leak Node typings.
+// setTimeout returns a NodeJS.Timeout when the Node typings are loaded.
+const timeoutRef2: number = setTimeout(() => { }, 100);

@@ -1,4 +1,4 @@
-import { configure, drawIcon, update, updateSvg, updateCanvas, toPng, toSvg, JdenticonConfig } from "../../../";
+import { configure, update, updateSvg, updateCanvas, toPng, toSvg, JdenticonConfig } from "../../../";
 
 const newConfig: JdenticonConfig = {
     lightness: {
@@ -23,8 +23,6 @@ const oldConfig: JdenticonConfig = {
     saturation: 0.5
 };
 
-window.jdenticon_config = oldConfig;
-
 configure(oldConfig);
 
 toPng("value to hash", 100);
@@ -33,13 +31,12 @@ toSvg("value to hash", 100);
 toPng("value to hash", 100, 0.08);
 toSvg("value to hash", 100, 0.08);
 
-toPng("value to hash", 100, newConfig);
+const buffer = toPng("value to hash", 100, newConfig);
 toSvg("value to hash", 100, newConfig);
 
-var el = document.createElement("canvas");
-update(el, "value");
-update(el, "value", 0.08);
-update(el, "value", newConfig);
+// Check that Node typings are loaded
+buffer.swap64();
+
 update("#selector", "value");
 update("#selector", "value", 0.08);
 update("#selector", "value", newConfig);
@@ -47,9 +44,3 @@ update("#selector", "value", newConfig);
 updateSvg("#selector", "value", newConfig);
 updateCanvas("#selector", "value", newConfig);
 
-var ctx = el.getContext("2d");
-if (ctx) {
-    drawIcon(ctx, "value", 100);
-    drawIcon(ctx, "value", 100, 0.08);
-    drawIcon(ctx, "value", 100, newConfig);
-}

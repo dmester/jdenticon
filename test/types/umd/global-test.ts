@@ -54,3 +54,7 @@ if (ctx) {
     jdenticon.drawIcon(ctx, "value", 100, 0.08);
     jdenticon.drawIcon(ctx, "value", 100, config);
 }
+
+// Ensure Jdenticon dodn't leak Node typings.
+// setTimeout returns a NodeJS.Timeout when the Node typings are loaded.
+const timeoutRef1: number = setTimeout(() => { }, 100);
