@@ -29,3 +29,8 @@
 // An alternative is to use <reference lib="dom" />, but it leaks to the user code base, so this is probably a
 // safer option.
 interface Element { }
+
+// By declaring Buffer without including the Node typings, we can avoid type issues related to differences
+// between Node and browser typings, e.g. the return type of setTimeout. The user can import the Node typings
+// if desired.
+interface Buffer { }

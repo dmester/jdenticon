@@ -1,5 +1,4 @@
-﻿/// <reference types="node" />
-/// <reference path="env.d.ts"/>
+﻿/// <reference path="env.d.ts"/>
 /**
  * Jdenticon
  * http://jdenticon.com
