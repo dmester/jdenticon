@@ -81,23 +81,23 @@ export function sha1(message) {
     for ( ; blockStartIndex < dataSize; blockStartIndex += BLOCK_SIZE_WORDS) {
         for (i = 0; i < 80; i++) {
             f = rotl(a, 5) + e + (
-					// Ch
-					i < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
-					
-					// Parity
-					i < 40 ? (b ^ c ^ d) + 0x6ed9eba1 :
-					
-					// Maj
-					i < 60 ? ((b & c) ^ (b & d) ^ (c & d)) + 0x8f1bbcdc :
-					
-					// Parity
+                    // Ch
+                    i < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
+                    
+                    // Parity
+                    i < 40 ? (b ^ c ^ d) + 0x6ed9eba1 :
+                    
+                    // Maj
+                    i < 60 ? ((b & c) ^ (b & d) ^ (c & d)) + 0x8f1bbcdc :
+                    
+                    // Parity
                     (b ^ c ^ d) + 0xca62c1d6
-				) + ( 
+                ) + ( 
                     hashBuffer[i] = i < BLOCK_SIZE_WORDS
                         // Bitwise OR is used to coerse `undefined` to 0
                         ? (data[blockStartIndex + i] | 0)
                         : rotl(hashBuffer[i - 3] ^ hashBuffer[i - 8] ^ hashBuffer[i - 14] ^ hashBuffer[i - 16], 1)
-				);
+                );
 
             e = d;
             d = c;
