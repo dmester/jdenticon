@@ -96,8 +96,8 @@ class Replacement {
                 line: inputEnd.line + offset.lineOffset + lineDifference,
                 column: replacementLines.length > 1 ? 
                     replacementLines[replacementLines.length - 1].length :
-                    inputEnd.column + offset.getColumnOffset(inputEnd.line) + 
-                    range.replacement.length - range.end + range.start
+                    inputStart.column + offset.getColumnOffset(inputStart.line) +
+                    range.replacement.length
             }
 
             sourceMap.spoolTo(inputStart.line, inputStart.column, offset);
