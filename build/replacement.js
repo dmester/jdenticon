@@ -49,7 +49,7 @@ class Replacement {
         return ranges
             .sort((a, b) => a.start - b.start)
             .filter(replacement => {
-                if (!lastReplacement || lastReplacement.end < replacement.start) {
+                if (!lastReplacement || lastReplacement.end <= replacement.start) {
                     lastReplacement = replacement;
                     return true;
                 }
