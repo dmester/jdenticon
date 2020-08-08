@@ -575,7 +575,6 @@ class Offset {
 class OverwriteRange {
     constructor(options) {
         if (!isFinite(options.start)) {
-            console.log(options)
             throw new Error("A replacement start index is required.");
         }
         if (!isFinite(options.end)) {
