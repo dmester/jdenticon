@@ -34,6 +34,7 @@ export function rgb(r, g, b) {
 
 /**
  * @param {string} color  Color value to parse. Currently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+ * @returns {string}
  */
 export function parseColor(color) {
     if (/^#[0-9a-f]{3,8}$/i.test(color)) {
@@ -55,7 +56,9 @@ export function parseColor(color) {
 }
 
 /**
+ * Converts a hexadecimal color to a CSS3 compatible color.
  * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
+ * @returns {string}
  */
 export function toCss3Color(hexColor) {
     const a = parseHex(hexColor, 7, 2);
@@ -74,38 +77,46 @@ export function toCss3Color(hexColor) {
 }
 
 /**
- * @param h Hue [0, 1]
- * @param s Saturation [0, 1]
- * @param l Lightness [0, 1]
+ * Converts an HSL color to a hexadecimal RGB color.
+ * @param {number} hue  Hue in range [0, 1]
+ * @param {number} saturation  Saturation in range [0, 1]
+ * @param {number} lightness  Lightness in range [0, 1]
+ * @returns {string}
  */
-export function hsl(h, s, l) {
+export function hsl(hue, saturation, lightness) {
     // Based on http://www.w3.org/TR/2011/REC-css3-color-20110607/#hsl-color
     let result;
 
-    if (s == 0) {
-        const partialHex = decToHex(l * 255);
+    if (saturation == 0) {
+        const partialHex = decToHex(lightness * 255);
         result = partialHex + partialHex + partialHex;
     }
     else {
-        const m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s,
-              m1 = l * 2 - m2;
+        const m2 = lightness <= 0.5 ? lightness * (saturation + 1) : lightness + saturation - lightness * saturation,
+              m1 = lightness * 2 - m2;
         result =
-            hueToRgb(m1, m2, h * 6 + 2) +
-            hueToRgb(m1, m2, h * 6) +
-            hueToRgb(m1, m2, h * 6 - 2);
+            hueToRgb(m1, m2, hue * 6 + 2) +
+            hueToRgb(m1, m2, hue * 6) +
+            hueToRgb(m1, m2, hue * 6 - 2);
     }
 
     return "#" + result;
 }
 
-// This function will correct the lightness for the "dark" hues
-export function correctedHsl(h, s, l) {
+/**
+ * Converts an HSL color to a hexadecimal RGB color. This function will correct the lightness for the "dark" hues
+ * @param {number} hue  Hue in range [0, 1]
+ * @param {number} saturation  Saturation in range [0, 1]
+ * @param {number} lightness  Lightness in range [0, 1]
+ * @returns {string}
+ */
+export function correctedHsl(hue, saturation, lightness) {
     // The corrector specifies the perceived middle lightness for each hue
     const correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
-          corrector = correctors[(h * 6 + 0.5) | 0];
+          corrector = correctors[(hue * 6 + 0.5) | 0];
     
     // Adjust the input lightness relative to the corrector
-    l = l < 0.5 ? l * corrector * 2 : corrector + (l - 0.5) * (1 - corrector) * 2;
+    lightness = lightness < 0.5 ? lightness * corrector * 2 : corrector + (lightness - 0.5) * (1 - corrector) * 2;
     
-    return hsl(h, s, l);
+    return hsl(hue, saturation, lightness);
 }

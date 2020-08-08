@@ -20,6 +20,7 @@ export class SvgPath {
     constructor() {
         /**
          * This property holds the data string (path.d) of the SVG path.
+         * @type {string}
          */
         this.dataString = "";
     }
@@ -38,7 +39,7 @@ export class SvgPath {
 
     /**
      * Adds a circle with the current fill color to the SVG path.
-     * @param {Point} point The upper left corner of the circle bounding box.
+     * @param {import('../point').Point} point The upper left corner of the circle bounding box.
      * @param {number} diameter The diameter of the circle.
      * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
      */

@@ -23,7 +23,7 @@ export function observer(updateCallback) {
                             updateCallback(addedNode);
                         }
                         else {
-                            const icons = addedNode.querySelectorAll(ICON_SELECTOR);
+                            const icons = /** @type {Element} */(addedNode).querySelectorAll(ICON_SELECTOR);
                             for (let iconIndex = 0; iconIndex < icons.length; iconIndex++) {
                                 updateCallback(icons[iconIndex]);
                             }

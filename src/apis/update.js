@@ -36,7 +36,7 @@ export function update(el, hashOrValue, config) {
         if (iconType) {
             return iconType == ICON_TYPE_SVG ? 
                 new SvgRenderer(new SvgElement(el)) : 
-                new CanvasRenderer(el.getContext("2d"));
+                new CanvasRenderer(/** @type {HTMLCanvasElement} */(el).getContext("2d"));
         }
     });
 }
@@ -54,7 +54,7 @@ export function update(el, hashOrValue, config) {
 export function updateCanvas(el, hashOrValue, config) {
     renderDomElement(el, hashOrValue, config, function (el, iconType) {
         if (iconType == ICON_TYPE_CANVAS) {
-            return new CanvasRenderer(el.getContext("2d"));
+            return new CanvasRenderer(/** @type {HTMLCanvasElement} */(el).getContext("2d"));
         }
     });
 }
@@ -84,7 +84,7 @@ export function updateSvg(el, hashOrValue, config) {
  * @param {*} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
  *    `data-jdenticon-value` attribute will be evaluated.
  * @param {Object|number|undefined} config
- * @param {function(Element,number)} rendererFactory - Factory function for creating an icon renderer.
+ * @param {function(Element,number):import("../renderer/renderer").Renderer} rendererFactory - Factory function for creating an icon renderer.
  */
 function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (typeof el === "string") {

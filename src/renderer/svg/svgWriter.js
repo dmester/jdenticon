@@ -12,7 +12,15 @@ export class SvgWriter {
      * @param {number} iconSize - Icon width and height in pixels.
      */
     constructor(iconSize) {
+        /**
+         * @type {number}
+         */
         this.iconSize = iconSize;
+
+        /**
+         * @type {string}
+         * @private
+         */
         this._s =
             '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
             iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 

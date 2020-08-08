@@ -9,6 +9,7 @@
  * @param {Graphics} g
  * @param {number} cell
  * @param {number} positionIndex
+ * @typedef {import('./graphics').Graphics} Graphics
  */
 export function centerShape(index, g, cell, positionIndex) {
     index = index % 14;

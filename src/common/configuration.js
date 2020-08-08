@@ -8,6 +8,17 @@ import { parseColor } from "../renderer/color";
 import { GLOBAL } from "./global";
 
 /**
+ * @typedef {Object} ParsedConfiguration
+ * @property {number} colorSaturation
+ * @property {number} grayscaleSaturation
+ * @property {string} backColor
+ * @property {number} iconPadding
+ * @property {function(number):number} hue
+ * @property {function(number):number} colorLightness
+ * @property {function(number):number} grayscaleLightness
+ */
+
+/**
  * @noinline
  */
 const ROOT_CONFIG_PROPERTY = "config";
@@ -58,6 +69,7 @@ export function configure(newConfiguration) {
  *    entire global configuration.
  * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
  *    explicitly to the API method.
+ * @returns {ParsedConfiguration}
  */
 export function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     const configObject = 

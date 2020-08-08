@@ -13,18 +13,21 @@ import { getConfiguration } from "../common/configuration";
      
 /**
  * Draws an identicon to a specified renderer.
+ * @param {import('./renderer').Renderer} renderer
+ * @param {string} hash
+ * @param {Object|number=} config
  */
 export function iconGenerator(renderer, hash, config) {
-    config = getConfiguration(config, 0.08);
+    const parsedConfig = getConfiguration(config, 0.08);
 
     // Set background color
-    if (config.backColor) {
-        renderer.setBackground(config.backColor);
+    if (parsedConfig.backColor) {
+        renderer.setBackground(parsedConfig.backColor);
     }
     
     // Calculate padding and round to nearest integer
     let size = renderer.iconSize;
-    const padding = (0.5 + size * config.iconPadding) | 0;
+    const padding = (0.5 + size * parsedConfig.iconPadding) | 0;
     size -= padding * 2;
     
     const graphics = new Graphics(renderer);
@@ -43,7 +46,7 @@ export function iconGenerator(renderer, hash, config) {
         renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
         
         for (let i = 0; i < positions.length; i++) {
-            graphics._transform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
+            graphics.currentTransform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
             shapes(shapeIndex, graphics, cell, i);
         }
         
@@ -54,7 +57,7 @@ export function iconGenerator(renderer, hash, config) {
     const hue = parseHex(hash, -7) / 0xfffffff,
     
           // Available colors for this icon
-          availableColors = colorTheme(hue, config),
+          availableColors = colorTheme(hue, parsedConfig),
 
           // The index of the selected colors
           selectedColorIndexes = [];

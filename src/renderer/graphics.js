@@ -7,26 +7,41 @@
 import { NO_TRANSFORM } from "./transform";
 
 /**
+ * @typedef {import("./renderer").Renderer} Renderer
+ * @typedef {import("./transform").Transform} Transform
+ */
+
+/**
  * Provides helper functions for rendering common basic shapes.
  */
 export class Graphics {
+    /**
+     * @param {Renderer} renderer 
+     */
     constructor(renderer) {
+        /**
+         * @type {Renderer}
+         * @private
+         */
         this._renderer = renderer;
-        this._transform = NO_TRANSFORM;
+
+        /**
+         * @type {Transform}
+         */
+        this.currentTransform = NO_TRANSFORM;
     }
 
     /**
      * Adds a polygon to the underlying renderer.
-     * @param {Array} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
+     * @param {Array<number>} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
      * @param {boolean=} invert Specifies if the polygon will be inverted.
      */
     addPolygon(points, invert) {
-        const di = invert ? -2 : 2, 
-              transform = this._transform,
+        const di = invert ? -2 : 2,
               transformedPoints = [];
         
         for (let i = invert ? points.length - 2 : 0; i < points.length && i >= 0; i += di) {
-            transformedPoints.push(transform.transformIconPoint(points[i], points[i + 1]));
+            transformedPoints.push(this.currentTransform.transformIconPoint(points[i], points[i + 1]));
         }
         
         this._renderer.addPolygon(transformedPoints);
@@ -41,7 +56,7 @@ export class Graphics {
      * @param {boolean=} invert Specifies if the ellipse will be inverted.
      */
     addCircle(x, y, size, invert) {
-        const p = this._transform.transformIconPoint(x, y, size, size);
+        const p = this.currentTransform.transformIconPoint(x, y, size, size);
         this._renderer.addCircle(p, size, invert);
     }
 

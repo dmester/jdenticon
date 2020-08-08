@@ -7,7 +7,13 @@
 import { toCss3Color } from "../color";
 
 /**
+ * @typedef {import("../renderer").Renderer} Renderer
+ * @typedef {import('../point').Point} Point
+ */
+
+/**
  * Renderer redirecting drawing commands to a canvas context.
+ * @implements {Renderer}
  */
 export class CanvasRenderer {
     /**

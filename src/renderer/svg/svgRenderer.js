@@ -8,7 +8,15 @@ import { SvgPath } from "./svgPath";
 import { parseHex } from "../../common/parseHex";
 
 /**
+ * @typedef {import("../point").Point} Point
+ * @typedef {import("../renderer").Renderer} Renderer
+ * @typedef {import("./svgElement").SvgElement} SvgElement
+ * @typedef {import("./svgWriter").SvgWriter} SvgWriter
+ */
+
+/**
  * Renderer producing SVG output.
+ * @implements {Renderer}
  */
 export class SvgRenderer {
     /**
@@ -17,10 +25,25 @@ export class SvgRenderer {
     constructor(target) {
         /**
          * @type {SvgPath}
+         * @private
          */
         this._path;
+
+        /**
+         * @type {Object.<string,SvgPath>}
+         * @private
+         */
         this._pathsByColor = { };
+
+        /**
+         * @type {SvgElement|SvgWriter}
+         * @private
+         */
         this._target = target;
+
+        /**
+         * @type {number}
+         */
         this.iconSize = target.iconSize;
     }
 

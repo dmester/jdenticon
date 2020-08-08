@@ -15,8 +15,8 @@ function SvgElement_append(parentNode, name, ...keyValuePairs) {
     
     for (let i = 0; i + 1 < keyValuePairs.length; i += 2) {
         el.setAttribute(
-            /** @type {string} */ (keyValuePairs[i]),
-            /** @type {string|number} */ (keyValuePairs[i + 1]),
+            /** @type {string} */(keyValuePairs[i]),
+            /** @type {string} */(keyValuePairs[i + 1]),
             );
     }
 
@@ -41,6 +41,11 @@ export class SvgElement {
             (Number(element.getAttribute("width")) || 100),
             (Number(element.getAttribute("height")) || 100)
             );
+        
+        /**
+         * @type {Element}
+         * @private
+         */
         this._el = element;
         
         // Clear current SVG child elements

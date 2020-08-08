@@ -8,6 +8,8 @@ import { correctedHsl } from "./color";
 
 /**
  * Gets a set of identicon color candidates for a specified hue and config.
+ * @param {number} hue
+ * @param {import("../common/configuration").ParsedConfiguration} config
  */
 export function colorTheme(hue, config) {
     hue = config.hue(hue);
