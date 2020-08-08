@@ -399,7 +399,7 @@ class InputReader {
         }
 
         const lineStartIndex = this._lineBreakIndexes[line - 2];
-        const column = this._inputCursorExclusive - (lineStartIndex || 0) - 1;
+        const column = this._inputCursorExclusive - (lineStartIndex || -1) - 1;
         this.pos = { line, column };
     }
 }
