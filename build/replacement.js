@@ -72,7 +72,7 @@ class Replacement {
             sourceMap.initEmpty(reader.lines);
         }
         
-        ranges.forEach(range => {
+        ranges.forEach((range, rangeIndex) => {
             output.push(reader.readTo(range.start));
             output.push(range.replacement);
 
@@ -99,17 +99,34 @@ class Replacement {
                     inputEnd.column + offset.getColumnOffset(inputEnd.line) + 
                     range.replacement.length - range.end + range.start
             }
-    
+
             sourceMap.spoolTo(inputStart.line, inputStart.column, offset);
-            sourceMap.skipTo(inputStart.line, inputStart.column + 1, offset);
             
             offset.lineOffset += lineDifference;
             offset.setColumnOffset(inputEnd.line, outputEnd.column - inputEnd.column);
     
-            if (range.name || replacementLines.length === 1) {
+            if (range.name || replacementLines.length === 1 && range.replacement) {
                 const mappingBeforeStart = sourceMap.lastMapping();
-    
-                if (mappingBeforeStart && mappingBeforeStart.generatedLine === inputStart.line) {
+                const mappingAfterStart = sourceMap.nextMapping();
+
+                if (mappingAfterStart &&
+                    mappingAfterStart.generatedLine === inputStart.line &&
+                    mappingAfterStart.generatedColumn === inputStart.column
+                ) {
+                    sourceMap.addMapping({
+                        original: {
+                            line: mappingAfterStart.originalLine,
+                            column: mappingAfterStart.originalColumn,
+                        },
+                        generated: {
+                            line: outputStart.line,
+                            column: outputStart.column
+                        },
+                        source: mappingAfterStart.source,
+                        name: range.name,
+                    });
+
+                } else if (mappingBeforeStart && mappingBeforeStart.generatedLine === inputStart.line) {
                     sourceMap.addMapping({
                         original: {
                             line: mappingBeforeStart.originalLine + inputStart.line - mappingBeforeStart.generatedLine,
@@ -124,39 +141,50 @@ class Replacement {
                     });
                 }
     
-            } else {
+            } else if (range.replacement) {
                 // Map longer replacements to a virtual file defined in the source map
                 const generatedSourceName = sourceMap.addSourceContent(replacedText, range.replacement);
                 
                 for (var i = 0; i < replacementLines.length; i++) {
-                    sourceMap.addMapping({
-                        original: {
-                            line: i + 1,
-                            column: 0,
-                        },
-                        generated: {
-                            line: outputStart.line + i,
-                            column: i ? 0 : outputStart.column,
-                        },
-                        source: generatedSourceName,
-                    });
+                    // Don't map empty lines
+                    if (replacementLines[i]) {
+                        sourceMap.addMapping({
+                            original: {
+                                line: i + 1,
+                                column: 0,
+                            },
+                            generated: {
+                                line: outputStart.line + i,
+                                column: i ? 0 : outputStart.column,
+                            },
+                            source: generatedSourceName,
+                        });
+                    }
                 }
-    
             }
-    
+
             sourceMap.skipTo(inputEnd.line, inputEnd.column, offset);
     
             // Add a source map node directly after the replacement to terminate the replacement
-            const nextMapping = sourceMap.nextMapping();
+            const mappingAfterEnd = sourceMap.nextMapping();
             const mappingBeforeEnd = sourceMap.lastMapping();
     
-            if (nextMapping &&
-                nextMapping.generatedLine === inputEnd.line &&
-                nextMapping.generatedColumn === inputEnd.column
+            if (mappingAfterEnd &&
+                mappingAfterEnd.generatedLine === inputEnd.line &&
+                mappingAfterEnd.generatedColumn === inputEnd.column
             ) {
                 // No extra source map node needed when the replacement is directly followed by another node
     
-            } else if (mappingBeforeEnd && mappingBeforeEnd.generatedLine === inputEnd.line) {
+            } else if (rangeIndex + 1 < ranges.length && range.end === ranges[rangeIndex + 1].start) {
+                // The next replacement range is adjacent to this one
+
+            } else if (reader.endOfLine()) {
+                // End of line, no point in adding a following node
+
+            } else if (!mappingBeforeEnd || mappingBeforeEnd.generatedLine !== inputEnd.line) {
+                // No applicable preceding node found
+
+            } else {
                 sourceMap.addMapping({
                     original: {
                         line: mappingBeforeEnd.originalLine + inputEnd.line - mappingBeforeEnd.generatedLine,
@@ -354,6 +382,11 @@ class InputReader {
 
     readToEnd() {
         return this.readTo(this._input.length);
+    }
+    
+    endOfLine() {
+        const nextChar = this._input[this._inputCursorExclusive];
+        return !nextChar || nextChar === "\r" || nextChar === "\n";
     }
 
     _updatePos() {
