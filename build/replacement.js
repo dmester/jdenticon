@@ -415,7 +415,7 @@ class SourceMapSpooler {
         }
 
         this._generator = generator;
-        this._sources = sources;
+        this._sources = new Set(sources);
         this._file = file;
         
         this._mappingsCursor = 0;
@@ -470,16 +470,17 @@ class SourceMapSpooler {
                     .replace(/[^0-9a-z-_]/ig, "");
                     
                 if (replacedText) {
-                    sourceNameWithoutNumber = PREFIX + replacedText;
-                    sourceName = sourceNameWithoutNumber;
+                    sourceNameWithoutNumber = PREFIX + replacedText + "-";
+                    sourceName = PREFIX + replacedText;
                 }
             }
             
             let counter = 2;
-            while (this._sources.includes(sourceName)) {
-                sourceName = sourceNameWithoutNumber + "-" + counter++;
+            while (this._sources.has(sourceName)) {
+                sourceName = sourceNameWithoutNumber + counter++;
             }
             
+            this._sources.add(sourceName);
             this._contents.set(content, sourceName);
             this._generator.setSourceContent(sourceName, content);
         }
