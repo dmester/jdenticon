@@ -6,7 +6,7 @@
 
 // This file is compiled to dist/jdenticon.js and dist/jdenticon.min.js
 
-import { defineConfigProperty } from "./common/configuration";
+import { CONFIG_PROPERTIES, defineConfigProperty } from "./common/configuration";
 import { observer } from "./common/observer";
 import { configure } from "./apis/configure";
 import { drawIcon } from "./apis/drawIcon";
@@ -50,8 +50,8 @@ if (jQuery) {
  */
 function jdenticonStartup() {
     const replaceMode = (
-        jdenticon["config"] ||
-        GLOBAL["jdenticon_config"] ||
+        jdenticon[CONFIG_PROPERTIES.MODULE] ||
+        GLOBAL[CONFIG_PROPERTIES.GLOBAL] ||
         { }
     )["replaceMode"];
     

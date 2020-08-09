@@ -4,7 +4,7 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
-import { HASH_ATTRIBUTE, ICON_SELECTOR, VALUE_ATTRIBUTE, getIdenticonType } from "./dom";
+import { ATTRIBUTES, ICON_SELECTOR, getIdenticonType } from "./dom";
 
 export function observer(updateCallback) {
     if (typeof MutationObserver != "undefined") {
@@ -40,7 +40,7 @@ export function observer(updateCallback) {
         mutationObserver.observe(document.body, {
             "childList": true,
             "attributes": true,
-            "attributeFilter": [VALUE_ATTRIBUTE, HASH_ATTRIBUTE, "width", "height"],
+            "attributeFilter": [ATTRIBUTES.VALUE, ATTRIBUTES.HASH, "width", "height"],
             "subtree": true,
         });
     }

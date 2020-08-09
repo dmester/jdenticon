@@ -4,6 +4,8 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
+import { SVG_CONSTANTS } from "./constants";
+
 /**
  * Creates a new element and adds it to the specified parent.
  * @param {Element} parentNode
@@ -11,7 +13,7 @@
  * @param {...(string|number)} keyValuePairs
  */
 function SvgElement_append(parentNode, name, ...keyValuePairs) {
-    const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+    const el = document.createElementNS(SVG_CONSTANTS.XMLNS, name);
     
     for (let i = 0; i + 1 < keyValuePairs.length; i += 2) {
         el.setAttribute(
@@ -38,8 +40,8 @@ export class SvgElement {
         // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
         // the icon to the correct dimensions)
         const iconSize = this.iconSize = Math.min(
-            (Number(element.getAttribute("width")) || 100),
-            (Number(element.getAttribute("height")) || 100)
+            (Number(element.getAttribute(SVG_CONSTANTS.WIDTH)) || 100),
+            (Number(element.getAttribute(SVG_CONSTANTS.HEIGHT)) || 100)
             );
         
         /**
@@ -66,8 +68,8 @@ export class SvgElement {
     setBackground(fillColor, opacity) {
         if (opacity) {
             SvgElement_append(this._el, "rect",
-                "width", "100%",
-                "height", "100%",
+                SVG_CONSTANTS.WIDTH, "100%",
+                SVG_CONSTANTS.HEIGHT, "100%",
                 "fill", fillColor,
                 "opacity", opacity);
         }

@@ -4,6 +4,8 @@
  * Copyright © Daniel Mester Pirttijärvi
  */
 
+import { SVG_CONSTANTS } from "./constants";
+
 /**
  * Renderer producing SVG output.
  */
@@ -22,7 +24,7 @@ export class SvgWriter {
          * @private
          */
         this._s =
-            '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
+            '<svg xmlns="' + SVG_CONSTANTS.XMLNS + '" width="' + 
             iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
             iconSize + ' ' + iconSize + '">';
     }

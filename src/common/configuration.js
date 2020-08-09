@@ -18,10 +18,10 @@ import { GLOBAL } from "./global";
  * @property {function(number):number} grayscaleLightness
  */
 
-/**
- * @noinline
- */
-const ROOT_CONFIG_PROPERTY = "config";
+export const CONFIG_PROPERTIES = {
+    GLOBAL: "jdenticon_config",
+    MODULE: "config",
+};
 
 var rootConfigurationHolder = {};
 
@@ -31,11 +31,11 @@ var rootConfigurationHolder = {};
  * @param {!Object} rootObject 
  */
 export function defineConfigPropertyWithWarn(rootObject) {
-    Object.defineProperty(rootObject, "config", {
+    Object.defineProperty(rootObject, CONFIG_PROPERTIES.MODULE, {
         configurable: true,
-        get: () => rootConfigurationHolder[ROOT_CONFIG_PROPERTY],
+        get: () => rootConfigurationHolder[CONFIG_PROPERTIES.MODULE],
         set: newConfiguration => {
-            rootConfigurationHolder[ROOT_CONFIG_PROPERTY] = newConfiguration;
+            rootConfigurationHolder[CONFIG_PROPERTIES.MODULE] = newConfiguration;
             console.warn("jdenticon.config is deprecated. Use jdenticon.configure() instead.");
         },
     });
@@ -56,9 +56,9 @@ export function defineConfigProperty(rootObject) {
  */
 export function configure(newConfiguration) {
     if (arguments.length) {
-        rootConfigurationHolder[ROOT_CONFIG_PROPERTY] = newConfiguration;
+        rootConfigurationHolder[CONFIG_PROPERTIES.MODULE] = newConfiguration;
     }
-    return rootConfigurationHolder[ROOT_CONFIG_PROPERTY];
+    return rootConfigurationHolder[CONFIG_PROPERTIES.MODULE];
 }
 
 /**
@@ -74,8 +74,8 @@ export function configure(newConfiguration) {
 export function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     const configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
-            rootConfigurationHolder[ROOT_CONFIG_PROPERTY] ||
-            GLOBAL["jdenticon_config"] ||
+            rootConfigurationHolder[CONFIG_PROPERTIES.MODULE] ||
+            GLOBAL[CONFIG_PROPERTIES.GLOBAL] ||
             { },
 
         lightnessConfig = configObject["lightness"] || { },
