@@ -16,14 +16,16 @@ const gulp = require("gulp");
 const rename = require("gulp-rename");
 const terser = require("gulp-terser");
 const zip = require("gulp-zip");
-const replace = require("./build/replacement").gulp;
+const replace = require("./build/gulp/replacement").gulp;
+const wrapTemplate = require("./build/gulp/wrap-template");
 const buble = require("gulp-buble");
 const sourcemaps = require("gulp-sourcemaps");
-const mangleProps = require("./build/mangle-props");
-const removeSource = require("./build/remove-source");
+const preMinify = require("./build/gulp/pre-minify");
+const removeJsDocImports = require("./build/gulp/remove-jsdoc-imports");
+const removeMappedSource = require("./build/gulp/remove-mapped-source");
 
 // Rollup dependencies
-const rollup = require("./build/rollup-stream");
+const rollup = require("./build/gulp/rollup");
 const commonjs = require( "@rollup/plugin-commonjs");
 const stripBanner = require("rollup-plugin-strip-banner");
 const alias = require("@rollup/plugin-alias");
@@ -38,22 +40,6 @@ const VARIABLES = [
     // Keep line prefix, e.g. " * " for license banners in JavaScript.
     [/(.*)#license#/gm, "$1" + LICENSE.trim().replace(/\n/g, "\n$1")],
 ];
-
-function wrapTemplate(templatePath) {
-    const template = fs.readFileSync(templatePath)
-        .toString()
-        .split(/\/\*content\*\//);
-
-    const replacements = [];
-    if (template[0]) {
-        replacements.push([/^/, template[0]]);
-    }
-    if (template[1]) {
-        replacements.push([/$/, template[1]]);
-    }
-
-    return replace(replacements);
-}
 
 function umdSrc() {
     return gulp.src("./src/browser-umd.js")
@@ -72,13 +58,15 @@ function umdSrc() {
 
         .pipe(rename(function (path) { path.basename = "notmapped"; path.extname = ".js" }))
 
+        .pipe(buble())
+        .pipe(preMinify())
+        .pipe(removeJsDocImports())
+
         // The UMD template expects a factory function body, so replace export with a return for the factory function.
         .pipe(replace("module.exports = ", "return "))
-        .pipe(wrapTemplate("./build/template-umd.js"))
-        .pipe(replace(VARIABLES))
 
-        .pipe(buble())
-        .pipe(mangleProps());
+        .pipe(replace(VARIABLES))
+        .pipe(wrapTemplate("./build/template-umd.js", VARIABLES));
 }
 
 gulp.task("clean", function (cb) {
@@ -96,13 +84,10 @@ gulp.task("build-umd", function () {
 
 gulp.task("build-umd-min", function () {
     return umdSrc()
-
         .pipe(terser())
-        
-        .pipe(wrapTemplate("./build/template-min.js"))
-        .pipe(replace(VARIABLES))
+        .pipe(wrapTemplate("./build/template-min.js", VARIABLES))
 
-        .pipe(removeSource("notmapped.js"))
+        .pipe(removeMappedSource("notmapped.js"))
 
         .pipe(rename(function (path) { path.basename = "jdenticon"; path.extname = ".min.js" }))
         .pipe(sourcemaps.write(".", { includeContent: true }))
@@ -123,13 +108,14 @@ gulp.task("build-cjs", function () {
 
         .pipe(rename(function (path) { path.basename = "notmapped"; path.extname = ".js" }))
         .pipe(buble())
-        .pipe(mangleProps())
+        .pipe(preMinify())
+        .pipe(removeJsDocImports())
 
         // Replace variables
-        .pipe(wrapTemplate("./build/template-module.js"))
         .pipe(replace(VARIABLES))
+        .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
-        .pipe(removeSource("notmapped.js"))
+        .pipe(removeMappedSource("notmapped.js"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".js" }))
         .pipe(sourcemaps.write("./", { includeContent: true }))
@@ -147,17 +133,14 @@ gulp.task("build-esm", function () {
             plugins: [ stripBanner() ],
         }))
 
-        .pipe(rename(function (path) { path.basename = "notmapped"; path.extname = ".js" }))
+        .pipe(preMinify())
+        .pipe(removeJsDocImports())
 
         // Replace variables
-        .pipe(wrapTemplate("./build/template-module.js"))
         .pipe(replace(VARIABLES))
+        .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
-        .pipe(mangleProps())
-
-        .pipe(removeSource("notmapped.js"))
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".mjs" }))
-
         .pipe(sourcemaps.write("./", { includeContent: true }))
         .pipe(gulp.dest("dist"))
         
@@ -174,11 +157,12 @@ gulp.task("build-node-cjs", function () {
             output: { format: "cjs" },
         }))
         
-        .pipe(wrapTemplate("./build/template-module.js"))
+        .pipe(removeJsDocImports())
+
         .pipe(replace(VARIABLES))
+        .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".js" }))
-
         .pipe(sourcemaps.write("./"))
         .pipe(gulp.dest("./dist"))
         
@@ -195,11 +179,12 @@ gulp.task("build-node-esm", function () {
             output: { format: "esm" },
         }))
 
-        .pipe(wrapTemplate("./build/template-module.js"))
+        .pipe(removeJsDocImports())
+
         .pipe(replace(VARIABLES))
+        .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".mjs" }))
-
         .pipe(sourcemaps.write("./"))
         .pipe(gulp.dest("./dist"))
         
