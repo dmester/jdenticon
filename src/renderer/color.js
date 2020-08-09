@@ -39,15 +39,16 @@ export function rgb(r, g, b) {
 export function parseColor(color) {
     if (/^#[0-9a-f]{3,8}$/i.test(color)) {
         let result;
+        const colorLength = color.length;
 
-        if (color.length < 6) {
+        if (colorLength < 6) {
             const r = color[1],
                   g = color[2],
                   b = color[3],
                   a = color[4] || "";
             result = "#" + r + r + g + g + b + b + a + a;
         }
-        if (color.length == 7 || color.length > 8) {
+        if (colorLength == 7 || colorLength > 8) {
             result = color;
         }
         

@@ -20,8 +20,9 @@ export class CanvasRenderer {
      * @param {number=} iconSize
      */
     constructor(ctx, iconSize) {
-        const width = ctx.canvas.width,
-              height = ctx.canvas.height;
+        const canvas = ctx.canvas; 
+        const width = canvas.width;
+        const height = canvas.height;
         
         ctx.save();
         
@@ -33,6 +34,9 @@ export class CanvasRenderer {
                 ((height - iconSize) / 2) | 0);
         }
 
+        /**
+         * @private
+         */
         this._ctx = ctx;
         this.iconSize = iconSize;
         
@@ -44,8 +48,8 @@ export class CanvasRenderer {
      * @param {string} fillColor  Fill color on the format #rrggbb[aa].
      */
     setBackground(fillColor) {
-        const ctx = this._ctx,
-              iconSize = this.iconSize;
+        const ctx = this._ctx;
+        const iconSize = this.iconSize;
 
         ctx.fillStyle = toCss3Color(fillColor);
         ctx.fillRect(0, 0, iconSize, iconSize);
