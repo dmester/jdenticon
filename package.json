@@ -50,6 +50,7 @@
     "rollup-plugin-strip-banner": "^2.0.0",
     "rollup-plugin-terser": "^6.1.0",
     "selenium-webdriver": "^4.0.0-alpha.7",
+    "source-map-loader": "^1.0.1",
     "tap": "^14.10.8",
     "typescript": "^3.2.4",
     "webpack": "^4.44.0",

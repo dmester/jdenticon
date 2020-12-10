@@ -118,7 +118,8 @@ gulp.task("build-cjs", function () {
         .pipe(removeMappedSource("notmapped.js"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".js" }))
-        .pipe(sourcemaps.write("./", { includeContent: true }))
+        .pipe(replace(/[\r\n]*$/, "\n//# sourceMappingURL=jdenticon-module.js.map\n"))
+        .pipe(sourcemaps.write("./", { includeContent: true, addComment: false }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module-" + pack.version; path.extname = ".js" }))
@@ -141,7 +142,8 @@ gulp.task("build-esm", function () {
         .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
         .pipe(rename(function (path) { path.basename = "jdenticon-module"; path.extname = ".mjs" }))
-        .pipe(sourcemaps.write("./", { includeContent: true }))
+        .pipe(replace(/[\r\n]*$/, "\n//# sourceMappingURL=jdenticon-module.mjs.map\n"))
+        .pipe(sourcemaps.write("./", { includeContent: true, addComment: false }))
         .pipe(gulp.dest("dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-module-" + pack.version; path.extname = ".mjs" }))
@@ -163,7 +165,8 @@ gulp.task("build-node-cjs", function () {
         .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".js" }))
-        .pipe(sourcemaps.write("./"))
+        .pipe(replace(/[\r\n]*$/, "\n//# sourceMappingURL=jdenticon-node.js.map\n"))
+        .pipe(sourcemaps.write("./", { includeContent: true, addComment: false }))
         .pipe(gulp.dest("./dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-node-" + pack.version; path.extname = ".js" }))
@@ -185,7 +188,9 @@ gulp.task("build-node-esm", function () {
         .pipe(wrapTemplate("./build/template-module.js", VARIABLES))
 
         .pipe(rename(path => { path.basename = "jdenticon-node"; path.extname = ".mjs" }))
-        .pipe(sourcemaps.write("./"))
+        .pipe(replace(/[\r\n]*$/, "\n//# sourceMappingURL=jdenticon-node.mjs.map\n"))
+        .pipe(sourcemaps.write("./", { includeContent: true, addComment: false }))
+
         .pipe(gulp.dest("./dist"))
         
         .pipe(rename(function (path) { path.basename = "jdenticon-node-" + pack.version; path.extname = ".mjs" }))
