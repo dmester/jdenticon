@@ -10,6 +10,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { exec } = require("child_process");
+const { promisify } = require("util");
 const pack = require("./package.json");
 
 // Gulp dependencies
@@ -70,8 +71,8 @@ function umdSrc() {
         .pipe(wrapTemplate("./build/template-umd.js", VARIABLES));
 }
 
-gulp.task("clean", function (cb) {
-    del(["./~jdenticon.nuspec", "./obj/output"], cb);
+gulp.task("clean", function () {
+    return del(["./~jdenticon.nuspec", "./obj/output"]);
 });
 
 gulp.task("build-umd", function () {
@@ -238,8 +239,8 @@ gulp.task("build", gulp.series("clean", gulp.parallel(
     "build-node-cjs", "build-node-esm",
 ), "install-jdenticon-test"));
  
-gulp.task("clean-tests", function (cb) {
-    del(["./obj/test/unit/**"], cb);
+gulp.task("clean-tests", function () {
+    return del(["./obj/test/unit/**"]);
 });
 
 gulp.task("build-unit-tests-js", function () {
@@ -270,20 +271,16 @@ gulp.task("prepare-nuget", function () {
         .pipe(gulp.dest("./"));
 });
 
-gulp.task("nuget", function (cb) {
+gulp.task("nuget", async function () {
     var command = "\"./build/nuget/nuget.exe\" pack ~jdenticon.nuspec -OutputDirectory releases";
 
     if (process.platform !== "win32") {
         command = "mono " + command;
     }
 
-    exec(command, function (error, stdout, stderr) {
-        if (error) {
-            cb(error);
-        } else {
-            del(["./~jdenticon.nuspec"], cb);
-        }
-    });
+    await promisify(exec)(command);
+
+    await del(["./~jdenticon.nuspec"]);
 });
 
 gulp.task("create-package", function () {
