@@ -1,8 +1,8 @@
 /**
- * Jdenticon 3.0.1
+ * Jdenticon 3.1.0
  * http://jdenticon.com
  *
- * Built: 2020-08-03T16:58:18.496Z
+ * Built: 2020-12-12T13:51:48.709Z
  * 
  * MIT License
  * 
@@ -32,8 +32,7 @@
 /**
  * Parses a substring of the hash as a number.
  * @param {number} startPosition 
- * @param {number=} octets 
- * @noinline
+ * @param {number=} octets
  */
 function parseHex(hash, startPosition, octets) {
     return parseInt(hash.substr(startPosition, octets), 16);
@@ -58,19 +57,21 @@ function hueToRgb(m1, m2, h) {
 
 /**
  * @param {string} color  Color value to parse. Currently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+ * @returns {string}
  */
 function parseColor(color) {
     if (/^#[0-9a-f]{3,8}$/i.test(color)) {
         var result;
+        var colorLength = color.length;
 
-        if (color.length < 6) {
+        if (colorLength < 6) {
             var r = color[1],
                   g = color[2],
                   b = color[3],
                   a = color[4] || "";
             result = "#" + r + r + g + g + b + b + a + a;
         }
-        if (color.length == 7 || color.length > 8) {
+        if (colorLength == 7 || colorLength > 8) {
             result = color;
         }
         
@@ -79,7 +80,9 @@ function parseColor(color) {
 }
 
 /**
+ * Converts a hexadecimal color to a CSS3 compatible color.
  * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
+ * @returns {string}
  */
 function toCss3Color(hexColor) {
     var a = parseHex(hexColor, 7, 2);
@@ -98,40 +101,48 @@ function toCss3Color(hexColor) {
 }
 
 /**
- * @param h Hue [0, 1]
- * @param s Saturation [0, 1]
- * @param l Lightness [0, 1]
+ * Converts an HSL color to a hexadecimal RGB color.
+ * @param {number} hue  Hue in range [0, 1]
+ * @param {number} saturation  Saturation in range [0, 1]
+ * @param {number} lightness  Lightness in range [0, 1]
+ * @returns {string}
  */
-function hsl(h, s, l) {
+function hsl(hue, saturation, lightness) {
     // Based on http://www.w3.org/TR/2011/REC-css3-color-20110607/#hsl-color
     var result;
 
-    if (s == 0) {
-        var partialHex = decToHex(l * 255);
+    if (saturation == 0) {
+        var partialHex = decToHex(lightness * 255);
         result = partialHex + partialHex + partialHex;
     }
     else {
-        var m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s,
-              m1 = l * 2 - m2;
+        var m2 = lightness <= 0.5 ? lightness * (saturation + 1) : lightness + saturation - lightness * saturation,
+              m1 = lightness * 2 - m2;
         result =
-            hueToRgb(m1, m2, h * 6 + 2) +
-            hueToRgb(m1, m2, h * 6) +
-            hueToRgb(m1, m2, h * 6 - 2);
+            hueToRgb(m1, m2, hue * 6 + 2) +
+            hueToRgb(m1, m2, hue * 6) +
+            hueToRgb(m1, m2, hue * 6 - 2);
     }
 
     return "#" + result;
 }
 
-// This function will correct the lightness for the "dark" hues
-function correctedHsl(h, s, l) {
+/**
+ * Converts an HSL color to a hexadecimal RGB color. This function will correct the lightness for the "dark" hues
+ * @param {number} hue  Hue in range [0, 1]
+ * @param {number} saturation  Saturation in range [0, 1]
+ * @param {number} lightness  Lightness in range [0, 1]
+ * @returns {string}
+ */
+function correctedHsl(hue, saturation, lightness) {
     // The corrector specifies the perceived middle lightness for each hue
     var correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
-          corrector = correctors[(h * 6 + 0.5) | 0];
+          corrector = correctors[(hue * 6 + 0.5) | 0];
     
     // Adjust the input lightness relative to the corrector
-    l = l < 0.5 ? l * corrector * 2 : corrector + (l - 0.5) * (1 - corrector) * 2;
+    lightness = lightness < 0.5 ? lightness * corrector * 2 : corrector + (lightness - 0.5) * (1 - corrector) * 2;
     
-    return hsl(h, s, l);
+    return hsl(hue, saturation, lightness);
 }
 
 // In the future we can replace `GLOBAL` with `globalThis`, but for now use the old school global detection for
@@ -144,9 +155,20 @@ var GLOBAL =
     {};
 
 /**
- * @noinline
+ * @typedef {Object} ParsedConfiguration
+ * @property {number} colorSaturation
+ * @property {number} grayscaleSaturation
+ * @property {string} backColor
+ * @property {number} iconPadding
+ * @property {function(number):number} hue
+ * @property {function(number):number} colorLightness
+ * @property {function(number):number} grayscaleLightness
  */
-var ROOT_CONFIG_PROPERTY = "config";
+
+var CONFIG_PROPERTIES = {
+    W/*GLOBAL*/: "jdenticon_config",
+    n/*MODULE*/: "config",
+};
 
 var rootConfigurationHolder = {};
 
@@ -165,9 +187,9 @@ function defineConfigProperty(rootObject) {
  */
 function configure(newConfiguration) {
     if (arguments.length) {
-        rootConfigurationHolder[ROOT_CONFIG_PROPERTY] = newConfiguration;
+        rootConfigurationHolder[CONFIG_PROPERTIES.n/*MODULE*/] = newConfiguration;
     }
-    return rootConfigurationHolder[ROOT_CONFIG_PROPERTY];
+    return rootConfigurationHolder[CONFIG_PROPERTIES.n/*MODULE*/];
 }
 
 /**
@@ -178,12 +200,13 @@ function configure(newConfiguration) {
  *    entire global configuration.
  * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
  *    explicitly to the API method.
+ * @returns {ParsedConfiguration}
  */
 function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     var configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
-            rootConfigurationHolder[ROOT_CONFIG_PROPERTY] ||
-            GLOBAL["jdenticon_config"] ||
+            rootConfigurationHolder[CONFIG_PROPERTIES.n/*MODULE*/] ||
+            GLOBAL[CONFIG_PROPERTIES.W/*GLOBAL*/] ||
             { },
 
         lightnessConfig = configObject["lightness"] || { },
@@ -246,13 +269,13 @@ function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     }
         
     return {
-        P/*hue*/: hueFunction,
-        n/*colorSaturation*/: typeof colorSaturation == "number" ? colorSaturation : 0.5,
-        C/*grayscaleSaturation*/: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
-        o/*colorLightness*/: lightness("color", [0.4, 0.8]),
-        D/*grayscaleLightness*/: lightness("grayscale", [0.3, 0.9]),
-        F/*backColor*/: parseColor(backColor),
-        R/*iconPadding*/: 
+        X/*hue*/: hueFunction,
+        o/*colorSaturation*/: typeof colorSaturation == "number" ? colorSaturation : 0.5,
+        F/*grayscaleSaturation*/: typeof grayscaleSaturation == "number" ? grayscaleSaturation : 0,
+        p/*colorLightness*/: lightness("color", [0.4, 0.8]),
+        G/*grayscaleLightness*/: lightness("grayscale", [0.3, 0.9]),
+        H/*backColor*/: parseColor(backColor),
+        Y/*iconPadding*/: 
             typeof paddingOrLocalConfig == "number" ? paddingOrLocalConfig : 
             typeof padding == "number" ? padding : 
             defaultPadding
@@ -262,21 +285,21 @@ function getConfiguration(paddingOrLocalConfig, defaultPadding) {
 /**
  * Represents a point.
  */
-var Point = function Point(x, y) {
+function Point(x, y) {
     this.x = x;
     this.y = y;
-};
+}
 
 /**
  * Translates and rotates a point before being passed on to the canvas context. This was previously done by the canvas context itself, 
  * but this caused a rendering issue in Chrome on sizes > 256 where the rotation transformation of inverted paths was not done properly.
  */
-var Transform = function Transform(x, y, size, rotation) {
-    this.p/*_x*/ = x;
-    this.q/*_y*/ = y;
-    this.G/*_size*/ = size;
-    this.S/*_rotation*/ = rotation;
-};
+function Transform(x, y, size, rotation) {
+    this.q/*_x*/ = x;
+    this.t/*_y*/ = y;
+    this.I/*_size*/ = size;
+    this.Z/*_rotation*/ = rotation;
+}
 
 /**
  * Transforms the specified point based on the translation and rotation specification for this Transform.
@@ -285,41 +308,53 @@ var Transform = function Transform(x, y, size, rotation) {
  * @param {number=} w The width of the transformed rectangle. If greater than 0, this will ensure the returned point is of the upper left corner of the transformed rectangle.
  * @param {number=} h The height of the transformed rectangle. If greater than 0, this will ensure the returned point is of the upper left corner of the transformed rectangle.
  */
-Transform.prototype.H/*transformIconPoint*/ = function transformIconPoint (x, y, w, h) {
-    var right = this.p/*_x*/ + this.G/*_size*/,
-          bottom = this.q/*_y*/ + this.G/*_size*/,
-          rotation = this.S/*_rotation*/;
-    return rotation === 1 ? new Point(right - y - (h || 0), this.q/*_y*/ + x) :
+Transform.prototype.J/*transformIconPoint*/ = function transformIconPoint (x, y, w, h) {
+    var right = this.q/*_x*/ + this.I/*_size*/,
+          bottom = this.t/*_y*/ + this.I/*_size*/,
+          rotation = this.Z/*_rotation*/;
+    return rotation === 1 ? new Point(right - y - (h || 0), this.t/*_y*/ + x) :
            rotation === 2 ? new Point(right - x - (w || 0), bottom - y - (h || 0)) :
-           rotation === 3 ? new Point(this.p/*_x*/ + y, bottom - x - (w || 0)) :
-           new Point(this.p/*_x*/ + x, this.q/*_y*/ + y);
+           rotation === 3 ? new Point(this.q/*_x*/ + y, bottom - x - (w || 0)) :
+           new Point(this.q/*_x*/ + x, this.t/*_y*/ + y);
 };
 
 var NO_TRANSFORM = new Transform(0, 0, 0, 0);
 
+
+
 /**
  * Provides helper functions for rendering common basic shapes.
  */
-var Graphics = function Graphics(renderer) {
-    this.I/*_renderer*/ = renderer;
-    this.t/*_transform*/ = NO_TRANSFORM;
-};
+function Graphics(renderer) {
+    /**
+     * @type {Renderer}
+     * @private
+     */
+    this.K/*_renderer*/ = renderer;
+
+    /**
+     * @type {Transform}
+     */
+    this.u/*currentTransform*/ = NO_TRANSFORM;
+}
+var Graphics__prototype = Graphics.prototype;
 
 /**
  * Adds a polygon to the underlying renderer.
- * @param {Array} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
+ * @param {Array<number>} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
  * @param {boolean=} invert Specifies if the polygon will be inverted.
  */
-Graphics.prototype.g/*addPolygon*/ = function addPolygon (points, invert) {
-    var di = invert ? -2 : 2, 
-          transform = this.t/*_transform*/,
+Graphics__prototype.g/*addPolygon*/ = function addPolygon (points, invert) {
+        var this$1 = this;
+
+    var di = invert ? -2 : 2,
           transformedPoints = [];
         
     for (var i = invert ? points.length - 2 : 0; i < points.length && i >= 0; i += di) {
-        transformedPoints.push(transform.H/*transformIconPoint*/(points[i], points[i + 1]));
+        transformedPoints.push(this$1.u/*currentTransform*/.J/*transformIconPoint*/(points[i], points[i + 1]));
     }
         
-    this.I/*_renderer*/.g/*addPolygon*/(transformedPoints);
+    this.K/*_renderer*/.g/*addPolygon*/(transformedPoints);
 };
     
 /**
@@ -330,9 +365,9 @@ Graphics.prototype.g/*addPolygon*/ = function addPolygon (points, invert) {
  * @param {number} size The size of the ellipse.
  * @param {boolean=} invert Specifies if the ellipse will be inverted.
  */
-Graphics.prototype.h/*addCircle*/ = function addCircle (x, y, size, invert) {
-    var p = this.t/*_transform*/.H/*transformIconPoint*/(x, y, size, size);
-    this.I/*_renderer*/.h/*addCircle*/(p, size, invert);
+Graphics__prototype.h/*addCircle*/ = function addCircle (x, y, size, invert) {
+    var p = this.u/*currentTransform*/.J/*transformIconPoint*/(x, y, size, size);
+    this.K/*_renderer*/.h/*addCircle*/(p, size, invert);
 };
 
 /**
@@ -343,7 +378,7 @@ Graphics.prototype.h/*addCircle*/ = function addCircle (x, y, size, invert) {
  * @param {number} h The height of the rectangle.
  * @param {boolean=} invert Specifies if the rectangle will be inverted.
  */
-Graphics.prototype.i/*addRectangle*/ = function addRectangle (x, y, w, h, invert) {
+Graphics__prototype.i/*addRectangle*/ = function addRectangle (x, y, w, h, invert) {
     this.g/*addPolygon*/([
         x, y, 
         x + w, y,
@@ -361,7 +396,7 @@ Graphics.prototype.i/*addRectangle*/ = function addRectangle (x, y, w, h, invert
  * @param {number} r The rotation of the triangle (clockwise). 0 = right corner of the triangle in the lower left corner of the bounding rectangle.
  * @param {boolean=} invert Specifies if the triangle will be inverted.
  */
-Graphics.prototype.j/*addTriangle*/ = function addTriangle (x, y, w, h, r, invert) {
+Graphics__prototype.j/*addTriangle*/ = function addTriangle (x, y, w, h, r, invert) {
     var points = [
         x + w, y, 
         x + w, y + h, 
@@ -380,7 +415,7 @@ Graphics.prototype.j/*addTriangle*/ = function addTriangle (x, y, w, h, r, inver
  * @param {number} h The height of the rhombus.
  * @param {boolean=} invert Specifies if the rhombus will be inverted.
  */
-Graphics.prototype.J/*addRhombus*/ = function addRhombus (x, y, w, h, invert) {
+Graphics__prototype.L/*addRhombus*/ = function addRhombus (x, y, w, h, invert) {
     this.g/*addPolygon*/([
         x + w / 2, y,
         x + w, y + h / 2,
@@ -500,7 +535,7 @@ function centerShape(index, g, cell, positionIndex) {
     index == 12 ? (
         m = cell * 0.25,
         g.i/*addRectangle*/(0, 0, cell, cell),
-        g.J/*addRhombus*/(m, m, cell - m, cell - m, true)) :
+        g.L/*addRhombus*/(m, m, cell - m, cell - m, true)) :
 
     // 13
     (
@@ -528,7 +563,7 @@ function outerShape(index, g, cell) {
         g.j/*addTriangle*/(0, cell / 2, cell, cell / 2, 0) :
 
     index == 2 ?
-        g.J/*addRhombus*/(0, 0, cell, cell) :
+        g.L/*addRhombus*/(0, 0, cell, cell) :
 
     // 3
     (
@@ -539,37 +574,42 @@ function outerShape(index, g, cell) {
 
 /**
  * Gets a set of identicon color candidates for a specified hue and config.
+ * @param {number} hue
+ * @param {ParsedConfiguration} config
  */
 function colorTheme(hue, config) {
-    hue = config.P/*hue*/(hue);
+    hue = config.X/*hue*/(hue);
     return [
         // Dark gray
-        correctedHsl(hue, config.C/*grayscaleSaturation*/, config.D/*grayscaleLightness*/(0)),
+        correctedHsl(hue, config.F/*grayscaleSaturation*/, config.G/*grayscaleLightness*/(0)),
         // Mid color
-        correctedHsl(hue, config.n/*colorSaturation*/, config.o/*colorLightness*/(0.5)),
+        correctedHsl(hue, config.o/*colorSaturation*/, config.p/*colorLightness*/(0.5)),
         // Light gray
-        correctedHsl(hue, config.C/*grayscaleSaturation*/, config.D/*grayscaleLightness*/(1)),
+        correctedHsl(hue, config.F/*grayscaleSaturation*/, config.G/*grayscaleLightness*/(1)),
         // Light color
-        correctedHsl(hue, config.n/*colorSaturation*/, config.o/*colorLightness*/(1)),
+        correctedHsl(hue, config.o/*colorSaturation*/, config.p/*colorLightness*/(1)),
         // Dark color
-        correctedHsl(hue, config.n/*colorSaturation*/, config.o/*colorLightness*/(0))
+        correctedHsl(hue, config.o/*colorSaturation*/, config.p/*colorLightness*/(0))
     ];
 }
 
 /**
  * Draws an identicon to a specified renderer.
+ * @param {Renderer} renderer
+ * @param {string} hash
+ * @param {Object|number=} config
  */
 function iconGenerator(renderer, hash, config) {
-    config = getConfiguration(config, 0.08);
+    var parsedConfig = getConfiguration(config, 0.08);
 
     // Set background color
-    if (config.F/*backColor*/) {
-        renderer.m/*setBackground*/(config.F/*backColor*/);
+    if (parsedConfig.H/*backColor*/) {
+        renderer.m/*setBackground*/(parsedConfig.H/*backColor*/);
     }
     
     // Calculate padding and round to nearest integer
     var size = renderer.k/*iconSize*/;
-    var padding = (0.5 + size * config.R/*iconPadding*/) | 0;
+    var padding = (0.5 + size * parsedConfig.Y/*iconPadding*/) | 0;
     size -= padding * 2;
     
     var graphics = new Graphics(renderer);
@@ -585,21 +625,21 @@ function iconGenerator(renderer, hash, config) {
         var shapeIndex = parseHex(hash, index, 1);
         var r = rotationIndex ? parseHex(hash, rotationIndex, 1) : 0;
         
-        renderer.K/*beginShape*/(availableColors[selectedColorIndexes[colorIndex]]);
+        renderer.M/*beginShape*/(availableColors[selectedColorIndexes[colorIndex]]);
         
         for (var i = 0; i < positions.length; i++) {
-            graphics.t/*_transform*/ = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
+            graphics.u/*currentTransform*/ = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
             shapes(shapeIndex, graphics, cell, i);
         }
         
-        renderer.L/*endShape*/();
+        renderer.N/*endShape*/();
     }
 
     // AVAILABLE COLORS
     var hue = parseHex(hash, -7) / 0xfffffff,
     
           // Available colors for this icon
-          availableColors = colorTheme(hue, config),
+          availableColors = colorTheme(hue, parsedConfig),
 
           // The index of the selected colors
           selectedColorIndexes = [];
@@ -713,23 +753,23 @@ function sha1(message) {
     for ( ; blockStartIndex < dataSize; blockStartIndex += BLOCK_SIZE_WORDS) {
         for (i = 0; i < 80; i++) {
             f = rotl(a, 5) + e + (
-					// Ch
-					i < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
-					
-					// Parity
-					i < 40 ? (b ^ c ^ d) + 0x6ed9eba1 :
-					
-					// Maj
-					i < 60 ? ((b & c) ^ (b & d) ^ (c & d)) + 0x8f1bbcdc :
-					
-					// Parity
+                    // Ch
+                    i < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
+                    
+                    // Parity
+                    i < 40 ? (b ^ c ^ d) + 0x6ed9eba1 :
+                    
+                    // Maj
+                    i < 60 ? ((b & c) ^ (b & d) ^ (c & d)) + 0x8f1bbcdc :
+                    
+                    // Parity
                     (b ^ c ^ d) + 0xca62c1d6
-				) + ( 
+                ) + ( 
                     hashBuffer[i] = i < BLOCK_SIZE_WORDS
                         // Bitwise OR is used to coerse `undefined` to 0
                         ? (data[blockStartIndex + i] | 0)
                         : rotl(hashBuffer[i - 3] ^ hashBuffer[i - 8] ^ hashBuffer[i - 14] ^ hashBuffer[i - 16], 1)
-				);
+                );
 
             e = d;
             d = c;
@@ -779,12 +819,16 @@ function computeHash(value) {
     return sha1(value == null ? "" : "" + value);
 }
 
+
+
 /**
  * Renderer redirecting drawing commands to a canvas context.
+ * @implements {Renderer}
  */
-var CanvasRenderer = function CanvasRenderer(ctx, iconSize) {
-    var width = ctx.canvas.width,
-          height = ctx.canvas.height;
+function CanvasRenderer(ctx, iconSize) {
+    var canvas = ctx.canvas; 
+    var width = canvas.width;
+    var height = canvas.height;
         
     ctx.save();
         
@@ -796,19 +840,23 @@ var CanvasRenderer = function CanvasRenderer(ctx, iconSize) {
             ((height - iconSize) / 2) | 0);
     }
 
+    /**
+     * @private
+     */
     this.l/*_ctx*/ = ctx;
     this.k/*iconSize*/ = iconSize;
         
     ctx.clearRect(0, 0, iconSize, iconSize);
-};
+}
+var CanvasRenderer__prototype = CanvasRenderer.prototype;
 
 /**
  * Fills the background with the specified color.
  * @param {string} fillColor  Fill color on the format #rrggbb[aa].
  */
-CanvasRenderer.prototype.m/*setBackground*/ = function setBackground (fillColor) {
-    var ctx = this.l/*_ctx*/,
-          iconSize = this.k/*iconSize*/;
+CanvasRenderer__prototype.m/*setBackground*/ = function setBackground (fillColor) {
+    var ctx = this.l/*_ctx*/;
+    var iconSize = this.k/*iconSize*/;
 
     ctx.fillStyle = toCss3Color(fillColor);
     ctx.fillRect(0, 0, iconSize, iconSize);
@@ -818,7 +866,7 @@ CanvasRenderer.prototype.m/*setBackground*/ = function setBackground (fillColor)
  * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
  * @param {string} fillColor Fill color on format #rrggbb[aa].
  */
-CanvasRenderer.prototype.K/*beginShape*/ = function beginShape (fillColor) {
+CanvasRenderer__prototype.M/*beginShape*/ = function beginShape (fillColor) {
     var ctx = this.l/*_ctx*/;
     ctx.fillStyle = toCss3Color(fillColor);
     ctx.beginPath();
@@ -827,7 +875,7 @@ CanvasRenderer.prototype.K/*beginShape*/ = function beginShape (fillColor) {
 /**
  * Marks the end of the currently drawn shape. This causes the queued paths to be rendered on the canvas.
  */
-CanvasRenderer.prototype.L/*endShape*/ = function endShape () {
+CanvasRenderer__prototype.N/*endShape*/ = function endShape () {
     this.l/*_ctx*/.fill();
 };
 
@@ -835,7 +883,7 @@ CanvasRenderer.prototype.L/*endShape*/ = function endShape () {
  * Adds a polygon to the rendering queue.
  * @param points An array of Point objects.
  */
-CanvasRenderer.prototype.g/*addPolygon*/ = function addPolygon (points) {
+CanvasRenderer__prototype.g/*addPolygon*/ = function addPolygon (points) {
     var ctx = this.l/*_ctx*/;
     ctx.moveTo(points[0].x, points[0].y);
     for (var i = 1; i < points.length; i++) {
@@ -850,7 +898,7 @@ CanvasRenderer.prototype.g/*addPolygon*/ = function addPolygon (points) {
  * @param {number} diameter The diameter of the circle.
  * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
  */
-CanvasRenderer.prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
+CanvasRenderer__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
     var ctx = this.l/*_ctx*/,
           radius = diameter / 2;
     ctx.moveTo(point.x + radius, point.y + radius);
@@ -861,7 +909,7 @@ CanvasRenderer.prototype.h/*addCircle*/ = function addCircle (point, diameter, c
 /**
  * Called when the icon has been completely drawn.
  */
-CanvasRenderer.prototype.finish = function finish () {
+CanvasRenderer__prototype.finish = function finish () {
     this.l/*_ctx*/.restore();
 };
 
@@ -896,23 +944,25 @@ function svgValue(value) {
 /**
  * Represents an SVG path element.
  */
-var SvgPath = function SvgPath() {
+function SvgPath() {
     /**
      * This property holds the data string (path.d) of the SVG path.
+     * @type {string}
      */
-    this.u/*dataString*/ = "";
-};
+    this.v/*dataString*/ = "";
+}
+var SvgPath__prototype = SvgPath.prototype;
 
 /**
  * Adds a polygon with the current fill color to the SVG path.
  * @param points An array of Point objects.
  */
-SvgPath.prototype.g/*addPolygon*/ = function addPolygon (points) {
+SvgPath__prototype.g/*addPolygon*/ = function addPolygon (points) {
     var dataString = "";
     for (var i = 0; i < points.length; i++) {
         dataString += (i ? "L" : "M") + svgValue(points[i].x) + " " + svgValue(points[i].y);
     }
-    this.u/*dataString*/ += dataString + "Z";
+    this.v/*dataString*/ += dataString + "Z";
 };
 
 /**
@@ -921,60 +971,79 @@ SvgPath.prototype.g/*addPolygon*/ = function addPolygon (points) {
  * @param {number} diameter The diameter of the circle.
  * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
  */
-SvgPath.prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
+SvgPath__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
     var sweepFlag = counterClockwise ? 0 : 1,
           svgRadius = svgValue(diameter / 2),
           svgDiameter = svgValue(diameter),
           svgArc = "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " ";
             
-    this.u/*dataString*/ += 
+    this.v/*dataString*/ += 
         "M" + svgValue(point.x) + " " + svgValue(point.y + diameter / 2) +
         svgArc + svgDiameter + ",0" + 
         svgArc + (-svgDiameter) + ",0";
 };
 
+
+
 /**
  * Renderer producing SVG output.
+ * @implements {Renderer}
  */
-var SvgRenderer = function SvgRenderer(target) {
+function SvgRenderer(target) {
     /**
      * @type {SvgPath}
+     * @private
      */
-    this.v/*_path*/;
-    this.A/*_pathsByColor*/ = { };
-    this.M/*_target*/ = target;
+    this.A/*_path*/;
+
+    /**
+     * @type {Object.<string,SvgPath>}
+     * @private
+     */
+    this.B/*_pathsByColor*/ = { };
+
+    /**
+     * @type {SvgElement|SvgWriter}
+     * @private
+     */
+    this.O/*_target*/ = target;
+
+    /**
+     * @type {number}
+     */
     this.k/*iconSize*/ = target.k/*iconSize*/;
-};
+}
+var SvgRenderer__prototype = SvgRenderer.prototype;
 
 /**
  * Fills the background with the specified color.
  * @param {string} fillColor  Fill color on the format #rrggbb[aa].
  */
-SvgRenderer.prototype.m/*setBackground*/ = function setBackground (fillColor) {
+SvgRenderer__prototype.m/*setBackground*/ = function setBackground (fillColor) {
     var match = /^(#......)(..)?/.exec(fillColor),
           opacity = match[2] ? parseHex(match[2], 0) / 255 : 1;
-    this.M/*_target*/.m/*setBackground*/(match[1], opacity);
+    this.O/*_target*/.m/*setBackground*/(match[1], opacity);
 };
 
 /**
  * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
  * @param {string} color Fill color on format #xxxxxx.
  */
-SvgRenderer.prototype.K/*beginShape*/ = function beginShape (color) {
-    this.v/*_path*/ = this.A/*_pathsByColor*/[color] || (this.A/*_pathsByColor*/[color] = new SvgPath());
+SvgRenderer__prototype.M/*beginShape*/ = function beginShape (color) {
+    this.A/*_path*/ = this.B/*_pathsByColor*/[color] || (this.B/*_pathsByColor*/[color] = new SvgPath());
 };
 
 /**
  * Marks the end of the currently drawn shape.
  */
-SvgRenderer.prototype.L/*endShape*/ = function endShape () { };
+SvgRenderer__prototype.N/*endShape*/ = function endShape () { };
 
 /**
  * Adds a polygon with the current fill color to the SVG.
  * @param points An array of Point objects.
  */
-SvgRenderer.prototype.g/*addPolygon*/ = function addPolygon (points) {
-    this.v/*_path*/.g/*addPolygon*/(points);
+SvgRenderer__prototype.g/*addPolygon*/ = function addPolygon (points) {
+    this.A/*_path*/.g/*addPolygon*/(points);
 };
 
 /**
@@ -983,45 +1052,60 @@ SvgRenderer.prototype.g/*addPolygon*/ = function addPolygon (points) {
  * @param {number} diameter The diameter of the circle.
  * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
  */
-SvgRenderer.prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
-    this.v/*_path*/.h/*addCircle*/(point, diameter, counterClockwise);
+SvgRenderer__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
+    this.A/*_path*/.h/*addCircle*/(point, diameter, counterClockwise);
 };
 
 /**
  * Called when the icon has been completely drawn.
  */
-SvgRenderer.prototype.finish = function finish () {
+SvgRenderer__prototype.finish = function finish () {
         var this$1 = this;
  
-    var pathsByColor = this.A/*_pathsByColor*/;
+    var pathsByColor = this.B/*_pathsByColor*/;
     for (var color in pathsByColor) {
         // hasOwnProperty cannot be shadowed in pathsByColor
         // eslint-disable-next-line no-prototype-builtins
         if (pathsByColor.hasOwnProperty(color)) {
-            this$1.M/*_target*/.N/*appendPath*/(color, pathsByColor[color].u/*dataString*/);
+            this$1.O/*_target*/.P/*appendPath*/(color, pathsByColor[color].v/*dataString*/);
         }
     }
+};
+
+var SVG_CONSTANTS = {
+    R/*XMLNS*/: "http://www.w3.org/2000/svg",
+    S/*WIDTH*/: "width",
+    T/*HEIGHT*/: "height",
 };
 
 /**
  * Renderer producing SVG output.
  */
-var SvgWriter = function SvgWriter(iconSize) {
+function SvgWriter(iconSize) {
+    /**
+     * @type {number}
+     */
     this.k/*iconSize*/ = iconSize;
-    this.B/*_s*/ =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
+
+    /**
+     * @type {string}
+     * @private
+     */
+    this.C/*_s*/ =
+        '<svg xmlns="' + SVG_CONSTANTS.R/*XMLNS*/ + '" width="' + 
         iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
         iconSize + ' ' + iconSize + '">';
-};
+}
+var SvgWriter__prototype = SvgWriter.prototype;
 
 /**
  * Fills the background with the specified color.
  * @param {string} fillColor  Fill color on the format #rrggbb.
  * @param {number} opacity  Opacity in the range [0.0, 1.0].
  */
-SvgWriter.prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
+SvgWriter__prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
     if (opacity) {
-        this.B/*_s*/ += '<rect width="100%" height="100%" fill="' + 
+        this.C/*_s*/ += '<rect width="100%" height="100%" fill="' + 
             fillColor + '" opacity="' + opacity.toFixed(2) + '"/>';
     }
 };
@@ -1031,15 +1115,15 @@ SvgWriter.prototype.m/*setBackground*/ = function setBackground (fillColor, opac
  * @param {string} color Fill color on format #rrggbb.
  * @param {string} dataString The SVG path data string.
  */
-SvgWriter.prototype.N/*appendPath*/ = function appendPath (color, dataString) {
-    this.B/*_s*/ += '<path fill="' + color + '" d="' + dataString + '"/>';
+SvgWriter__prototype.P/*appendPath*/ = function appendPath (color, dataString) {
+    this.C/*_s*/ += '<path fill="' + color + '" d="' + dataString + '"/>';
 };
 
 /**
  * Gets the rendered image as an SVG string.
  */
-SvgWriter.prototype.toString = function toString () {
-    return this.B/*_s*/ + "</svg>";
+SvgWriter__prototype.toString = function toString () {
+    return this.C/*_s*/ + "</svg>";
 };
 
 /**
@@ -1063,20 +1147,12 @@ var ICON_TYPE_SVG = 1;
 
 var ICON_TYPE_CANVAS = 2;
 
-/**
- * @noinline
- */
-var HASH_ATTRIBUTE = "data-jdenticon-hash";
+var ATTRIBUTES = {
+    U/*HASH*/: "data-jdenticon-hash",
+    D/*VALUE*/: "data-jdenticon-value"
+};
 
-/**
- * @noinline
- */
-var VALUE_ATTRIBUTE = "data-jdenticon-value";
-
-/**
- * @noinline
- */
-var ICON_SELECTOR = "[" + HASH_ATTRIBUTE +"],[" + VALUE_ATTRIBUTE +"]";
+var ICON_SELECTOR = "[" + ATTRIBUTES.U/*HASH*/ +"],[" + ATTRIBUTES.D/*VALUE*/ +"]";
 
 var documentQuerySelectorAll = /** @type {!Function} */ (
     typeof document !== "undefined" && document.querySelectorAll.bind(document));
@@ -1105,12 +1181,12 @@ function SvgElement_append(parentNode, name) {
     var keyValuePairs = [], len = arguments.length - 2;
     while ( len-- > 0 ) keyValuePairs[ len ] = arguments[ len + 2 ];
 
-    var el = document.createElementNS("http://www.w3.org/2000/svg", name);
+    var el = document.createElementNS(SVG_CONSTANTS.R/*XMLNS*/, name);
     
     for (var i = 0; i + 1 < keyValuePairs.length; i += 2) {
         el.setAttribute(
-            /** @type {string} */ (keyValuePairs[i]),
-            /** @type {string|number} */ (keyValuePairs[i + 1])
+            /** @type {string} */(keyValuePairs[i]),
+            /** @type {string} */(keyValuePairs[i + 1])
             );
     }
 
@@ -1121,17 +1197,22 @@ function SvgElement_append(parentNode, name) {
 /**
  * Renderer producing SVG output.
  */
-var SvgElement = function SvgElement(element) {
+function SvgElement(element) {
     // Don't use the clientWidth and clientHeight properties on SVG elements
     // since Firefox won't serve a proper value of these properties on SVG
     // elements (https://bugzilla.mozilla.org/show_bug.cgi?id=874811)
     // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
     // the icon to the correct dimensions)
     var iconSize = this.k/*iconSize*/ = Math.min(
-        (Number(element.getAttribute("width")) || 100),
-        (Number(element.getAttribute("height")) || 100)
+        (Number(element.getAttribute(SVG_CONSTANTS.S/*WIDTH*/)) || 100),
+        (Number(element.getAttribute(SVG_CONSTANTS.T/*HEIGHT*/)) || 100)
         );
-    this.O/*_el*/ = element;
+        
+    /**
+     * @type {Element}
+     * @private
+     */
+    this.V/*_el*/ = element;
         
     // Clear current SVG child elements
     while (element.firstChild) {
@@ -1141,18 +1222,19 @@ var SvgElement = function SvgElement(element) {
     // Set viewBox attribute to ensure the svg scales nicely.
     element.setAttribute("viewBox", "0 0 " + iconSize + " " + iconSize);
     element.setAttribute("preserveAspectRatio", "xMidYMid meet");
-};
+}
+var SvgElement__prototype = SvgElement.prototype;
 
 /**
  * Fills the background with the specified color.
  * @param {string} fillColor  Fill color on the format #rrggbb.
  * @param {number} opacity  Opacity in the range [0.0, 1.0].
  */
-SvgElement.prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
+SvgElement__prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
     if (opacity) {
-        SvgElement_append(this.O/*_el*/, "rect",
-            "width", "100%",
-            "height", "100%",
+        SvgElement_append(this.V/*_el*/, "rect",
+            SVG_CONSTANTS.S/*WIDTH*/, "100%",
+            SVG_CONSTANTS.T/*HEIGHT*/, "100%",
             "fill", fillColor,
             "opacity", opacity);
     }
@@ -1163,8 +1245,8 @@ SvgElement.prototype.m/*setBackground*/ = function setBackground (fillColor, opa
  * @param {string} color Fill color on format #xxxxxx.
  * @param {string} dataString The SVG path data string.
  */
-SvgElement.prototype.N/*appendPath*/ = function appendPath (color, dataString) {
-    SvgElement_append(this.O/*_el*/, "path",
+SvgElement__prototype.P/*appendPath*/ = function appendPath (color, dataString) {
+    SvgElement_append(this.V/*_el*/, "path",
         "fill", color,
         "d", dataString);
 };
@@ -1193,7 +1275,7 @@ function update(el, hashOrValue, config) {
         if (iconType) {
             return iconType == ICON_TYPE_SVG ? 
                 new SvgRenderer(new SvgElement(el)) : 
-                new CanvasRenderer(el.getContext("2d"));
+                new CanvasRenderer(/** @type {HTMLCanvasElement} */(el).getContext("2d"));
         }
     });
 }
@@ -1211,7 +1293,7 @@ function update(el, hashOrValue, config) {
 function updateCanvas(el, hashOrValue, config) {
     renderDomElement(el, hashOrValue, config, function (el, iconType) {
         if (iconType == ICON_TYPE_CANVAS) {
-            return new CanvasRenderer(el.getContext("2d"));
+            return new CanvasRenderer(/** @type {HTMLCanvasElement} */(el).getContext("2d"));
         }
     });
 }
@@ -1241,7 +1323,7 @@ function updateSvg(el, hashOrValue, config) {
  * @param {*} hashOrValue - Optional hash or value to be rendered. If not specified, the `data-jdenticon-hash` or
  *    `data-jdenticon-value` attribute will be evaluated.
  * @param {Object|number|undefined} config
- * @param {function(Element,number)} rendererFactory - Factory function for creating an icon renderer.
+ * @param {function(Element,number):Renderer} rendererFactory - Factory function for creating an icon renderer.
  */
 function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (typeof el === "string") {
@@ -1264,14 +1346,14 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
         hashOrValue != null && computeHash(hashOrValue) ||
         
         // 3. `data-jdenticon-hash` attribute
-        isValidHash(el.getAttribute(HASH_ATTRIBUTE)) ||
+        isValidHash(el.getAttribute(ATTRIBUTES.U/*HASH*/)) ||
         
         // 4. `data-jdenticon-value` attribute. 
         // We want to treat an empty attribute as an empty value. 
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(VALUE_ATTRIBUTE) && computeHash(el.getAttribute(VALUE_ATTRIBUTE));
+        el.hasAttribute(ATTRIBUTES.D/*VALUE*/) && computeHash(el.getAttribute(ATTRIBUTES.D/*VALUE*/));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
@@ -1303,7 +1385,7 @@ jdenticon["updateSvg"] = updateSvg;
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-jdenticon["version"] = "3.0.1";
+jdenticon["version"] = "3.1.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.
@@ -1312,5 +1394,4 @@ jdenticon["version"] = "3.0.1";
 jdenticon["bundle"] = "browser-cjs";
 
 module.exports = jdenticon;
-
 //# sourceMappingURL=jdenticon-module.js.map

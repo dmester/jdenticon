@@ -36,8 +36,8 @@ use it right off [jsDelivr](https://www.jsdelivr.com).
 
 ```HTML
 <!-- Using jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.0.1/dist/jdenticon.min.js"
-        integrity="sha384-im0a1VvEdl5EiBsEMbY7GyEL6DvEIChaqrtxjYyxqR/qkSYVmrBT1xP/yiIozXIA"
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.1.0/dist/jdenticon.min.js"
+        integrity="sha384-VngWWnG9GS4jDgsGEUNaoRQtfBGiIKZTiXwm9KpgAeaRn6Y/1tAFiyXqSzqC8Ga/"
         crossorigin="anonymous">
 </script>
 

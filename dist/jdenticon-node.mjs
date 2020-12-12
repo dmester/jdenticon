@@ -1,8 +1,8 @@
 /**
- * Jdenticon 3.0.1
+ * Jdenticon 3.1.0
  * http://jdenticon.com
  *
- * Built: 2020-08-03T16:58:18.496Z
+ * Built: 2020-12-12T13:51:48.709Z
  * 
  * MIT License
  * 
@@ -32,8 +32,7 @@ import canvasRenderer from 'canvas-renderer';
 /**
  * Parses a substring of the hash as a number.
  * @param {number} startPosition 
- * @param {number=} octets 
- * @noinline
+ * @param {number=} octets
  */
 function parseHex(hash, startPosition, octets) {
     return parseInt(hash.substr(startPosition, octets), 16);
@@ -58,19 +57,21 @@ function hueToRgb(m1, m2, h) {
 
 /**
  * @param {string} color  Color value to parse. Currently hexadecimal strings on the format #rgb[a] and #rrggbb[aa] are supported.
+ * @returns {string}
  */
 function parseColor(color) {
     if (/^#[0-9a-f]{3,8}$/i.test(color)) {
         let result;
+        const colorLength = color.length;
 
-        if (color.length < 6) {
+        if (colorLength < 6) {
             const r = color[1],
                   g = color[2],
                   b = color[3],
                   a = color[4] || "";
             result = "#" + r + r + g + g + b + b + a + a;
         }
-        if (color.length == 7 || color.length > 8) {
+        if (colorLength == 7 || colorLength > 8) {
             result = color;
         }
         
@@ -79,7 +80,9 @@ function parseColor(color) {
 }
 
 /**
+ * Converts a hexadecimal color to a CSS3 compatible color.
  * @param {string} hexColor  Color on the format "#RRGGBB" or "#RRGGBBAA"
+ * @returns {string}
  */
 function toCss3Color(hexColor) {
     const a = parseHex(hexColor, 7, 2);
@@ -98,40 +101,48 @@ function toCss3Color(hexColor) {
 }
 
 /**
- * @param h Hue [0, 1]
- * @param s Saturation [0, 1]
- * @param l Lightness [0, 1]
+ * Converts an HSL color to a hexadecimal RGB color.
+ * @param {number} hue  Hue in range [0, 1]
+ * @param {number} saturation  Saturation in range [0, 1]
+ * @param {number} lightness  Lightness in range [0, 1]
+ * @returns {string}
  */
-function hsl(h, s, l) {
+function hsl(hue, saturation, lightness) {
     // Based on http://www.w3.org/TR/2011/REC-css3-color-20110607/#hsl-color
     let result;
 
-    if (s == 0) {
-        const partialHex = decToHex(l * 255);
+    if (saturation == 0) {
+        const partialHex = decToHex(lightness * 255);
         result = partialHex + partialHex + partialHex;
     }
     else {
-        const m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s,
-              m1 = l * 2 - m2;
+        const m2 = lightness <= 0.5 ? lightness * (saturation + 1) : lightness + saturation - lightness * saturation,
+              m1 = lightness * 2 - m2;
         result =
-            hueToRgb(m1, m2, h * 6 + 2) +
-            hueToRgb(m1, m2, h * 6) +
-            hueToRgb(m1, m2, h * 6 - 2);
+            hueToRgb(m1, m2, hue * 6 + 2) +
+            hueToRgb(m1, m2, hue * 6) +
+            hueToRgb(m1, m2, hue * 6 - 2);
     }
 
     return "#" + result;
 }
 
-// This function will correct the lightness for the "dark" hues
-function correctedHsl(h, s, l) {
+/**
+ * Converts an HSL color to a hexadecimal RGB color. This function will correct the lightness for the "dark" hues
+ * @param {number} hue  Hue in range [0, 1]
+ * @param {number} saturation  Saturation in range [0, 1]
+ * @param {number} lightness  Lightness in range [0, 1]
+ * @returns {string}
+ */
+function correctedHsl(hue, saturation, lightness) {
     // The corrector specifies the perceived middle lightness for each hue
     const correctors = [ 0.55, 0.5, 0.5, 0.46, 0.6, 0.55, 0.55 ],
-          corrector = correctors[(h * 6 + 0.5) | 0];
+          corrector = correctors[(hue * 6 + 0.5) | 0];
     
     // Adjust the input lightness relative to the corrector
-    l = l < 0.5 ? l * corrector * 2 : corrector + (l - 0.5) * (1 - corrector) * 2;
+    lightness = lightness < 0.5 ? lightness * corrector * 2 : corrector + (lightness - 0.5) * (1 - corrector) * 2;
     
-    return hsl(h, s, l);
+    return hsl(hue, saturation, lightness);
 }
 
 // In the future we can replace `GLOBAL` with `globalThis`, but for now use the old school global detection for
@@ -144,9 +155,20 @@ const GLOBAL =
     {};
 
 /**
- * @noinline
+ * @typedef {Object} ParsedConfiguration
+ * @property {number} colorSaturation
+ * @property {number} grayscaleSaturation
+ * @property {string} backColor
+ * @property {number} iconPadding
+ * @property {function(number):number} hue
+ * @property {function(number):number} colorLightness
+ * @property {function(number):number} grayscaleLightness
  */
-const ROOT_CONFIG_PROPERTY = "config";
+
+const CONFIG_PROPERTIES = {
+    GLOBAL: "jdenticon_config",
+    MODULE: "config",
+};
 
 var rootConfigurationHolder = {};
 
@@ -156,9 +178,9 @@ var rootConfigurationHolder = {};
  */
 function configure(newConfiguration) {
     if (arguments.length) {
-        rootConfigurationHolder[ROOT_CONFIG_PROPERTY] = newConfiguration;
+        rootConfigurationHolder[CONFIG_PROPERTIES.MODULE] = newConfiguration;
     }
-    return rootConfigurationHolder[ROOT_CONFIG_PROPERTY];
+    return rootConfigurationHolder[CONFIG_PROPERTIES.MODULE];
 }
 
 /**
@@ -169,12 +191,13 @@ function configure(newConfiguration) {
  *    entire global configuration.
  * @param {number} defaultPadding - Padding used if no padding is specified in neither the configuration nor
  *    explicitly to the API method.
+ * @returns {ParsedConfiguration}
  */
 function getConfiguration(paddingOrLocalConfig, defaultPadding) {
     const configObject = 
             typeof paddingOrLocalConfig == "object" && paddingOrLocalConfig ||
-            rootConfigurationHolder[ROOT_CONFIG_PROPERTY] ||
-            GLOBAL["jdenticon_config"] ||
+            rootConfigurationHolder[CONFIG_PROPERTIES.MODULE] ||
+            GLOBAL[CONFIG_PROPERTIES.GLOBAL] ||
             { },
 
         lightnessConfig = configObject["lightness"] || { },
@@ -302,27 +325,39 @@ class Transform {
 
 const NO_TRANSFORM = new Transform(0, 0, 0, 0);
 
+
+
 /**
  * Provides helper functions for rendering common basic shapes.
  */
 class Graphics {
+    /**
+     * @param {Renderer} renderer 
+     */
     constructor(renderer) {
+        /**
+         * @type {Renderer}
+         * @private
+         */
         this._renderer = renderer;
-        this._transform = NO_TRANSFORM;
+
+        /**
+         * @type {Transform}
+         */
+        this.currentTransform = NO_TRANSFORM;
     }
 
     /**
      * Adds a polygon to the underlying renderer.
-     * @param {Array} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
+     * @param {Array<number>} points The points of the polygon clockwise on the format [ x0, y0, x1, y1, ..., xn, yn ]
      * @param {boolean=} invert Specifies if the polygon will be inverted.
      */
     addPolygon(points, invert) {
-        const di = invert ? -2 : 2, 
-              transform = this._transform,
+        const di = invert ? -2 : 2,
               transformedPoints = [];
         
         for (let i = invert ? points.length - 2 : 0; i < points.length && i >= 0; i += di) {
-            transformedPoints.push(transform.transformIconPoint(points[i], points[i + 1]));
+            transformedPoints.push(this.currentTransform.transformIconPoint(points[i], points[i + 1]));
         }
         
         this._renderer.addPolygon(transformedPoints);
@@ -337,7 +372,7 @@ class Graphics {
      * @param {boolean=} invert Specifies if the ellipse will be inverted.
      */
     addCircle(x, y, size, invert) {
-        const p = this._transform.transformIconPoint(x, y, size, size);
+        const p = this.currentTransform.transformIconPoint(x, y, size, size);
         this._renderer.addCircle(p, size, invert);
     }
 
@@ -546,6 +581,8 @@ function outerShape(index, g, cell) {
 
 /**
  * Gets a set of identicon color candidates for a specified hue and config.
+ * @param {number} hue
+ * @param {ParsedConfiguration} config
  */
 function colorTheme(hue, config) {
     hue = config.hue(hue);
@@ -565,18 +602,21 @@ function colorTheme(hue, config) {
 
 /**
  * Draws an identicon to a specified renderer.
+ * @param {Renderer} renderer
+ * @param {string} hash
+ * @param {Object|number=} config
  */
 function iconGenerator(renderer, hash, config) {
-    config = getConfiguration(config, 0.08);
+    const parsedConfig = getConfiguration(config, 0.08);
 
     // Set background color
-    if (config.backColor) {
-        renderer.setBackground(config.backColor);
+    if (parsedConfig.backColor) {
+        renderer.setBackground(parsedConfig.backColor);
     }
     
     // Calculate padding and round to nearest integer
     let size = renderer.iconSize;
-    const padding = (0.5 + size * config.iconPadding) | 0;
+    const padding = (0.5 + size * parsedConfig.iconPadding) | 0;
     size -= padding * 2;
     
     const graphics = new Graphics(renderer);
@@ -595,7 +635,7 @@ function iconGenerator(renderer, hash, config) {
         renderer.beginShape(availableColors[selectedColorIndexes[colorIndex]]);
         
         for (let i = 0; i < positions.length; i++) {
-            graphics._transform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
+            graphics.currentTransform = new Transform(x + positions[i][0] * cell, y + positions[i][1] * cell, cell, r++ % 4);
             shapes(shapeIndex, graphics, cell, i);
         }
         
@@ -606,7 +646,7 @@ function iconGenerator(renderer, hash, config) {
     const hue = parseHex(hash, -7) / 0xfffffff,
     
           // Available colors for this icon
-          availableColors = colorTheme(hue, config),
+          availableColors = colorTheme(hue, parsedConfig),
 
           // The index of the selected colors
           selectedColorIndexes = [];
@@ -720,23 +760,23 @@ function sha1(message) {
     for ( ; blockStartIndex < dataSize; blockStartIndex += BLOCK_SIZE_WORDS) {
         for (i = 0; i < 80; i++) {
             f = rotl(a, 5) + e + (
-					// Ch
-					i < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
-					
-					// Parity
-					i < 40 ? (b ^ c ^ d) + 0x6ed9eba1 :
-					
-					// Maj
-					i < 60 ? ((b & c) ^ (b & d) ^ (c & d)) + 0x8f1bbcdc :
-					
-					// Parity
+                    // Ch
+                    i < 20 ? ((b & c) ^ ((~b) & d)) + 0x5a827999 :
+                    
+                    // Parity
+                    i < 40 ? (b ^ c ^ d) + 0x6ed9eba1 :
+                    
+                    // Maj
+                    i < 60 ? ((b & c) ^ (b & d) ^ (c & d)) + 0x8f1bbcdc :
+                    
+                    // Parity
                     (b ^ c ^ d) + 0xca62c1d6
-				) + ( 
+                ) + ( 
                     hashBuffer[i] = i < BLOCK_SIZE_WORDS
                         // Bitwise OR is used to coerse `undefined` to 0
                         ? (data[blockStartIndex + i] | 0)
                         : rotl(hashBuffer[i - 3] ^ hashBuffer[i - 8] ^ hashBuffer[i - 14] ^ hashBuffer[i - 16], 1)
-				);
+                );
 
             e = d;
             d = c;
@@ -786,16 +826,20 @@ function computeHash(value) {
     return sha1(value == null ? "" : "" + value);
 }
 
+
+
 /**
  * Renderer redirecting drawing commands to a canvas context.
+ * @implements {Renderer}
  */
 class CanvasRenderer {
     /**
      * @param {number=} iconSize
      */
     constructor(ctx, iconSize) {
-        const width = ctx.canvas.width,
-              height = ctx.canvas.height;
+        const canvas = ctx.canvas; 
+        const width = canvas.width;
+        const height = canvas.height;
         
         ctx.save();
         
@@ -807,6 +851,9 @@ class CanvasRenderer {
                 ((height - iconSize) / 2) | 0);
         }
 
+        /**
+         * @private
+         */
         this._ctx = ctx;
         this.iconSize = iconSize;
         
@@ -818,8 +865,8 @@ class CanvasRenderer {
      * @param {string} fillColor  Fill color on the format #rrggbb[aa].
      */
     setBackground(fillColor) {
-        const ctx = this._ctx,
-              iconSize = this.iconSize;
+        const ctx = this._ctx;
+        const iconSize = this.iconSize;
 
         ctx.fillStyle = toCss3Color(fillColor);
         ctx.fillRect(0, 0, iconSize, iconSize);
@@ -932,6 +979,7 @@ class SvgPath {
     constructor() {
         /**
          * This property holds the data string (path.d) of the SVG path.
+         * @type {string}
          */
         this.dataString = "";
     }
@@ -967,8 +1015,11 @@ class SvgPath {
     }
 }
 
+
+
 /**
  * Renderer producing SVG output.
+ * @implements {Renderer}
  */
 class SvgRenderer {
     /**
@@ -977,10 +1028,25 @@ class SvgRenderer {
     constructor(target) {
         /**
          * @type {SvgPath}
+         * @private
          */
         this._path;
+
+        /**
+         * @type {Object.<string,SvgPath>}
+         * @private
+         */
         this._pathsByColor = { };
+
+        /**
+         * @type {SvgElement|SvgWriter}
+         * @private
+         */
         this._target = target;
+
+        /**
+         * @type {number}
+         */
         this.iconSize = target.iconSize;
     }
 
@@ -1040,6 +1106,12 @@ class SvgRenderer {
     }
 }
 
+const SVG_CONSTANTS = {
+    XMLNS: "http://www.w3.org/2000/svg",
+    WIDTH: "width",
+    HEIGHT: "height",
+};
+
 /**
  * Renderer producing SVG output.
  */
@@ -1048,9 +1120,17 @@ class SvgWriter {
      * @param {number} iconSize - Icon width and height in pixels.
      */
     constructor(iconSize) {
+        /**
+         * @type {number}
+         */
         this.iconSize = iconSize;
+
+        /**
+         * @type {string}
+         * @private
+         */
         this._s =
-            '<svg xmlns="http://www.w3.org/2000/svg" width="' + 
+            '<svg xmlns="' + SVG_CONSTANTS.XMLNS + '" width="' + 
             iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
             iconSize + ' ' + iconSize + '">';
     }
@@ -1117,7 +1197,7 @@ if (typeof process === "undefined" &&
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-const version = "3.0.1";
+const version = "3.1.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.
@@ -1147,3 +1227,4 @@ function updateSvg() {
 }
 
 export { bundle, configure, drawIcon, toPng, toSvg, update, updateCanvas, updateSvg, version };
+//# sourceMappingURL=jdenticon-node.mjs.map
