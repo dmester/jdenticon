@@ -4,15 +4,18 @@
   "description": "Javascript identicon generator",
   "main": "dist/jdenticon-node.js",
   "exports": {
-    "node": {
-    "require": "./dist/jdenticon-node.js",
-      "import": "./dist/jdenticon-node.mjs"
+    ".": {
+      "node": {
+        "require": "./dist/jdenticon-node.js",
+        "import": "./dist/jdenticon-node.mjs"
+      },
+      "browser": {
+        "require": "./dist/jdenticon-module.js",
+        "import": "./dist/jdenticon-module.mjs"
+      },
+      "default": "./dist/jdenticon-node.js"
     },
-    "browser": {
-      "require": "./dist/jdenticon-module.js",
-      "import": "./dist/jdenticon-module.mjs"
-    },
-    "default": "./dist/jdenticon-node.js"
+    "./standalone": "./dist/jdenticon.min.js"
   },
   "browser": "dist/jdenticon-module",
   "jsdelivr": "dist/jdenticon.min.js",
