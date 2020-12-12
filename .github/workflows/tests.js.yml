@@ -30,8 +30,11 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
-      - name: Webpack bundle test
-        run: npm run test:webpack
+      - name: Webpack 4 bundle test
+        run: npm run test:webpack4
+      - name: Webpack 5 bundle test
+        run: npm run test:webpack5
+
       - name: Rollup bundle test
         run: npm run test:rollup
 
