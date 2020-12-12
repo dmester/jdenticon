@@ -5,13 +5,19 @@
         <version>#version#</version>
         <title>Jdenticon JS</title>
         <authors>Daniel Mester Pirttijärvi</authors>
-        <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
+        <license type="expression">MIT</license>
         <projectUrl>http://jdenticon.com/</projectUrl>
         <iconUrl>http://jdenticon.com/hosted/nuget-logo-js.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Javascript library generating identicons using SVG graphics or HTML5 canvas.</description>
-        <summary>Javascript library generating identicons using SVG graphics or HTML5 canvas.</summary>
-        <tags>Javascript identicon avatar library</tags>
+        <description>JavaScript library generating identicons using SVG graphics or HTML5 canvas.
+
+If you intend to generate icons server-side, consider using any of the .NET packages instead:
+* Jdenticon-net
+* Jdenticon.AspNetCore 
+* Jdenticon.AspNet.Mvc
+* Jdenticon.AspNet.WebApi 
+* Jdenticon.AspNet.WebForms</description>
+        <tags>JavaScript identicon avatar library</tags>
     </metadata>
     <files>
         <file src="obj\output\jdenticon-#version#.min.js" target="Content\Scripts\jdenticon-#version#.min.js" />
