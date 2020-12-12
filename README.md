@@ -36,12 +36,15 @@ use it right off [jsDelivr](https://www.jsdelivr.com).
 
 ```HTML
 <!-- Using jsDelivr -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jdenticon@3.0.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.0.1/dist/jdenticon.min.js"
+        integrity="sha384-im0a1VvEdl5EiBsEMbY7GyEL6DvEIChaqrtxjYyxqR/qkSYVmrBT1xP/yiIozXIA"
+        crossorigin="anonymous">
+</script>
 
 <!-- OR -->
 
 <!-- Hosting it yourself -->
-<script type="text/javascript" src="-path-to-/jdenticon.min.js"></script>
+<script src="-path-to-/jdenticon.min.js"></script>
 ```
 That's it!
 

@@ -1,0 +1,3 @@
+
+# Treat minifyed files as binary to ensure the integrity does not change
+dist/*.min.js binary

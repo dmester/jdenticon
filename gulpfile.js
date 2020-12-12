@@ -8,6 +8,7 @@
 const del = require("del");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const { exec } = require("child_process");
 const pack = require("./package.json");
 
@@ -203,9 +204,15 @@ gulp.task("update-license-year", function () {
         .pipe(gulp.dest("./"))
 });
 
-gulp.task("update-readme-version", function () {
+gulp.task("update-readme", function () {
     return gulp.src("./README.md")
-        .pipe(replace(/@\d{1,2}\.\d{1,3}\.\d{1,3}/, "@" + pack.version))
+        .pipe(replace([
+            [/@\d{1,2}\.\d{1,3}\.\d{1,3}/, "@" + pack.version],
+            [/(?<=integrity=\"([^-]+)-).*?(?=\")/, (match, algorithm) => {
+                const min = fs.readFileSync("./dist/jdenticon.min.js");
+                return crypto.createHash(algorithm).update(min).digest("base64");
+            }],
+        ]))
         .pipe(gulp.dest("./"))
 });
 
@@ -286,8 +293,8 @@ gulp.task("create-package", function () {
 });
 
 gulp.task("release", gulp.series(
-    "update-license-year", "update-readme-version",
     "build",
+    "update-license-year", "update-readme",
     "prepare-release",
     "create-package",
     "prepare-nuget", "nuget",
