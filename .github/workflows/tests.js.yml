@@ -68,7 +68,7 @@ jobs:
       - name: npm install (Node 6.4)
         if: ${{ matrix.node == '6.4' }}
         run: |
-          npm install -g npm@latest
+          npm install -g npm@latest-6
           npm install
           npm install tap@12.7.0
 
