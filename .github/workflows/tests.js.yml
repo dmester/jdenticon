@@ -70,7 +70,6 @@ jobs:
         if: ${{ matrix.node == '6.4' }}
         run: |
           npm install -g npm@latest-6
-          npm install
           npm install tap@12.7.0 bind-obj-methods@2.0.0
 
       - name: npm install (Node 8+)
