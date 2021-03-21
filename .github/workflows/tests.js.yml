@@ -65,12 +65,13 @@ jobs:
           node-version: ${{ matrix.node }}
 
       # Use an older tap version to ensure compatibility with the old Node version
+      # bind-obj-methods broke old Node 6 support in 2.0.1
       - name: npm install (Node 6.4)
         if: ${{ matrix.node == '6.4' }}
         run: |
           npm install -g npm@latest-6
           npm install
-          npm install tap@12.7.0
+          npm install tap@12.7.0 bind-obj-methods@2.0.0
 
       - name: npm install (Node 8+)
         if: ${{ matrix.node != '6.4' }}
