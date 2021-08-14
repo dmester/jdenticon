@@ -12,4 +12,8 @@ interface Element { }
 // By declaring Buffer without including the Node typings, we can avoid type issues related to differences
 // between Node and browser typings, e.g. the return type of setTimeout. The user can import the Node typings
 // if desired.
-interface Buffer { }
+declare module "buffer" {
+    global {
+        interface Buffer { }
+    }
+}
