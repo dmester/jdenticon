@@ -3,7 +3,9 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "checkJs": true,
-        "noEmit": true
+        "noEmit": true,
+        "types": ["node14"],
+        "lib": ["es6", "dom"]
     },
     "include": ["*.js"]
 }

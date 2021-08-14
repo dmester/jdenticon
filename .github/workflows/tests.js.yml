@@ -54,9 +54,10 @@ jobs:
     name: E2E tests (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     needs: build
-    strategy: 
+    strategy:
+      fail-fast: false
       matrix:
-        node: [ '6.4', '8.x', '10.x', '12.x', '14.x' ]
+        node: [ '6.4', '8.x', '10.x', '12.x', '14.x', '16.x' ]
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node }}
@@ -72,8 +73,12 @@ jobs:
           npm install -g npm@latest-6
           npm install tap@12.7.0 bind-obj-methods@2.0.0
 
-      - name: npm install (Node 8+)
-        if: ${{ matrix.node != '6.4' }}
+      - name: npm install (Node 8.x)
+        if: ${{ matrix.node == '8.x' }}
+        run: npm install tap@14.11.0
+
+      - name: npm install (Node 10+)
+        if: ${{ matrix.node != '6.4' && matrix.node != '8.x' }}
         run: npm install
 
       - uses: actions/download-artifact@v2

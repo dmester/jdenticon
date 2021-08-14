@@ -1,7 +1,7 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
-        "types": [ "Node" ],
+        "types": [ "node16" ],
         "lib": [ "es6" ],
     },
     "include": [

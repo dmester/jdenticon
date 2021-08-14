@@ -31,7 +31,8 @@ toSvg("value to hash", 100);
 toPng("value to hash", 100, 0.08);
 toSvg("value to hash", 100, 0.08);
 
-const buffer = toPng("value to hash", 100, newConfig);
+const buffer: Buffer = toPng("value to hash", 100, newConfig);
+
 toSvg("value to hash", 100, newConfig);
 
 // Check that Node typings are loaded
