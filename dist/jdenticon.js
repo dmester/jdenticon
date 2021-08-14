@@ -1,8 +1,8 @@
 /**
- * Jdenticon 3.1.0
+ * Jdenticon 3.1.1
  * http://jdenticon.com
  *  
- * Built: 2020-12-12T13:51:48.709Z
+ * Built: 2021-08-14T17:50:52.207Z
  *
  * MIT License
  * 
@@ -1419,7 +1419,7 @@ jdenticon["updateSvg"] = update;
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-jdenticon["version"] = "3.1.0";
+jdenticon["version"] = "3.1.1";
 
 /**
  * Specifies which bundle of Jdenticon that is used.

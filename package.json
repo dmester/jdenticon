@@ -1,6 +1,6 @@
 {
   "name": "jdenticon",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Javascript identicon generator",
   "main": "dist/jdenticon-node.js",
   "exports": {
@@ -78,7 +78,7 @@
     "test:browser-win": "tap ./test/e2e/browser/test.js --test-arg=win --test-arg=chrome,firefox,edge,ie11,ie10,ie9 --timeout=300",
     "test:browser-macos": "tap ./test/e2e/browser/test.js --test-arg=macos --test-arg=chrome,firefox,safari --timeout=180",
     "test:node-cjs": "tap ./test/e2e/node/test.js",
-    "test:node-esm": "tap ./test/e2e/node/test.mjs", 
+    "test:node-esm": "tap ./test/e2e/node/test.mjs",
     "test:webpack4": "cd ./test/e2e/webpack && node runner.js webpack4 && tap ./app.bundle.js --no-coverage",
     "test:webpack5": "cd ./test/e2e/webpack && node runner.js webpack5 && tap ./app.bundle.js --no-coverage",
     "test:rollup": "cd ./test/e2e/rollup && rollup --config && tap ./app.bundle.js --no-coverage",
