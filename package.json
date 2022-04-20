@@ -13,6 +13,10 @@
         "require": "./dist/jdenticon-module.js",
         "import": "./dist/jdenticon-module.mjs"
       },
+      "module": {
+        "require": "./dist/jdenticon-module.js",
+        "import": "./dist/jdenticon-module.mjs"
+      },
       "default": "./dist/jdenticon-node.js"
     },
     "./standalone": "./dist/jdenticon.min.js"
