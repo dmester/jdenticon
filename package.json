@@ -6,10 +6,12 @@
   "exports": {
     ".": {
       "node": {
+        "types": "./types/module.d.ts",
         "require": "./dist/jdenticon-node.js",
         "import": "./dist/jdenticon-node.mjs"
       },
       "browser": {
+        "types": "./types/module.d.ts",
         "require": "./dist/jdenticon-module.js",
         "import": "./dist/jdenticon-module.mjs"
       },
