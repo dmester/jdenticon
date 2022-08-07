@@ -90,7 +90,7 @@
     "test:types:node16": "npm run tsc4 -- -p ./test/types/module-node16/tsconfig.json && npm run tsc4 -- -p ./test/types/module-node16/tsconfig.json --moduleResolution node16",
     "test:types:umd": "npm run tsc3 -- -p ./test/types/umd/tsconfig.json && npm run tsc4 -- -p ./test/types/umd/tsconfig.json --moduleResolution node16",
     "test:browser-win": "tap ./test/e2e/browser/test.js --test-arg=win --test-arg=chrome,firefox,edge,ie11,ie10,ie9 --timeout=300",
-    "test:browser-macos": "tap ./test/e2e/browser/test.js --test-arg=macos --test-arg=chrome,firefox,safari --timeout=180",
+    "test:browser-macos": "tap ./test/e2e/browser/test.js --test-arg=macos --test-arg=chrome,firefox,safari --timeout=300",
     "test:node-cjs": "tap ./test/e2e/node/test.js",
     "test:node-esm": "tap ./test/e2e/node/test.mjs",
     "test:webpack4": "cd ./test/e2e/webpack && node runner.js webpack4 && tap ./app.bundle.js --no-coverage",
