@@ -29,9 +29,9 @@ export function testBrowser(jdenticon, bundle) {
         });
 
         bundleTest.test("jdenticon.update*", t => {
-            t.isa(jdenticon.update, Function);
-            t.isa(jdenticon.updateCanvas, Function);
-            t.isa(jdenticon.updateSvg, Function);
+            t.type(jdenticon.update, Function);
+            t.type(jdenticon.updateCanvas, Function);
+            t.type(jdenticon.updateSvg, Function);
             t.end();
         });
 

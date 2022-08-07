@@ -25,7 +25,7 @@ function testNode(jdenticon) {
     });
     
     tap.test("jdenticon.toPng", t => {
-        t.isa(jdenticon.toPng("Icon1", 100), Buffer);
+        t.type(jdenticon.toPng("Icon1", 100), Buffer);
         iconTest(jdenticon);
         t.end();
     });

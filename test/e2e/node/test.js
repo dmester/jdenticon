@@ -21,7 +21,7 @@ tap.test("jdenticon.config", t => {
         console.warn = originalConsoleWarn;
     }
 
-    t.equivalent(warn, ["jdenticon.config is deprecated. Use jdenticon.configure() instead."]);
+    t.same(warn, ["jdenticon.config is deprecated. Use jdenticon.configure() instead."]);
     t.end();
 });
 
