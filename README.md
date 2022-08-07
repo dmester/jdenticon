@@ -63,6 +63,7 @@ There are ports or bindings for Jdenticon available for the following platforms:
 * [.NET](https://github.com/dmester/jdenticon-net/)
 * [Polymer](https://github.com/GeoloeG/identicon-element)
 * [Swift](https://github.com/aleph7/jdenticon-swift)
+* [Java](https://github.com/sunshower-io/sunshower-arcus/tree/master/arcus-identicon)
 * [Dart/Flutter](https://pub.dartlang.org/packages/jdenticon_dart)
 * [Kotlin](https://github.com/WycliffeAssociates/jdenticon-kotlin)
 
