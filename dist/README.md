@@ -15,7 +15,13 @@
 There are separate bundles for Node.js and browsers. The Node.js bundles contain support for generating PNG icons, while the browser bundles have support for updating DOM elements. It is important that the right bundle is used, since a web application bundle will be significally larger if the Node bundle is imported instead of the browser bundle.
 
 ## Don't address `dist/*` directly
-In first hand, don't import a specific file from the `dist` folder. Instead import the Jdenticon package and let the package decide what file to be imported.
+In first hand, don't import a specific file from the `dist` folder. Instead import the Jdenticon package and let the package decide what file to be imported. If your bundler does not pick the right file, and you cannot configure it to do so, there are explicit exports that you can use to force it to use the correct bundle:
+
+| Platform | Export               | Example                                      |
+|----------|----------------------|----------------------------------------------|
+| Browser  | jdenticon/browser    | `import { toSvg } from "jdenticon/browser";` |
+| Node.js  | jdenticon/node       | `import { toSvg } from "jdenticon/node";`    |
+| UMD      | jdenticon/standalone | `import "jdenticon/standalone";`             |
 
 Jdenticon has multiple public entry points:
 
