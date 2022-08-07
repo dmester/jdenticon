@@ -1,12 +1,12 @@
 /**
- * Jdenticon 3.1.1
+ * Jdenticon 3.2.0
  * http://jdenticon.com
  *
- * Built: 2021-08-14T17:50:52.207Z
+ * Built: 2022-08-07T11:23:11.640Z
  * 
  * MIT License
  * 
- * Copyright (c) 2014-2020 Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-2021 Daniel Mester Pirttijärvi
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1197,7 +1197,7 @@ if (typeof process === "undefined" &&
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-const version = "3.1.1";
+const version = "3.2.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.

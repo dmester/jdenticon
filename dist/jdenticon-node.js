@@ -1,12 +1,12 @@
 /**
- * Jdenticon 3.1.1
+ * Jdenticon 3.2.0
  * http://jdenticon.com
  *
- * Built: 2021-08-14T17:50:52.207Z
+ * Built: 2022-08-07T11:23:11.640Z
  * 
  * MIT License
  * 
- * Copyright (c) 2014-2020 Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-2021 Daniel Mester Pirttijärvi
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -975,7 +975,7 @@ function drawIcon(ctx, hashOrValue, size, config) {
  * @returns {Buffer} PNG data
  */
 function toPng(hashOrValue, size, config) {
-    const canvas = canvasRenderer__default['default'].createCanvas(size, size);
+    const canvas = canvasRenderer__default["default"].createCanvas(size, size);
     const ctx = canvas.getContext("2d");
     
     iconGenerator(new CanvasRenderer(ctx, size), 
@@ -1233,7 +1233,7 @@ jdenticon.toSvg = toSvg;
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-jdenticon.version = "3.1.1";
+jdenticon.version = "3.2.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.
