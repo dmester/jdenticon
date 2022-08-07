@@ -44,6 +44,7 @@ const BROWSER_DEFINITIONS = [
         uaCompatible: "IE=Edge",
         capabilities: {
             "browserName": webdriver.Browser.INTERNET_EXPLORER,
+            "ie.ensureCleanSession": true,
         },
     },
     {
@@ -51,6 +52,7 @@ const BROWSER_DEFINITIONS = [
         uaCompatible: "IE=10",
         capabilities: {
             "browserName": webdriver.Browser.INTERNET_EXPLORER,
+            "ie.ensureCleanSession": true,
         },
     },
     {
@@ -58,6 +60,7 @@ const BROWSER_DEFINITIONS = [
         uaCompatible: "IE=9",
         capabilities: {
             "browserName": webdriver.Browser.INTERNET_EXPLORER,
+            "ie.ensureCleanSession": true,
         },
     },
     {
