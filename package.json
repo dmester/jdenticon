@@ -5,6 +5,7 @@
   "main": "dist/jdenticon-node.js",
   "exports": {
     ".": {
+      "types": "./types/module.d.ts",
       "node": {
         "require": "./dist/jdenticon-node.js",
         "import": "./dist/jdenticon-node.mjs"
@@ -15,7 +16,10 @@
       },
       "default": "./dist/jdenticon-node.js"
     },
-    "./standalone": "./dist/jdenticon.min.js"
+    "./standalone": {
+      "types": "./types/umd.d.ts",
+      "default": "./dist/jdenticon.min.js"
+    }
   },
   "browser": "dist/jdenticon-module",
   "jsdelivr": "dist/jdenticon.min.js",
