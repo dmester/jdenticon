@@ -1,4 +1,4 @@
-import { configure, update, updateSvg, updateCanvas, toPng, toSvg, JdenticonConfig } from "../../../";
+import { configure, update, updateSvg, updateCanvas, toPng, toSvg, JdenticonConfig } from "jdenticon";
 
 const newConfig: JdenticonConfig = {
     lightness: {

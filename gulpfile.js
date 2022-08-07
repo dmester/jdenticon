@@ -230,7 +230,7 @@ gulp.task("install-jdenticon-test", function () {
     // Simulate an installed Jdenticon package. Cannot use actual npm command, since it won't install Jdenticon in a
     // subfolder to the Jdenticon source package itself.
     return gulp.src(["./package.json", ...globs], { base: "./" })
-        .pipe(gulp.dest("./test/e2e/node_modules/jdenticon"));
+        .pipe(gulp.dest("./test/node_modules/jdenticon"));
 });
 
 gulp.task("build", gulp.series("clean", gulp.parallel(

@@ -2,7 +2,7 @@
     "extends": "../tsconfig.json",
     "compilerOptions": {
         "types": [
-            "../../../standalone"
+            "jdenticon/standalone"
         ],
         "lib": ["es6", "dom"],
     },

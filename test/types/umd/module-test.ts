@@ -1,4 +1,4 @@
-import { configure, drawIcon, update, updateSvg, updateCanvas, toPng, toSvg } from "../../../standalone";
+import { configure, drawIcon, update, updateSvg, updateCanvas, toPng, toSvg } from "jdenticon/standalone";
 
 const newConfig: JdenticonConfig = {
     lightness: {

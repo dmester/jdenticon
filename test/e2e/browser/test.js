@@ -120,7 +120,7 @@ async function testBrowser(browserName) {
         }
 
         await serve(
-            path.join(__dirname, "../"), 
+            path.join(__dirname, "../../"), 
             {
                 "index": ["index.html"],
                 setHeaders: resp => {
@@ -133,7 +133,7 @@ async function testBrowser(browserName) {
                 }
             },
             async listener => {
-                const url = "http://localhost:" + listener.address().port + "/browser/assets/";
+                const url = "http://localhost:" + listener.address().port + "/e2e/browser/assets/";
                 
                 console.log(`Screenshot in ${browserName}`);
                 console.log(url);

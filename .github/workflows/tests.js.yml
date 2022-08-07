@@ -48,7 +48,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: package
-          path: ./test/e2e/node_modules/jdenticon
+          path: ./test/node_modules/jdenticon
 
   e2e:
     name: E2E tests (Node ${{ matrix.node }})
@@ -84,7 +84,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: package
-          path: test/e2e/node_modules/jdenticon
+          path: test/node_modules/jdenticon
 
       - name: Node test (CommonJS)
         run: npm run test:node-cjs
@@ -115,7 +115,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: package
-          path: test/e2e/node_modules/jdenticon
+          path: test/node_modules/jdenticon
 
       - name: Run visual tests (Windows)
         if: ${{ startsWith(matrix.os, 'windows') }}
