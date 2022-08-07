@@ -16,6 +16,16 @@
       },
       "default": "./dist/jdenticon-node.js"
     },
+    "./browser": {
+      "types": "./types/module.d.ts",
+      "import": "./dist/jdenticon-module.mjs",
+      "default": "./dist/jdenticon-module.js"
+    },
+    "./node": {
+      "types": "./types/module.d.ts",
+      "import": "./dist/jdenticon-node.mjs",
+      "default": "./dist/jdenticon-node.js"
+    },
     "./standalone": {
       "types": "./types/umd.d.ts",
       "default": "./dist/jdenticon.min.js"
@@ -93,6 +103,8 @@
     "bin/",
     "dist/",
     "standalone/",
+    "browser/",
+    "node/",
     "types/*.d.ts"
   ],
   "repository": {

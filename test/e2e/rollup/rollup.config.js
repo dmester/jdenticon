@@ -7,7 +7,11 @@ export default {
     output: {
         file: "./app.bundle.js",
         format: "iife",
+        globals: {
+            "canvas-renderer": "{}",
+        },
     },
+    external: ["canvas-renderer"],
     plugins: [
         commonjs(),
         nodeResolve({

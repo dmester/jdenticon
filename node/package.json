@@ -1,0 +1,4 @@
+{
+  "main": "../dist/jdenticon-node",
+  "types": "../types/module.d.ts"
+}
