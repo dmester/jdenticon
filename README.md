@@ -67,10 +67,5 @@ There are ports or bindings for Jdenticon available for the following platforms:
 * [Dart/Flutter](https://pub.dartlang.org/packages/jdenticon_dart)
 * [Kotlin](https://github.com/WycliffeAssociates/jdenticon-kotlin)
 
-### Hosted Jdenticon
-Same icons but generated server-side. Service provided by [Aaroh Mankad](https://github.com/aarohmankad).
-
-http://identicon-api.herokuapp.com/
-
 ## License
 Jdenticon is available under the [MIT license](https://github.com/dmester/jdenticon/blob/master/LICENSE).
