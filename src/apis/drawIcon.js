@@ -1,6 +1,7 @@
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
 import { CanvasRenderer } from "../renderer/canvas/canvasRenderer";
+import { IS_RENDERED_PROPERTY } from "../common/dom";
 
 /**
  * Draws an identicon to a context.
@@ -19,4 +20,9 @@ export function drawIcon(ctx, hashOrValue, size, config) {
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
         config);
+
+    const canvas = ctx.canvas;
+    if (canvas) {
+        canvas[IS_RENDERED_PROPERTY] = true;
+    }
 }

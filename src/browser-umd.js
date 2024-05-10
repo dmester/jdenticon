@@ -11,9 +11,10 @@ import { observer } from "./common/observer";
 import { configure } from "./apis/configure";
 import { drawIcon } from "./apis/drawIcon";
 import { toSvg } from "./apis/toSvg";
-import { update, updateAll } from "./apis/update";
+import { update, updateAll, updateAllConditional } from "./apis/update";
 import { jdenticonJqueryPlugin } from "./apis/jquery";
 import { GLOBAL } from "./common/global";
+import { whenDocumentIsReady } from "./common/dom";
 
 const jdenticon = updateAll;
 
@@ -56,7 +57,7 @@ function jdenticonStartup() {
     )["replaceMode"];
     
     if (replaceMode != "never") {
-        updateAll();
+        updateAllConditional();
         
         if (replaceMode == "observe") {
             observer(update);
@@ -65,8 +66,6 @@ function jdenticonStartup() {
 }
 
 // Schedule to render all identicons on the page once it has been loaded.
-if (typeof setTimeout === "function") {
-    setTimeout(jdenticonStartup, 0);
-}
+whenDocumentIsReady(jdenticonStartup);
 
 module.exports = jdenticon;

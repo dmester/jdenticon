@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jdenticon</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <script>
+        var jdenticon_config = {
+            backColor: "#00f1"
+        };
+        </script>
+        <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
+    </head>
+    <body>
+        <h1>"Icon0" - UMD in &lt;head&gt; - Should be equal</h1>
+        <figure>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAWlBMVEUAAP9aOuYxMYKdne+CXN5AQGLHx+lDQ2TIyOlDQ13NzedHR1ZHR1jW1ufY2OdLS1Dg4OVKSk/g4OWjc9Gjc9FLS02ldNDj4+RLS0yldNDj4+VMTEymddHl5eU2yqFLAAAAG3RSTlMRHy8vPVtbXFxra4iIiIjDw8TE0tPw8PDx8fEmYw1hAAABrUlEQVR42u2ZYWvCQBBE6542UVuT2Kaxnvf//2aR45hrl2mgxyKFfR+HjM9EggP35DiOY0x4fn0OP0PZveyEhLTOFWO6M367ToZ4ZxAe6jrnsKTMckC4n2Nm3tNQ1ylhSYUllFDmWJiFhrrOGBMYSzhEMNBQ1wkh1YQcSqwRErK6pk81fQ67WNORkNU1p1RzyuEx1hxJSOrmd/KA3wScEziXcIpgoqGuM8I1Fa54Ty6xcBEa6jrlcC0X1W/8pXzcnoe6zgnnfLOhDmXKj0VISOtc0596dY10x05oqOuO8xAwD2zrmAeEprqeB4Smup4HhJa6ngeMlrr+KyK01PWfKqOhTuaBYrNtqKuvQhxvn9uG+q8PFY7b7WP7x7qeB9TBLOt1PQ+Yg1nW63oeMAezrNf1POAObuF1Mg+Yg1t4ncMdsFDaHbBYOMwtm3ctwatvYYHDygKHwRKABQ6DIQELHO1DQlvgMBgSsMBhMSRggaN9SBBLdtgMCVjg+K9DAlgOCWA5JIDlkAA2Q4LTPiQ4JkMCrNcdx482/Gij5Whj8qMNP9rwow0/2nAcx7HjC8pg1fBM8ggRAAAAAElFTkSuQmCC" width="100" height="100">
+            <figcaption><strong>IMG</strong> static image</figcaption>
+        </figure>
+        
+        <figure>
+            <canvas data-jdenticon-value="Icon0" width="100" height="100"></canvas>
+            <figcaption><strong>Canvas</strong> UMD in &lt;head&gt;</figcaption>
+        </figure>
+        <script src="common.js"></script>
+    </body>
+</html>

@@ -6,7 +6,7 @@
 
 import { iconGenerator } from "../renderer/iconGenerator";
 import { isValidHash, computeHash } from "../common/hashUtils";
-import { ATTRIBUTES, ICON_SELECTOR, documentQuerySelectorAll } from "../common/dom";
+import { ATTRIBUTES, ICON_SELECTOR, IS_RENDERED_PROPERTY, documentQuerySelectorAll } from "../common/dom";
 import { SvgRenderer } from "../renderer/svg/svgRenderer";
 import { SvgElement } from "../renderer/svg/svgElement";
 import { CanvasRenderer } from "../renderer/canvas/canvasRenderer";
@@ -19,6 +19,24 @@ import { ICON_TYPE_CANVAS, ICON_TYPE_SVG, getIdenticonType } from "../common/dom
 export function updateAll() {
     if (documentQuerySelectorAll) {
         update(ICON_SELECTOR);
+    }
+}
+
+/**
+ * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute that have not already
+ * been rendered.
+ */
+export function updateAllConditional() {
+    if (documentQuerySelectorAll) {
+        /** @type {NodeListOf<HTMLElement>} */
+        const elements = documentQuerySelectorAll(ICON_SELECTOR);
+        
+        for (let i = 0; i < elements.length; i++) {
+            const el = elements[i];
+            if (!el[IS_RENDERED_PROPERTY]) {
+                update(el);
+            }
+        }
     }
 }
 
@@ -126,5 +144,6 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (renderer) {
         // Draw icon
         iconGenerator(renderer, hash, config);
+        el[IS_RENDERED_PROPERTY] = true;
     }
 }
