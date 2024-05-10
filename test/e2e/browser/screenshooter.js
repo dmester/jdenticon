@@ -12,7 +12,7 @@ async function screenshot(driver) {
         width: dimensions.scrollWidth,
         height: dimensions.scrollHeight
     });
-    
+
     const xnum = Math.ceil(dimensions.scrollWidth / dimensions.innerWidth);
     const ynum = Math.ceil(dimensions.scrollHeight / dimensions.innerHeight);
 
@@ -22,6 +22,9 @@ async function screenshot(driver) {
             var scrollpos = await driver.executeScript(`
                 window.scrollTo(${x * dimensions.innerWidth}, ${y * dimensions.innerHeight});
                 return { x: window.scrollX || window.pageXOffset, y: window.scrollY || window.pageYOffset }`)
+
+            // Delay for Safari
+            await driver.sleep(500);
 
             const datauri = await driver.takeScreenshot();
             const image = PNG.sync.read(Buffer.from(datauri, "base64"));
