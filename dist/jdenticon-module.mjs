@@ -1,12 +1,12 @@
 /**
- * Jdenticon 3.2.0
+ * Jdenticon 3.3.0
  * http://jdenticon.com
  *
- * Built: 2022-08-07T11:23:11.640Z
+ * Built: 2024-05-10T09:48:41.921Z
  * 
  * MIT License
  * 
- * Copyright (c) 2014-2021 Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-2024 Daniel Mester Pirttijärvi
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -922,6 +922,34 @@ class CanvasRenderer {
     }
 }
 
+const ICON_TYPE_SVG = 1;
+
+const ICON_TYPE_CANVAS = 2;
+
+const ATTRIBUTES = {
+    Z/*HASH*/: "data-jdenticon-hash",
+    N/*VALUE*/: "data-jdenticon-value"
+};
+
+const IS_RENDERED_PROPERTY = "jdenticonRendered";
+
+const documentQuerySelectorAll = /** @type {!Function} */ (
+    typeof document !== "undefined" && document.querySelectorAll.bind(document));
+
+function getIdenticonType(el) {
+    if (el) {
+        const tagName = el["tagName"];
+
+        if (/^svg$/i.test(tagName)) {
+            return ICON_TYPE_SVG;
+        }
+
+        if (/^canvas$/i.test(tagName) && "getContext" in el) {
+            return ICON_TYPE_CANVAS;
+        }
+    }
+}
+
 /**
  * Draws an identicon to a context.
  * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
@@ -939,6 +967,11 @@ function drawIcon(ctx, hashOrValue, size, config) {
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
         config);
+
+    const canvas = ctx.canvas;
+    if (canvas) {
+        canvas[IS_RENDERED_PROPERTY] = true;
+    }
 }
 
 /**
@@ -1020,7 +1053,7 @@ class SvgRenderer {
          * @type {SvgElement|SvgWriter}
          * @private
          */
-        this.N/*_target*/ = target;
+        this.O/*_target*/ = target;
 
         /**
          * @type {number}
@@ -1035,7 +1068,7 @@ class SvgRenderer {
     m/*setBackground*/(fillColor) {
         const match = /^(#......)(..)?/.exec(fillColor),
               opacity = match[2] ? parseHex(match[2], 0) / 255 : 1;
-        this.N/*_target*/.m/*setBackground*/(match[1], opacity);
+        this.O/*_target*/.m/*setBackground*/(match[1], opacity);
     }
 
     /**
@@ -1078,16 +1111,16 @@ class SvgRenderer {
             // hasOwnProperty cannot be shadowed in pathsByColor
             // eslint-disable-next-line no-prototype-builtins
             if (pathsByColor.hasOwnProperty(color)) {
-                this.N/*_target*/.O/*appendPath*/(color, pathsByColor[color].v/*dataString*/);
+                this.O/*_target*/.P/*appendPath*/(color, pathsByColor[color].v/*dataString*/);
             }
         }
     }
 }
 
 const SVG_CONSTANTS = {
-    P/*XMLNS*/: "http://www.w3.org/2000/svg",
-    R/*WIDTH*/: "width",
-    S/*HEIGHT*/: "height",
+    R/*XMLNS*/: "http://www.w3.org/2000/svg",
+    S/*WIDTH*/: "width",
+    T/*HEIGHT*/: "height",
 };
 
 /**
@@ -1108,7 +1141,7 @@ class SvgWriter {
          * @private
          */
         this.C/*_s*/ =
-            '<svg xmlns="' + SVG_CONSTANTS.P/*XMLNS*/ + '" width="' + 
+            '<svg xmlns="' + SVG_CONSTANTS.R/*XMLNS*/ + '" width="' + 
             iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
             iconSize + ' ' + iconSize + '">';
     }
@@ -1130,7 +1163,7 @@ class SvgWriter {
      * @param {string} color Fill color on format #rrggbb.
      * @param {string} dataString The SVG path data string.
      */
-    O/*appendPath*/(color, dataString) {
+    P/*appendPath*/(color, dataString) {
         this.C/*_s*/ += '<path fill="' + color + '" d="' + dataString + '"/>';
     }
 
@@ -1159,32 +1192,6 @@ function toSvg(hashOrValue, size, config) {
     return writer.toString();
 }
 
-const ICON_TYPE_SVG = 1;
-
-const ICON_TYPE_CANVAS = 2;
-
-const ATTRIBUTES = {
-    Z/*HASH*/: "data-jdenticon-hash",
-    T/*VALUE*/: "data-jdenticon-value"
-};
-
-const documentQuerySelectorAll = /** @type {!Function} */ (
-    typeof document !== "undefined" && document.querySelectorAll.bind(document));
-
-function getIdenticonType(el) {
-    if (el) {
-        const tagName = el["tagName"];
-
-        if (/^svg$/i.test(tagName)) {
-            return ICON_TYPE_SVG;
-        }
-
-        if (/^canvas$/i.test(tagName) && "getContext" in el) {
-            return ICON_TYPE_CANVAS;
-        }
-    }
-}
-
 /**
  * Creates a new element and adds it to the specified parent.
  * @param {Element} parentNode
@@ -1192,7 +1199,7 @@ function getIdenticonType(el) {
  * @param {...(string|number)} keyValuePairs
  */
 function SvgElement_append(parentNode, name, ...keyValuePairs) {
-    const el = document.createElementNS(SVG_CONSTANTS.P/*XMLNS*/, name);
+    const el = document.createElementNS(SVG_CONSTANTS.R/*XMLNS*/, name);
     
     for (let i = 0; i + 1 < keyValuePairs.length; i += 2) {
         el.setAttribute(
@@ -1219,8 +1226,8 @@ class SvgElement {
         // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
         // the icon to the correct dimensions)
         const iconSize = this.k/*iconSize*/ = Math.min(
-            (Number(element.getAttribute(SVG_CONSTANTS.R/*WIDTH*/)) || 100),
-            (Number(element.getAttribute(SVG_CONSTANTS.S/*HEIGHT*/)) || 100)
+            (Number(element.getAttribute(SVG_CONSTANTS.S/*WIDTH*/)) || 100),
+            (Number(element.getAttribute(SVG_CONSTANTS.T/*HEIGHT*/)) || 100)
             );
         
         /**
@@ -1247,8 +1254,8 @@ class SvgElement {
     m/*setBackground*/(fillColor, opacity) {
         if (opacity) {
             SvgElement_append(this.U/*_el*/, "rect",
-                SVG_CONSTANTS.R/*WIDTH*/, "100%",
-                SVG_CONSTANTS.S/*HEIGHT*/, "100%",
+                SVG_CONSTANTS.S/*WIDTH*/, "100%",
+                SVG_CONSTANTS.T/*HEIGHT*/, "100%",
                 "fill", fillColor,
                 "opacity", opacity);
         }
@@ -1259,7 +1266,7 @@ class SvgElement {
      * @param {string} color Fill color on format #xxxxxx.
      * @param {string} dataString The SVG path data string.
      */
-    O/*appendPath*/(color, dataString) {
+    P/*appendPath*/(color, dataString) {
         SvgElement_append(this.U/*_el*/, "path",
             "fill", color,
             "d", dataString);
@@ -1359,7 +1366,7 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(ATTRIBUTES.T/*VALUE*/) && computeHash(el.getAttribute(ATTRIBUTES.T/*VALUE*/));
+        el.hasAttribute(ATTRIBUTES.N/*VALUE*/) && computeHash(el.getAttribute(ATTRIBUTES.N/*VALUE*/));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
@@ -1370,6 +1377,7 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (renderer) {
         // Draw icon
         iconGenerator(renderer, hash, config);
+        el[IS_RENDERED_PROPERTY] = true;
     }
 }
 
@@ -1379,7 +1387,7 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-const version = "3.2.0";
+const version = "3.3.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.

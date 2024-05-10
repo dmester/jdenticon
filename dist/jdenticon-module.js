@@ -1,12 +1,12 @@
 /**
- * Jdenticon 3.2.0
+ * Jdenticon 3.3.0
  * http://jdenticon.com
  *
- * Built: 2022-08-07T11:23:11.640Z
+ * Built: 2024-05-10T09:48:41.921Z
  * 
  * MIT License
  * 
- * Copyright (c) 2014-2021 Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-2024 Daniel Mester Pirttijärvi
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -913,246 +913,18 @@ CanvasRenderer__prototype.finish = function finish () {
     this.l/*_ctx*/.restore();
 };
 
-/**
- * Draws an identicon to a context.
- * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
- * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
- * @param {number} size - Icon size in pixels.
- * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
- *    specified in place of a configuration object.
- */
-function drawIcon(ctx, hashOrValue, size, config) {
-    if (!ctx) {
-        throw new Error("No canvas specified.");
-    }
-    
-    iconGenerator(new CanvasRenderer(ctx, size), 
-        isValidHash(hashOrValue) || computeHash(hashOrValue), 
-        config);
-}
-
-/**
- * Prepares a measure to be used as a measure in an SVG path, by
- * rounding the measure to a single decimal. This reduces the file
- * size of the generated SVG with more than 50% in some cases.
- */
-function svgValue(value) {
-    return ((value * 10 + 0.5) | 0) / 10;
-}
-
-/**
- * Represents an SVG path element.
- */
-function SvgPath() {
-    /**
-     * This property holds the data string (path.d) of the SVG path.
-     * @type {string}
-     */
-    this.v/*dataString*/ = "";
-}
-var SvgPath__prototype = SvgPath.prototype;
-
-/**
- * Adds a polygon with the current fill color to the SVG path.
- * @param points An array of Point objects.
- */
-SvgPath__prototype.g/*addPolygon*/ = function addPolygon (points) {
-    var dataString = "";
-    for (var i = 0; i < points.length; i++) {
-        dataString += (i ? "L" : "M") + svgValue(points[i].x) + " " + svgValue(points[i].y);
-    }
-    this.v/*dataString*/ += dataString + "Z";
-};
-
-/**
- * Adds a circle with the current fill color to the SVG path.
- * @param {Point} point The upper left corner of the circle bounding box.
- * @param {number} diameter The diameter of the circle.
- * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
- */
-SvgPath__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
-    var sweepFlag = counterClockwise ? 0 : 1,
-          svgRadius = svgValue(diameter / 2),
-          svgDiameter = svgValue(diameter),
-          svgArc = "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " ";
-            
-    this.v/*dataString*/ += 
-        "M" + svgValue(point.x) + " " + svgValue(point.y + diameter / 2) +
-        svgArc + svgDiameter + ",0" + 
-        svgArc + (-svgDiameter) + ",0";
-};
-
-
-
-/**
- * Renderer producing SVG output.
- * @implements {Renderer}
- */
-function SvgRenderer(target) {
-    /**
-     * @type {SvgPath}
-     * @private
-     */
-    this.A/*_path*/;
-
-    /**
-     * @type {Object.<string,SvgPath>}
-     * @private
-     */
-    this.B/*_pathsByColor*/ = { };
-
-    /**
-     * @type {SvgElement|SvgWriter}
-     * @private
-     */
-    this.O/*_target*/ = target;
-
-    /**
-     * @type {number}
-     */
-    this.k/*iconSize*/ = target.k/*iconSize*/;
-}
-var SvgRenderer__prototype = SvgRenderer.prototype;
-
-/**
- * Fills the background with the specified color.
- * @param {string} fillColor  Fill color on the format #rrggbb[aa].
- */
-SvgRenderer__prototype.m/*setBackground*/ = function setBackground (fillColor) {
-    var match = /^(#......)(..)?/.exec(fillColor),
-          opacity = match[2] ? parseHex(match[2], 0) / 255 : 1;
-    this.O/*_target*/.m/*setBackground*/(match[1], opacity);
-};
-
-/**
- * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
- * @param {string} color Fill color on format #xxxxxx.
- */
-SvgRenderer__prototype.M/*beginShape*/ = function beginShape (color) {
-    this.A/*_path*/ = this.B/*_pathsByColor*/[color] || (this.B/*_pathsByColor*/[color] = new SvgPath());
-};
-
-/**
- * Marks the end of the currently drawn shape.
- */
-SvgRenderer__prototype.N/*endShape*/ = function endShape () { };
-
-/**
- * Adds a polygon with the current fill color to the SVG.
- * @param points An array of Point objects.
- */
-SvgRenderer__prototype.g/*addPolygon*/ = function addPolygon (points) {
-    this.A/*_path*/.g/*addPolygon*/(points);
-};
-
-/**
- * Adds a circle with the current fill color to the SVG.
- * @param {Point} point The upper left corner of the circle bounding box.
- * @param {number} diameter The diameter of the circle.
- * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
- */
-SvgRenderer__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
-    this.A/*_path*/.h/*addCircle*/(point, diameter, counterClockwise);
-};
-
-/**
- * Called when the icon has been completely drawn.
- */
-SvgRenderer__prototype.finish = function finish () {
-        var this$1 = this;
- 
-    var pathsByColor = this.B/*_pathsByColor*/;
-    for (var color in pathsByColor) {
-        // hasOwnProperty cannot be shadowed in pathsByColor
-        // eslint-disable-next-line no-prototype-builtins
-        if (pathsByColor.hasOwnProperty(color)) {
-            this$1.O/*_target*/.P/*appendPath*/(color, pathsByColor[color].v/*dataString*/);
-        }
-    }
-};
-
-var SVG_CONSTANTS = {
-    R/*XMLNS*/: "http://www.w3.org/2000/svg",
-    S/*WIDTH*/: "width",
-    T/*HEIGHT*/: "height",
-};
-
-/**
- * Renderer producing SVG output.
- */
-function SvgWriter(iconSize) {
-    /**
-     * @type {number}
-     */
-    this.k/*iconSize*/ = iconSize;
-
-    /**
-     * @type {string}
-     * @private
-     */
-    this.C/*_s*/ =
-        '<svg xmlns="' + SVG_CONSTANTS.R/*XMLNS*/ + '" width="' + 
-        iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
-        iconSize + ' ' + iconSize + '">';
-}
-var SvgWriter__prototype = SvgWriter.prototype;
-
-/**
- * Fills the background with the specified color.
- * @param {string} fillColor  Fill color on the format #rrggbb.
- * @param {number} opacity  Opacity in the range [0.0, 1.0].
- */
-SvgWriter__prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
-    if (opacity) {
-        this.C/*_s*/ += '<rect width="100%" height="100%" fill="' + 
-            fillColor + '" opacity="' + opacity.toFixed(2) + '"/>';
-    }
-};
-
-/**
- * Writes a path to the SVG string.
- * @param {string} color Fill color on format #rrggbb.
- * @param {string} dataString The SVG path data string.
- */
-SvgWriter__prototype.P/*appendPath*/ = function appendPath (color, dataString) {
-    this.C/*_s*/ += '<path fill="' + color + '" d="' + dataString + '"/>';
-};
-
-/**
- * Gets the rendered image as an SVG string.
- */
-SvgWriter__prototype.toString = function toString () {
-    return this.C/*_s*/ + "</svg>";
-};
-
-/**
- * Draws an identicon as an SVG string.
- * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
- * @param {number} size - Icon size in pixels.
- * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
- *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
- *    specified in place of a configuration object.
- * @returns {string} SVG string
- */
-function toSvg(hashOrValue, size, config) {
-    var writer = new SvgWriter(size);
-    iconGenerator(new SvgRenderer(writer), 
-        isValidHash(hashOrValue) || computeHash(hashOrValue),
-        config);
-    return writer.toString();
-}
-
 var ICON_TYPE_SVG = 1;
 
 var ICON_TYPE_CANVAS = 2;
 
 var ATTRIBUTES = {
-    U/*HASH*/: "data-jdenticon-hash",
-    D/*VALUE*/: "data-jdenticon-value"
+    O/*HASH*/: "data-jdenticon-hash",
+    v/*VALUE*/: "data-jdenticon-value"
 };
 
-var ICON_SELECTOR = "[" + ATTRIBUTES.U/*HASH*/ +"],[" + ATTRIBUTES.D/*VALUE*/ +"]";
+var IS_RENDERED_PROPERTY = "jdenticonRendered";
+
+var ICON_SELECTOR = "[" + ATTRIBUTES.O/*HASH*/ +"],[" + ATTRIBUTES.v/*VALUE*/ +"]";
 
 var documentQuerySelectorAll = /** @type {!Function} */ (
     typeof document !== "undefined" && document.querySelectorAll.bind(document));
@@ -1172,6 +944,241 @@ function getIdenticonType(el) {
 }
 
 /**
+ * Draws an identicon to a context.
+ * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {number} size - Icon size in pixels.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
+ */
+function drawIcon(ctx, hashOrValue, size, config) {
+    if (!ctx) {
+        throw new Error("No canvas specified.");
+    }
+    
+    iconGenerator(new CanvasRenderer(ctx, size), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue), 
+        config);
+
+    var canvas = ctx.canvas;
+    if (canvas) {
+        canvas[IS_RENDERED_PROPERTY] = true;
+    }
+}
+
+/**
+ * Prepares a measure to be used as a measure in an SVG path, by
+ * rounding the measure to a single decimal. This reduces the file
+ * size of the generated SVG with more than 50% in some cases.
+ */
+function svgValue(value) {
+    return ((value * 10 + 0.5) | 0) / 10;
+}
+
+/**
+ * Represents an SVG path element.
+ */
+function SvgPath() {
+    /**
+     * This property holds the data string (path.d) of the SVG path.
+     * @type {string}
+     */
+    this.A/*dataString*/ = "";
+}
+var SvgPath__prototype = SvgPath.prototype;
+
+/**
+ * Adds a polygon with the current fill color to the SVG path.
+ * @param points An array of Point objects.
+ */
+SvgPath__prototype.g/*addPolygon*/ = function addPolygon (points) {
+    var dataString = "";
+    for (var i = 0; i < points.length; i++) {
+        dataString += (i ? "L" : "M") + svgValue(points[i].x) + " " + svgValue(points[i].y);
+    }
+    this.A/*dataString*/ += dataString + "Z";
+};
+
+/**
+ * Adds a circle with the current fill color to the SVG path.
+ * @param {Point} point The upper left corner of the circle bounding box.
+ * @param {number} diameter The diameter of the circle.
+ * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
+ */
+SvgPath__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
+    var sweepFlag = counterClockwise ? 0 : 1,
+          svgRadius = svgValue(diameter / 2),
+          svgDiameter = svgValue(diameter),
+          svgArc = "a" + svgRadius + "," + svgRadius + " 0 1," + sweepFlag + " ";
+            
+    this.A/*dataString*/ += 
+        "M" + svgValue(point.x) + " " + svgValue(point.y + diameter / 2) +
+        svgArc + svgDiameter + ",0" + 
+        svgArc + (-svgDiameter) + ",0";
+};
+
+
+
+/**
+ * Renderer producing SVG output.
+ * @implements {Renderer}
+ */
+function SvgRenderer(target) {
+    /**
+     * @type {SvgPath}
+     * @private
+     */
+    this.B/*_path*/;
+
+    /**
+     * @type {Object.<string,SvgPath>}
+     * @private
+     */
+    this.C/*_pathsByColor*/ = { };
+
+    /**
+     * @type {SvgElement|SvgWriter}
+     * @private
+     */
+    this.P/*_target*/ = target;
+
+    /**
+     * @type {number}
+     */
+    this.k/*iconSize*/ = target.k/*iconSize*/;
+}
+var SvgRenderer__prototype = SvgRenderer.prototype;
+
+/**
+ * Fills the background with the specified color.
+ * @param {string} fillColor  Fill color on the format #rrggbb[aa].
+ */
+SvgRenderer__prototype.m/*setBackground*/ = function setBackground (fillColor) {
+    var match = /^(#......)(..)?/.exec(fillColor),
+          opacity = match[2] ? parseHex(match[2], 0) / 255 : 1;
+    this.P/*_target*/.m/*setBackground*/(match[1], opacity);
+};
+
+/**
+ * Marks the beginning of a new shape of the specified color. Should be ended with a call to endShape.
+ * @param {string} color Fill color on format #xxxxxx.
+ */
+SvgRenderer__prototype.M/*beginShape*/ = function beginShape (color) {
+    this.B/*_path*/ = this.C/*_pathsByColor*/[color] || (this.C/*_pathsByColor*/[color] = new SvgPath());
+};
+
+/**
+ * Marks the end of the currently drawn shape.
+ */
+SvgRenderer__prototype.N/*endShape*/ = function endShape () { };
+
+/**
+ * Adds a polygon with the current fill color to the SVG.
+ * @param points An array of Point objects.
+ */
+SvgRenderer__prototype.g/*addPolygon*/ = function addPolygon (points) {
+    this.B/*_path*/.g/*addPolygon*/(points);
+};
+
+/**
+ * Adds a circle with the current fill color to the SVG.
+ * @param {Point} point The upper left corner of the circle bounding box.
+ * @param {number} diameter The diameter of the circle.
+ * @param {boolean} counterClockwise True if the circle is drawn counter-clockwise (will result in a hole if rendered on a clockwise path).
+ */
+SvgRenderer__prototype.h/*addCircle*/ = function addCircle (point, diameter, counterClockwise) {
+    this.B/*_path*/.h/*addCircle*/(point, diameter, counterClockwise);
+};
+
+/**
+ * Called when the icon has been completely drawn.
+ */
+SvgRenderer__prototype.finish = function finish () {
+        var this$1 = this;
+ 
+    var pathsByColor = this.C/*_pathsByColor*/;
+    for (var color in pathsByColor) {
+        // hasOwnProperty cannot be shadowed in pathsByColor
+        // eslint-disable-next-line no-prototype-builtins
+        if (pathsByColor.hasOwnProperty(color)) {
+            this$1.P/*_target*/.R/*appendPath*/(color, pathsByColor[color].A/*dataString*/);
+        }
+    }
+};
+
+var SVG_CONSTANTS = {
+    S/*XMLNS*/: "http://www.w3.org/2000/svg",
+    T/*WIDTH*/: "width",
+    U/*HEIGHT*/: "height",
+};
+
+/**
+ * Renderer producing SVG output.
+ */
+function SvgWriter(iconSize) {
+    /**
+     * @type {number}
+     */
+    this.k/*iconSize*/ = iconSize;
+
+    /**
+     * @type {string}
+     * @private
+     */
+    this.D/*_s*/ =
+        '<svg xmlns="' + SVG_CONSTANTS.S/*XMLNS*/ + '" width="' + 
+        iconSize + '" height="' + iconSize + '" viewBox="0 0 ' + 
+        iconSize + ' ' + iconSize + '">';
+}
+var SvgWriter__prototype = SvgWriter.prototype;
+
+/**
+ * Fills the background with the specified color.
+ * @param {string} fillColor  Fill color on the format #rrggbb.
+ * @param {number} opacity  Opacity in the range [0.0, 1.0].
+ */
+SvgWriter__prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
+    if (opacity) {
+        this.D/*_s*/ += '<rect width="100%" height="100%" fill="' + 
+            fillColor + '" opacity="' + opacity.toFixed(2) + '"/>';
+    }
+};
+
+/**
+ * Writes a path to the SVG string.
+ * @param {string} color Fill color on format #rrggbb.
+ * @param {string} dataString The SVG path data string.
+ */
+SvgWriter__prototype.R/*appendPath*/ = function appendPath (color, dataString) {
+    this.D/*_s*/ += '<path fill="' + color + '" d="' + dataString + '"/>';
+};
+
+/**
+ * Gets the rendered image as an SVG string.
+ */
+SvgWriter__prototype.toString = function toString () {
+    return this.D/*_s*/ + "</svg>";
+};
+
+/**
+ * Draws an identicon as an SVG string.
+ * @param {*} hashOrValue - A hexadecimal hash string or any value that will be hashed by Jdenticon.
+ * @param {number} size - Icon size in pixels.
+ * @param {Object|number=} config - Optional configuration. If specified, this configuration object overrides any
+ *    global configuration in its entirety. For backward compatibility a padding value in the range [0.0, 0.5) can be
+ *    specified in place of a configuration object.
+ * @returns {string} SVG string
+ */
+function toSvg(hashOrValue, size, config) {
+    var writer = new SvgWriter(size);
+    iconGenerator(new SvgRenderer(writer), 
+        isValidHash(hashOrValue) || computeHash(hashOrValue),
+        config);
+    return writer.toString();
+}
+
+/**
  * Creates a new element and adds it to the specified parent.
  * @param {Element} parentNode
  * @param {string} name
@@ -1181,7 +1188,7 @@ function SvgElement_append(parentNode, name) {
     var keyValuePairs = [], len = arguments.length - 2;
     while ( len-- > 0 ) keyValuePairs[ len ] = arguments[ len + 2 ];
 
-    var el = document.createElementNS(SVG_CONSTANTS.R/*XMLNS*/, name);
+    var el = document.createElementNS(SVG_CONSTANTS.S/*XMLNS*/, name);
     
     for (var i = 0; i + 1 < keyValuePairs.length; i += 2) {
         el.setAttribute(
@@ -1204,8 +1211,8 @@ function SvgElement(element) {
     // Instead use 100px as a hardcoded size (the svg viewBox will rescale 
     // the icon to the correct dimensions)
     var iconSize = this.k/*iconSize*/ = Math.min(
-        (Number(element.getAttribute(SVG_CONSTANTS.S/*WIDTH*/)) || 100),
-        (Number(element.getAttribute(SVG_CONSTANTS.T/*HEIGHT*/)) || 100)
+        (Number(element.getAttribute(SVG_CONSTANTS.T/*WIDTH*/)) || 100),
+        (Number(element.getAttribute(SVG_CONSTANTS.U/*HEIGHT*/)) || 100)
         );
         
     /**
@@ -1233,8 +1240,8 @@ var SvgElement__prototype = SvgElement.prototype;
 SvgElement__prototype.m/*setBackground*/ = function setBackground (fillColor, opacity) {
     if (opacity) {
         SvgElement_append(this.V/*_el*/, "rect",
-            SVG_CONSTANTS.S/*WIDTH*/, "100%",
-            SVG_CONSTANTS.T/*HEIGHT*/, "100%",
+            SVG_CONSTANTS.T/*WIDTH*/, "100%",
+            SVG_CONSTANTS.U/*HEIGHT*/, "100%",
             "fill", fillColor,
             "opacity", opacity);
     }
@@ -1245,7 +1252,7 @@ SvgElement__prototype.m/*setBackground*/ = function setBackground (fillColor, op
  * @param {string} color Fill color on format #xxxxxx.
  * @param {string} dataString The SVG path data string.
  */
-SvgElement__prototype.P/*appendPath*/ = function appendPath (color, dataString) {
+SvgElement__prototype.R/*appendPath*/ = function appendPath (color, dataString) {
     SvgElement_append(this.V/*_el*/, "path",
         "fill", color,
         "d", dataString);
@@ -1346,14 +1353,14 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
         hashOrValue != null && computeHash(hashOrValue) ||
         
         // 3. `data-jdenticon-hash` attribute
-        isValidHash(el.getAttribute(ATTRIBUTES.U/*HASH*/)) ||
+        isValidHash(el.getAttribute(ATTRIBUTES.O/*HASH*/)) ||
         
         // 4. `data-jdenticon-value` attribute. 
         // We want to treat an empty attribute as an empty value. 
         // Some browsers return empty string even if the attribute 
         // is not specified, so use hasAttribute to determine if 
         // the attribute is specified.
-        el.hasAttribute(ATTRIBUTES.D/*VALUE*/) && computeHash(el.getAttribute(ATTRIBUTES.D/*VALUE*/));
+        el.hasAttribute(ATTRIBUTES.v/*VALUE*/) && computeHash(el.getAttribute(ATTRIBUTES.v/*VALUE*/));
     
     if (!hash) {
         // No hash specified. Don't render an icon.
@@ -1364,6 +1371,7 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (renderer) {
         // Draw icon
         iconGenerator(renderer, hash, config);
+        el[IS_RENDERED_PROPERTY] = true;
     }
 }
 
@@ -1385,7 +1393,7 @@ jdenticon["updateSvg"] = updateSvg;
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-jdenticon["version"] = "3.2.0";
+jdenticon["version"] = "3.3.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.

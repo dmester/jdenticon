@@ -1,12 +1,12 @@
 /**
- * Jdenticon 3.2.0
+ * Jdenticon 3.3.0
  * http://jdenticon.com
  *  
- * Built: 2022-08-07T11:23:11.640Z
+ * Built: 2024-05-10T09:48:41.921Z
  *
  * MIT License
  * 
- * Copyright (c) 2014-2021 Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-2024 Daniel Mester Pirttijärvi
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -304,6 +304,8 @@ var ATTRIBUTES = {
     o/*VALUE*/: "data-jdenticon-value"
 };
 
+var IS_RENDERED_PROPERTY = "jdenticonRendered";
+
 var ICON_SELECTOR = "[" + ATTRIBUTES.t/*HASH*/ +"],[" + ATTRIBUTES.o/*VALUE*/ +"]";
 
 var documentQuerySelectorAll = /** @type {!Function} */ (
@@ -319,6 +321,27 @@ function getIdenticonType(el) {
 
         if (/^canvas$/i.test(tagName) && "getContext" in el) {
             return ICON_TYPE_CANVAS;
+        }
+    }
+}
+
+function whenDocumentIsReady(/** @type {Function} */ callback) {
+    function loadedHandler() {
+        document.removeEventListener("DOMContentLoaded", loadedHandler);
+        window.removeEventListener("load", loadedHandler);
+        setTimeout(callback, 0); // Give scripts a chance to run
+    }
+    
+    if (typeof document !== "undefined" &&
+        typeof window !== "undefined" &&
+        typeof setTimeout !== "undefined"
+    ) {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", loadedHandler);
+            window.addEventListener("load", loadedHandler);
+        } else {
+            // Document already loaded. The load events above likely won't be raised
+            setTimeout(callback, 0);
         }
     }
 }
@@ -1011,6 +1034,11 @@ function drawIcon(ctx, hashOrValue, size, config) {
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
         config);
+
+    var canvas = ctx.canvas;
+    if (canvas) {
+        canvas[IS_RENDERED_PROPERTY] = true;
+    }
 }
 
 /**
@@ -1314,6 +1342,24 @@ function updateAll() {
 }
 
 /**
+ * Updates all canvas elements with the `data-jdenticon-hash` or `data-jdenticon-value` attribute that have not already
+ * been rendered.
+ */
+function updateAllConditional() {
+    if (documentQuerySelectorAll) {
+        /** @type {NodeListOf<HTMLElement>} */
+        var elements = documentQuerySelectorAll(ICON_SELECTOR);
+        
+        for (var i = 0; i < elements.length; i++) {
+            var el = elements[i];
+            if (!el[IS_RENDERED_PROPERTY]) {
+                update(el);
+            }
+        }
+    }
+}
+
+/**
  * Updates the identicon in the specified `<canvas>` or `<svg>` elements.
  * @param {(string|Element)} el - Specifies the container in which the icon is rendered as a DOM element of the type
  *    `<svg>` or `<canvas>`, or a CSS selector to such an element.
@@ -1381,6 +1427,7 @@ function renderDomElement(el, hashOrValue, config, rendererFactory) {
     if (renderer) {
         // Draw icon
         iconGenerator(renderer, hash, config);
+        el[IS_RENDERED_PROPERTY] = true;
     }
 }
 
@@ -1419,7 +1466,7 @@ jdenticon["updateSvg"] = update;
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-jdenticon["version"] = "3.2.0";
+jdenticon["version"] = "3.3.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.
@@ -1444,7 +1491,7 @@ function jdenticonStartup() {
     )["replaceMode"];
     
     if (replaceMode != "never") {
-        updateAll();
+        updateAllConditional();
         
         if (replaceMode == "observe") {
             observer(update);
@@ -1453,9 +1500,7 @@ function jdenticonStartup() {
 }
 
 // Schedule to render all identicons on the page once it has been loaded.
-if (typeof setTimeout === "function") {
-    setTimeout(jdenticonStartup, 0);
-}
+whenDocumentIsReady(jdenticonStartup);
 
 return jdenticon;
 

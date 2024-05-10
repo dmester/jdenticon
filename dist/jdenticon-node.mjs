@@ -1,12 +1,12 @@
 /**
- * Jdenticon 3.2.0
+ * Jdenticon 3.3.0
  * http://jdenticon.com
  *
- * Built: 2022-08-07T11:23:11.640Z
+ * Built: 2024-05-10T09:48:41.921Z
  * 
  * MIT License
  * 
- * Copyright (c) 2014-2021 Daniel Mester Pirttijärvi
+ * Copyright (c) 2014-2024 Daniel Mester Pirttijärvi
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -924,6 +924,11 @@ class CanvasRenderer {
     }
 }
 
+const IS_RENDERED_PROPERTY = "jdenticonRendered";
+
+/** @type {!Function} */ (
+    typeof document !== "undefined" && document.querySelectorAll.bind(document));
+
 /**
  * Draws an identicon to a context.
  * @param {CanvasRenderingContext2D} ctx - Canvas context on which the icon will be drawn at location (0, 0).
@@ -941,6 +946,11 @@ function drawIcon(ctx, hashOrValue, size, config) {
     iconGenerator(new CanvasRenderer(ctx, size), 
         isValidHash(hashOrValue) || computeHash(hashOrValue), 
         config);
+
+    const canvas = ctx.canvas;
+    if (canvas) {
+        canvas[IS_RENDERED_PROPERTY] = true;
+    }
 }
 
 /**
@@ -1197,7 +1207,7 @@ if (typeof process === "undefined" &&
  * Specifies the version of the Jdenticon package in use.
  * @type {string}
  */
-const version = "3.2.0";
+const version = "3.3.0";
 
 /**
  * Specifies which bundle of Jdenticon that is used.
