@@ -1,23 +1,20 @@
 ﻿"use strict";
 
+const assert = require("assert");
 const tap = require("tap");
 const fs = require("fs");
 const path = require("path");
+const { PNG } = require("pngjs");
 
 const expectedDir = path.join(__dirname, "expected");
 
-function equal(buf1, buf2) {
-    if (buf1.length !== buf2.length) {
+function equal(obj1, obj2) {
+    try {
+        assert.deepStrictEqual(obj1, obj2);
+        return true;
+    } catch (e) {
         return false;
     }
-    
-    for (let i = 0; i < buf1.length; i++) {
-        if (buf1.readUInt8(i) !== buf2.readUInt8(i)) {
-            return false;
-        }
-    }
-    
-    return true;
 }
 
 function test(jdenticon, icon, style) {
@@ -27,8 +24,15 @@ function test(jdenticon, icon, style) {
     {
         const actual = jdenticon.toPng(icon, 50);
         const expected = fs.readFileSync(path.join(expectedDir, icon +".png"));
-        
-        if (!equal(actual, expected)) {
+
+        const actualDecoded = PNG.sync.read(actual);
+        const expectedDecoded = PNG.sync.read(expected);
+
+        if (!equal(actualDecoded, expectedDecoded)) {
+            actualDecoded.data = "...";
+            expectedDecoded.data = "...";
+            fs.writeFileSync(path.join(expectedDir, icon +".metadata.json"), JSON.stringify(expectedDecoded, undefined, 2));
+            fs.writeFileSync(path.join(expectedDir, icon +"-actual.metadata.json"), JSON.stringify(actualDecoded, undefined, 2));
             fs.writeFileSync(path.join(expectedDir, icon +"-actual.png"), actual);
             tap.ok(false, "Icon '" + icon + "' failed PNG test.");
         }
