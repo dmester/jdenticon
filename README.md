@@ -61,6 +61,7 @@ There are ports or bindings for Jdenticon available for the following platforms:
 * [React](https://www.npmjs.com/package/react-jdenticon)
 * [Angular](https://www.npmjs.com/package/ngx-jdenticon)
 * [.NET](https://github.com/dmester/jdenticon-net/)
+* [Rust](https://github.com/jay3332/rdenticon)
 * [Polymer](https://github.com/GeoloeG/identicon-element)
 * [Swift](https://github.com/aleph7/jdenticon-swift)
 * [Java](https://github.com/sunshower-io/sunshower-arcus/tree/master/arcus-identicon)
