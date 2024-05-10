@@ -15,9 +15,9 @@ jobs:
     env:
       TAP_NO_ESM: 1
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4.1.5
       - name: Use Node.js v14
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.2
         with:
           node-version: 14.x
       - run: npm install
@@ -44,7 +44,7 @@ jobs:
         run: npm run test:node-esm
 
       - name: Publish artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.3.3
         if: ${{ always() }}
         with:
           name: package
@@ -59,9 +59,15 @@ jobs:
       matrix:
         node: [ '6.4', '8.x', '10.x', '12.x', '14.x', '16.x' ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4.1.5
+      
+      - uses: actions/download-artifact@v4.1.7
+        with:
+          name: package
+          path: test/node_modules/jdenticon
+
       - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ matrix.node }}
 
@@ -70,7 +76,7 @@ jobs:
       - name: npm install (Node 6.4)
         if: ${{ matrix.node == '6.4' }}
         run: |
-          npm install -g npm@latest-6
+          npm install -g npm@6.14.17
           npm install tap@12.7.0 bind-obj-methods@2.0.0
 
       - name: npm install (Node 8.x)
@@ -81,17 +87,19 @@ jobs:
         if: ${{ matrix.node != '6.4' && matrix.node != '8.x' }}
         run: npm install
 
-      - uses: actions/download-artifact@v2
-        with:
-          name: package
-          path: test/node_modules/jdenticon
-
       - name: Node test (CommonJS)
         run: npm run test:node-cjs
         
       - name: Node test (ESM, Node 12+)
         if: ${{ matrix.node != '6.4' && matrix.node != '8.x' && matrix.node != '10.x' }}
         run: npm run test:node-esm
+
+      - name: Publish artifacts
+        uses: actions/upload-artifact@v4.3.3
+        if: ${{ failure() }}
+        with:
+          name: e2e-${{ matrix.node }}
+          path: ./test/e2e/node/expected
 
   visual:
     name: Visual tests
@@ -105,14 +113,14 @@ jobs:
       BROWSER_SCREENSHOT_DIR: ./artifacts/screenshots
       BROWSER_DIFF_DIR: ./artifacts/diffs
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4.1.5
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4.0.2
         with:
-          node-version: 12.x
+          node-version: 16.x
       - run: npm install
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: package
           path: test/node_modules/jdenticon
@@ -127,9 +135,9 @@ jobs:
         run: npm run test:browser-macos
 
       - name: Publish artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.3.3
         if: ${{ always() }}
         with:
-          name: visual
+          name: visual-${{ matrix.os }}
           path: ${{ env.ARTIFACTS_DIR }}
       
