@@ -59,6 +59,7 @@ There are ports or bindings for Jdenticon available for the following platforms:
 
 * [PHP](https://github.com/dmester/jdenticon-php/)
 * [React](https://www.npmjs.com/package/react-jdenticon)
+* [Vue](https://www.npmjs.com/package/vue-jdenticon)
 * [Angular](https://www.npmjs.com/package/ngx-jdenticon)
 * [.NET](https://github.com/dmester/jdenticon-net/)
 * [Rust](https://github.com/jay3332/rdenticon)
