@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>几何图形头像生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .size-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .size-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .size-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .size-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar-section h2 {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .avatar-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-wrapper {
+            text-align: center;
+        }
+
+        .avatar-wrapper label {
+            display: block;
+            margin-bottom: 10px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .avatar-box {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas, svg {
+            border-radius: 10px;
+            display: block;
+        }
+
+        .download-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .download-btn.svg {
+            background: #17a2b8;
+        }
+
+        .download-btn.svg:hover {
+            background: #138496;
+        }
+
+        .hint {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .random-btn {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .random-btn:hover {
+            background: #e0a800;
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 几何图形头像生成器</h1>
+        
+        <div class="input-section">
+            <label for="inputText">输入任意字符串：</label>
+            <div class="input-row">
+                <input type="text" id="inputText" placeholder="输入用户名、邮箱或任意文字..." value="Hello World">
+                <button class="random-btn" id="randomBtn">随机</button>
+            </div>
+            
+            <label>选择头像尺寸：</label>
+            <div class="size-selector">
+                <button class="size-btn" data-size="64">64px</button>
+                <button class="size-btn active" data-size="128">128px</button>
+                <button class="size-btn" data-size="256">256px</button>
+                <button class="size-btn" data-size="512">512px</button>
+            </div>
+        </div>
+
+        <div class="avatar-section">
+            <h2>生成的头像</h2>
+            <div class="avatar-container">
+                <div class="avatar-wrapper">
+                    <label>Canvas (PNG)</label>
+                    <div class="avatar-box">
+                        <canvas id="avatarCanvas" width="128" height="128"></canvas>
+                    </div>
+                </div>
+                <div class="avatar-wrapper">
+                    <label>SVG (矢量)</label>
+                    <div class="avatar-box" id="avatarSvgContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <a href="#" class="download-btn" id="downloadPngBtn">
+                <span>📥 下载 PNG</span>
+            </a>
+            <a href="#" class="download-btn svg" id="downloadSvgBtn">
+                <span>📥 下载 SVG</span>
+            </a>
+        </div>
+
+        <p class="hint">相同的字符串总是生成相同的头像，便于统一管理用户头像</p>
+    </div>
+
+    <script src="./dist/jdenticon.min.js"></script>
+    <script>
+        const inputText = document.getElementById('inputText');
+        const avatarCanvas = document.getElementById('avatarCanvas');
+        const avatarSvgContainer = document.getElementById('avatarSvgContainer');
+        const downloadPngBtn = document.getElementById('downloadPngBtn');
+        const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+        const sizeButtons = document.querySelectorAll('.size-btn');
+        const randomBtn = document.getElementById('randomBtn');
+
+        let currentSize = 128;
+        let currentValue = 'Hello World';
+        let currentSvg = '';
+
+        function generateAvatar(value, size) {
+            currentValue = value;
+            currentSize = size;
+
+            avatarCanvas.width = size;
+            avatarCanvas.height = size;
+            const ctx = avatarCanvas.getContext('2d');
+            jdenticon.drawIcon(ctx, value, size);
+
+            currentSvg = jdenticon.toSvg(value, size);
+            avatarSvgContainer.innerHTML = currentSvg;
+        }
+
+        function downloadPng() {
+            const link = document.createElement('a');
+            link.download = `avatar_${currentSize}x${currentSize}.png`;
+            link.href = avatarCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadSvg() {
+            const blob = new Blob([currentSvg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `avatar_${currentSize}x${currentSize}.svg`;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function randomString() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const length = Math.floor(Math.random() * 10) + 5;
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        inputText.addEventListener('input', function() {
+            const value = this.value || 'Empty';
+            generateAvatar(value, currentSize);
+        });
+
+        sizeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                sizeButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const size = parseInt(this.dataset.size);
+                generateAvatar(currentValue, size);
+            });
+        });
+
+        randomBtn.addEventListener('click', function() {
+            const randomValue = randomString();
+            inputText.value = randomValue;
+            generateAvatar(randomValue, currentSize);
+        });
+
+        downloadPngBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            downloadPng();
+        });
+
+        downloadSvgBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            downloadSvg();
+        });
+
+        generateAvatar(currentValue, currentSize);
+    </script>
+</body>
+</html>
